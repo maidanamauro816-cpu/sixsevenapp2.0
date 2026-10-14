@@ -15,7 +15,7 @@ En https://console.firebase.google.com → tu proyecto → ⚙️ Configuración
 - **SHA-1:** `AF:46:6B:DC:27:56:B3:6E:A7:EE:86:3F:2C:91:A6:DA:69:1A:02:86`
 - Después, en la misma pantalla, agregá también el **SHA-256:**
   `AE:B5:B8:AA:F2:FB:5D:46:32:6E:B5:9C:F2:7A:44:55:81:B9:AA:AE:55:28:A1:2F:12:2A:6A:EF:49:FD:12:E9`
-- Descargá **`google-services.json`** y subilo a la **raíz** del repositorio de GitHub.
+- Descargá **`google-services.json`** (ya incluido) y mantené `firebase-applet-config.json` apuntando al mismo proyecto de Firebase.
 - En **Authentication → Método de acceso** activá **Google** y **Teléfono**.
 
 > Esos SHA vienen de la firma incluida en `android-signing/debug.keystore`. Es una firma de
