@@ -1,0 +1,6 @@
+{
+  "name": "SixSeven",
+  "description": "SixSeven: app de mensajería con chats, amigos, historias y llamadas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

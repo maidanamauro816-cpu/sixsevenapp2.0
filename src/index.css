@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-\[marquee_12s_linear_infinite\] {
+  animation: marquee 12s linear infinite;
+}
+
+/* Safe area padding for mobile viewports */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== SixSeven theme ===== */
+:root {
+  --sat: 0px; /* safe area top (barra de estado) */
+  --sab: 0px; /* safe area bottom (barra de gestos) */
+  --ss-red: #ff1a1a;
+  --ss-red-deep: #b3101a;
+}
+html.native {
+  --sat: max(env(safe-area-inset-top, 0px), 28px);
+  --sab: max(env(safe-area-inset-bottom, 0px), 14px);
+}
+html.native .pb-safe {
+  padding-bottom: var(--sab);
+}
+.safe-top {
+  padding-top: var(--sat);
+}
+.neon {
+  border: 1px solid rgba(255, 40, 40, 0.55);
+  box-shadow: 0 0 14px rgba(255, 0, 0, 0.25), inset 0 0 12px rgba(255, 0, 0, 0.08);
+}
+.neon-text {
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+}
+input, textarea {
+  user-select: text;
+}
