@@ -11,6 +11,8 @@ export function explainAuthError(msg: string): string {
   let hint = '';
   if (l.includes('28444') || l.includes('developer console') || l.includes('developer_error')) {
     hint = 'Google no reconoce la firma de esta versión de la app. Falta registrar la huella SHA en Firebase o todavía no se propagó (puede tardar unos minutos).';
+  } else if (l.includes('region')) {
+    hint = 'Firebase no tiene habilitado el envío de SMS a este país. En Firebase: Authentication → Configuración → Política de regiones de SMS → permitir Argentina.';
   } else if (l.includes('billing')) {
     hint = 'Firebase pide activar el plan Blaze (de pago por uso) para enviar SMS. Mientras tanto podés entrar con Google.';
   } else if (l.includes('not authorized') || l.includes('app-not-authorized') || l.includes('play integrity') || l.includes('sha-')) {
