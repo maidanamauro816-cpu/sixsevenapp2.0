@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { ConfirmationResult } from 'firebase/auth';
 import { ArrowLeft, CheckCircle2, AlertCircle, Shield } from 'lucide-react';
 import { playSixSevenSound, playSuccessChime } from '../utils/audio';
+import { errorText, explainAuthError } from '../utils/authErrors';
 import { COUNTRIES, normalizePhone, prettyPhone } from '../utils/phone';
 import logoMark from '../assets/logo-mark.png';
 import wordmark from '../assets/logo-wordmark.png';
@@ -38,7 +39,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       onLoginSuccess();
     } catch (err: unknown) {
       console.error('Error al iniciar sesión con Google:', err);
-      setErrorMsg(err instanceof Error ? err.message : 'No se pudo iniciar sesión con Google.');
+      setErrorMsg(explainAuthError(errorText(err, 'No se pudo iniciar sesión con Google.')));
     } finally {
       setLoading(false);
     }
@@ -69,14 +70,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       playSuccessChime();
     } catch (err: unknown) {
       console.error('Error al enviar SMS:', err);
-      const msg = err instanceof Error ? err.message : 'Error al enviar código SMS.';
-      setErrorMsg(
-        msg.toLowerCase().includes('billing')
-          ? 'Firebase pide activar el plan Blaze (de pago por uso) para enviar SMS. Mientras tanto podés entrar con Google.'
-          : msg.includes('app-not-authorized') || msg.includes('disabled')
-          ? 'El proveedor telefónico se está configurando. ¡También puedes continuar con Google o Acceso Rápido!'
-          : msg
-      );
+      setErrorMsg(explainAuthError(errorText(err, 'Error al enviar código SMS.')));
     } finally {
       setLoading(false);
     }
@@ -124,7 +118,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         {errorMsg && (
           <div className="mb-4 p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-200 text-xs flex items-start gap-2 animate-in fade-in">
             <AlertCircle size={16} className="shrink-0 text-red-400 mt-0.5" />
-            <span className="leading-snug">{errorMsg}</span>
+            <span className="leading-snug whitespace-pre-line break-words">{errorMsg}</span>
           </div>
         )}
 

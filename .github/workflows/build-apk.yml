@@ -64,6 +64,17 @@ jobs:
       - name: Renombrar APK
         run: cp android/app/build/outputs/apk/debug/app-debug.apk SixSeven.apk
 
+      - name: Verificar que el APK tenga la firma registrada en Firebase
+        run: |
+          EXPECTED="AF:46:6B:DC:27:56:B3:6E:A7:EE:86:3F:2C:91:A6:DA:69:1A:02:86"
+          ACTUAL=$(keytool -printcert -jarfile SixSeven.apk | grep "SHA1:" | head -1 | awk '{print $2}')
+          echo "SHA-1 del APK:  $ACTUAL"
+          echo "SHA-1 esperado: $EXPECTED"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "::error::El APK NO está firmado con la clave registrada en Firebase."
+            exit 1
+          fi
+
       - uses: actions/upload-artifact@v4
         with:
           name: SixSeven-APK

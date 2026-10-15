@@ -25,3 +25,25 @@ if "android:screenOrientation" not in xml:
 
 manifest.write_text(xml, encoding="utf-8")
 print("AndroidManifest.xml listo")
+
+# Firma fija: siempre el keystore del repo (mismo SHA-1 que está cargado en Firebase)
+gradle = pathlib.Path("android/app/build.gradle")
+text = gradle.read_text(encoding="utf-8")
+MARK = "// SIXSEVEN-FIXED-SIGNING"
+if MARK not in text:
+    text += """
+
+""" + MARK + """
+android {
+    signingConfigs {
+        debug {
+            storeFile rootProject.file("../android-signing/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+}
+"""
+    gradle.write_text(text, encoding="utf-8")
+print("Firma fija configurada")
