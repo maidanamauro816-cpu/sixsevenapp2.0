@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { ConfirmationResult } from 'firebase/auth';
 import { ArrowLeft, CheckCircle2, AlertCircle, Shield } from 'lucide-react';
 import { playSixSevenSound, playSuccessChime } from '../utils/audio';
+import { COUNTRIES, normalizePhone, prettyPhone } from '../utils/phone';
 import logoMark from '../assets/logo-mark.png';
 import wordmark from '../assets/logo-wordmark.png';
 
@@ -20,6 +21,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
   const [mode, setMode] = useState<'main' | 'phone_input' | 'phone_verify'>('main');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [country, setCountry] = useState('54');
+  const [sentTo, setSentTo] = useState('');
   const [code, setCode] = useState('');
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -48,16 +51,19 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
   const handleSendPhoneCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phoneNumber.trim() || phoneNumber.trim().length < 6) {
-      setErrorMsg('Por favor ingresa un número de teléfono válido (ej. +15556767676 o +54...).');
+    const parsed = normalizePhone(phoneNumber, country);
+    if (!parsed.ok) {
+      setErrorMsg(parsed.error);
       return;
     }
+    const e164 = parsed.e164;
 
     try {
       setLoading(true);
       setErrorMsg(null);
       const verifier = setupPhoneRecaptcha('recaptcha-container');
-      const confirmation = await sendPhoneCode(phoneNumber.trim(), verifier);
+      const confirmation = await sendPhoneCode(e164, verifier);
+      setSentTo(e164);
       setConfirmationResult(confirmation);
       setMode('phone_verify');
       playSuccessChime();
@@ -65,7 +71,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       console.error('Error al enviar SMS:', err);
       const msg = err instanceof Error ? err.message : 'Error al enviar código SMS.';
       setErrorMsg(
-        msg.includes('app-not-authorized') || msg.includes('disabled')
+        msg.toLowerCase().includes('billing')
+          ? 'Firebase pide activar el plan Blaze (de pago por uso) para enviar SMS. Mientras tanto podés entrar con Google.'
+          : msg.includes('app-not-authorized') || msg.includes('disabled')
           ? 'El proveedor telefónico se está configurando. ¡También puedes continuar con Google o Acceso Rápido!'
           : msg
       );
@@ -173,14 +181,34 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               <span className="text-xs font-bold text-neutral-300">Ingresa tu número de teléfono</span>
             </div>
 
-            <input
-              type="tel"
-              placeholder="+1 555 676 7676"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-red-500"
-              autoFocus
-            />
+            <div className="flex gap-2">
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="bg-neutral-900 border border-neutral-700 rounded-xl px-2 py-3 text-sm text-white focus:outline-none focus:border-red-500"
+                aria-label="País"
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} +{c.code}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                inputMode="tel"
+                placeholder={country === '54' ? '376 4624386' : 'Tu número'}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="flex-1 min-w-0 bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-red-500"
+                autoFocus
+              />
+            </div>
+            <p className="text-[11px] text-neutral-500 -mt-2">
+              {country === '54'
+                ? 'Código de área + número, sin 0 ni 15. Ej: 376 4624386'
+                : 'Tu número sin el código de país.'}
+            </p>
 
             <button
               type="submit"
@@ -196,7 +224,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
           <form onSubmit={handleVerifyCode} className="space-y-4">
             <div className="text-center">
               <p className="text-xs font-semibold text-neutral-300">
-                Código enviado a {phoneNumber}
+                Código enviado a {prettyPhone(sentTo)}
               </p>
               <p className="text-[11px] text-neutral-500 mt-0.5">Ingresa los 6 dígitos recibidos:</p>
             </div>
