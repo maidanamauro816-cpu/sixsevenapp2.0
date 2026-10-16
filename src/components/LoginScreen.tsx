@@ -33,7 +33,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     try {
       setLoading(true);
       setErrorMsg(null);
-      playSixSevenSound();
       await signInWithGoogle();
       playSuccessChime();
       onLoginSuccess();
