@@ -156,7 +156,7 @@ function MainApp() {
           <StoriesFeed onCreate={() => setCreatingStory(true)} />
         )}
 
-        {currentTab === 'musica' && <MusicView />}
+        {<div className={currentTab === 'musica' ? 'block' : 'hidden'}><MusicView /></div>}
 
         {currentTab === 'ia' && <SixSevenIA onNavigate={setCurrentTab} />}
 

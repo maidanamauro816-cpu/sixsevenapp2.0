@@ -108,9 +108,14 @@ service cloud.firestore {
         allow read: if isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
         allow create: if isSignedIn()
           && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
-          && incoming().keys().hasOnly(['senderId', 'text', 'createdAt'])
+          && incoming().keys().hasOnly(['senderId', 'text', 'createdAt', 'mediaUrl', 'mediaType', 'mediaName', 'mimeType'])
           && incoming().senderId == request.auth.uid
-          && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 2000;
+          && incoming().text is string && incoming().text.size() <= 2000
+          && (incoming().text.size() > 0 || ('mediaUrl' in incoming() && incoming().mediaUrl is string && incoming().mediaUrl.size() <= 2000))
+          && (!('mediaUrl' in incoming()) || (incoming().mediaUrl is string && incoming().mediaUrl.size() <= 2000))
+          && (!('mediaType' in incoming()) || incoming().mediaType in ['image', 'video', 'audio', 'gif'])
+          && (!('mediaName' in incoming()) || (incoming().mediaName is string && incoming().mediaName.size() <= 150))
+          && (!('mimeType' in incoming()) || (incoming().mimeType is string && incoming().mimeType.size() <= 100));
       }
     }
 
