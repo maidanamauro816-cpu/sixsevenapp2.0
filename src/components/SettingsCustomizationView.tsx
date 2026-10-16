@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Bell, Check, Crown, Palette, Phone, Volume2 } from 'lucide-react';
+import { ArrowLeft, Bell, Check, Crown, Palette, Phone, Volume2, Mic } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
 
 interface Props { onBack: () => void }
@@ -53,6 +53,30 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
   const [messageSound, setMessageSound] = useState(read('messageSound','classic'));
   const [callSound, setCallSound] = useState(read('callSound','digital'));
   const [loginSound, setLoginSound] = useState(read('loginSound','off'));
+  const [voiceName, setVoiceName] = useState(read('iaVoice','futuristic'));
+  const [voiceRate, setVoiceRate] = useState(Number(read('iaVoiceRate','0.95')));
+  const [voicePitch, setVoicePitch] = useState(Number(read('iaVoicePitch','0.75')));
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  useEffect(() => {
+    if (!('speechSynthesis' in window)) return;
+    const refresh = () => setAvailableVoices(window.speechSynthesis.getVoices().filter(v => v.lang.toLowerCase().startsWith('es')));
+    refresh();
+    window.speechSynthesis.addEventListener?.('voiceschanged', refresh);
+    return () => window.speechSynthesis.removeEventListener?.('voiceschanged', refresh);
+  }, []);
+
+  const testVoice = () => {
+    if (!('speechSynthesis' in window)) { window.alert('Este dispositivo no ofrece síntesis de voz en este momento.'); return; }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance('Sistema SixSeven activo. Estoy listo para ayudarte.');
+    const selected = availableVoices.find(v => v.name === voiceName) || availableVoices[0];
+    if (selected) utterance.voice = selected;
+    utterance.lang = selected?.lang || 'es-AR';
+    utterance.rate = voiceName === 'futuristic' || voiceName === 'warrior' ? voiceRate : voiceRate;
+    utterance.pitch = voiceName === 'warrior' ? Math.min(voicePitch, 0.8) : voicePitch;
+    window.speechSynthesis.speak(utterance);
+  };
 
   useEffect(() => {
     const chosen = themes.find(t=>t.id===theme) || themes[0];
@@ -66,6 +90,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     document.documentElement.style.colorScheme = theme === 'white' ? 'light' : 'dark';
     save('theme',theme); save('bubble',bubble); save('font',font); save('icon',icon);
     save('messageSound',messageSound); save('callSound',callSound); save('loginSound',loginSound);
+    save('iaVoice',voiceName); save('iaVoiceRate',String(voiceRate)); save('iaVoicePitch',String(voicePitch));
     window.dispatchEvent(new Event('sixseven:iconChanged'));
   },[theme,bubble,font,icon,messageSound,callSound,loginSound]);
 
@@ -128,6 +153,20 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
         <p className="text-xs text-neutral-400">Probá los tonos y elegí el que querés usar. El tono de bienvenida al iniciar sesión queda desactivado.</p>
         {[{id:'message',label:'Mensajes',value:messageSound,set:setMessageSound},{id:'call',label:'Llamadas',value:callSound,set:setCallSound},{id:'login',label:'Inicio de sesión',value:loginSound,set:setLoginSound}].map(item=><div key={item.id} className="flex items-center gap-2"><label className="flex-1 text-sm">{item.label}</label><select className="max-w-[170px] flex-1 bg-neutral-900 rounded-lg border border-neutral-800 p-2 text-xs" value={item.value} onChange={e=>item.set(e.target.value)}>{soundOptions.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select><button onClick={()=>testSound(item.id as 'message'|'call'|'login')} className="rounded-lg border border-neutral-700 p-2 text-red-400" title="Probar tono"><Volume2 size={16}/></button></div>)}
         <div className="rounded-lg bg-neutral-900 p-3 text-[11px] text-neutral-400"><Phone size={14} className="mr-2 inline"/>Los tonos de llamada se configuran aquí como preferencia; la pantalla de llamadas todavía está pendiente de implementación.</div>
+      </section>
+      <section className={section}>
+        <h2 className="flex items-center gap-2 font-bold"><Mic size={18} className="text-red-400"/> SixSeven IA · Configuración de voz</h2>
+        <p className="text-xs text-neutral-400">Elegí una voz en español disponible en el teléfono. Los estilos futurista y guerrero ajustan velocidad y tono; el resultado depende del motor de voz instalado.</p>
+        <label className="block text-sm">Estilo de voz</label>
+        <select className={selectClass} value={voiceName} onChange={e=>setVoiceName(e.target.value)}>
+          <option value="futuristic">Futurista elegante</option>
+          <option value="warrior">Guerrero grave (estilo anime)</option>
+          {availableVoices.map(v=><option key={v.name} value={v.name}>{v.name} · {v.lang}</option>)}
+        </select>
+        <div><div className="flex justify-between text-xs"><label>Velocidad</label><span>{voiceRate.toFixed(2)}×</span></div><input className="w-full accent-red-500" type="range" min="0.65" max="1.35" step="0.05" value={voiceRate} onChange={e=>setVoiceRate(Number(e.target.value))}/></div>
+        <div><div className="flex justify-between text-xs"><label>Tono</label><span>{voicePitch.toFixed(2)}</span></div><input className="w-full accent-red-500" type="range" min="0.5" max="1.5" step="0.05" value={voicePitch} onChange={e=>setVoicePitch(Number(e.target.value))}/></div>
+        <button onClick={testVoice} className="w-full rounded-xl border border-red-700 bg-red-950/40 py-3 font-bold text-red-300"><Volume2 size={16} className="mr-2 inline"/> Probar voz</button>
+        <p className="text-[11px] text-neutral-500">No es una copia de la voz original de Vegeta. Si no aparecen voces, instalá o activá un motor de texto a voz en los ajustes de Android.</p>
       </section>
       <button onClick={onBack} className="w-full rounded-xl bg-red-600 py-3 font-bold shadow-[0_0_16px_rgba(255,0,0,.35)]">Guardar personalización</button>
     </div>
