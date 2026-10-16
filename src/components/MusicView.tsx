@@ -3,7 +3,7 @@ import { AudioLines, Music2, Pause, Play, SkipBack, SkipForward, Upload, X, Sear
 
 type MusicTrack = { name: string; url: string; artist?: string; sourceUrl?: string; licenseUrl?: string; identifier?: string; origin: 'device' | 'online' };
 type ArchiveResult = { identifier: string; title?: string; creator?: string | string[]; licenseurl?: string };
-type ArchiveFile = { name: string; format?: string; source?: string; private?: string; size?: string };
+type ArchiveFile = { name: string; format?: string; source?: string; private?: string | boolean; size?: string };
 export const MusicView: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +59,10 @@ export const MusicView: React.FC = () => {
     if (term.length < 2) { setOnlineError('Escribí al menos dos letras para buscar.'); return; }
     setSearchingOnline(true); setOnlineError(''); setOnlineResults([]);
     try {
-      const params = new URLSearchParams({ q: `mediatype:audio AND licenseurl:* AND title:(${term})`, 'fl[]': 'identifier,title,creator,licenseurl', rows: '24', page: '1', output: 'json', 'sort[]': 'downloads desc' });
+      const params = new URLSearchParams();
+      params.set('q', `mediatype:audio AND licenseurl:* AND title:(${term.replace(/[+\\-!(){}\\[\\]^\"~*?:\\\\/]/g, ' ').trim()})`);
+      ['identifier', 'title', 'creator', 'licenseurl'].forEach((field) => params.append('fl[]', field));
+      params.set('rows', '24'); params.set('page', '1'); params.set('output', 'json'); params.append('sort[]', 'downloads desc');
       const response = await fetch(`https://archive.org/advancedsearch.php?${params.toString()}`);
       if (!response.ok) throw new Error('El catálogo online no respondió.');
       const data = await response.json() as { response?: { docs?: ArchiveResult[] } };
@@ -78,7 +81,7 @@ export const MusicView: React.FC = () => {
       const response = await fetch(`https://archive.org/metadata/${encodeURIComponent(item.identifier)}`);
       if (!response.ok) throw new Error('No se pudo abrir el audio.');
       const data = await response.json() as { files?: ArchiveFile[] };
-      const file = (data.files || []).find((entry) => /\.mp3$/i.test(entry.name) && entry.private !== 'true' && entry.source !== 'metadata')
+      const file = (data.files || []).find((entry) => /\.mp3$/i.test(entry.name) && entry.private !== 'true' && entry.private !== true && entry.source !== 'metadata')
         || (data.files || []).find((entry) => /\.(ogg|oga|opus|m4a|wav)$/i.test(entry.name) && entry.private !== 'true' && entry.source !== 'metadata');
       if (!file) throw new Error('Este registro no tiene un archivo de audio reproducible.');
       const path = file.name.split('/').map((part) => encodeURIComponent(part)).join('/');
