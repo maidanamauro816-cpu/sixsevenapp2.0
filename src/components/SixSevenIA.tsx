@@ -1,35 +1,174 @@
-import React, { useState } from 'react';
-import { Bot, Send, Sparkles } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Bot, Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../firebase';
+import type { WhatsAppTab } from './WhatsAppBottomNav';
 
-export const SixSevenIA: React.FC = () => {
+type ChatMessage = { role: 'user' | 'assistant'; text: string };
+type RecognitionResult = { 0: { transcript: string }; isFinal: boolean };
+type RecognitionEvent = { resultIndex: number; results: ArrayLike<RecognitionResult> };
+type RecognitionLike = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: RecognitionEvent) => void) | null;
+  onerror: ((event: { error?: string }) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+type RecognitionConstructor = new () => RecognitionLike;
+
+interface Props { onNavigate: (tab: WhatsAppTab) => void }
+
+export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<{role:'user'|'system'; text:string}[]>([]);
-  const send = () => {
-    const text = message.trim();
-    if (!text) return;
-    setMessages((old) => [...old, {role:'user', text}, {role:'system', text:'La pantalla de SixSeven IA está preparada. Para generar respuestas reales falta conectar el servicio de inteligencia artificial de forma segura.'}]);
-    setMessage('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [error, setError] = useState('');
+  const recognitionRef = useRef<RecognitionLike | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages, loading]);
+
+  useEffect(() => () => {
+    recognitionRef.current?.stop();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }, []);
+
+  const speak = (text: string) => {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-AR';
+    utterance.rate = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const spanish = voices.find((voice) => voice.lang.toLowerCase().startsWith('es-ar')) ||
+      voices.find((voice) => voice.lang.toLowerCase().startsWith('es'));
+    if (spanish) utterance.voice = spanish;
+    window.speechSynthesis.speak(utterance);
   };
+
+  const routeCommand = (text: string): WhatsAppTab | null => {
+    const clean = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (/\b(abrir|ir a|mostrame|mostrar)\s+(los?\s+)?(chats?|mensajes)\b/.test(clean)) return 'chats';
+    if (/\b(abrir|ir a|mostrame|mostrar)\s+(los?\s+)?(estados|estado)\b/.test(clean)) return 'estados';
+    if (/\b(abrir|ir a|poner|reproducir)\s+(la\s+)?musica\b/.test(clean)) return 'musica';
+    if (/\b(abrir|ir a|mostrar)\s+(mi\s+)?perfil\b/.test(clean)) return 'perfil';
+    if (/\b(abrir|ir a|mostrar)\s+(las?\s+)?llamadas\b/.test(clean)) return 'llamadas';
+    if (/\b(abrir|ir a)\s+(sixseven\s+)?ia\b/.test(clean)) return 'ia';
+    return null;
+  };
+
+  const sendMessage = async (raw = message) => {
+    const prompt = raw.trim();
+    if (!prompt || loading) return;
+    setMessage('');
+    setError('');
+    setMessages((old) => [...old, { role: 'user', text: prompt }]);
+
+    const destination = routeCommand(prompt);
+    if (destination) {
+      const answer = destination === 'musica' ? 'Abriendo Música.' :
+        destination === 'estados' ? 'Abriendo Estados.' :
+        destination === 'perfil' ? 'Abriendo tu perfil.' :
+        destination === 'llamadas' ? 'Abriendo Llamadas.' :
+        destination === 'ia' ? 'Ya estás en SixSeven IA.' : 'Abriendo Chats.';
+      setMessages((old) => [...old, { role: 'assistant', text: answer }]);
+      onNavigate(destination);
+      speak(answer);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const ask = httpsCallable<{ message: string }, { answer: string }>(functions, 'askSixSevenIA');
+      const result = await ask({ message: prompt });
+      const answer = result.data?.answer?.trim() || 'No recibí una respuesta. Probá de nuevo.';
+      setMessages((old) => [...old, { role: 'assistant', text: answer }]);
+      speak(answer);
+    } catch (err) {
+      console.error('SixSeven IA:', err);
+      const code = (err as { code?: string })?.code || '';
+      const detail = code.includes('unauthenticated')
+        ? 'Iniciá sesión para usar SixSeven IA.'
+        : 'No pude conectarme al motor de IA. Hay que desplegar la función de Firebase y configurar GEMINI_API_KEY.';
+      setError(detail);
+      setMessages((old) => [...old, { role: 'assistant', text: detail }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startListening = () => {
+    setError('');
+    const browser = window as Window & { SpeechRecognition?: RecognitionConstructor; webkitSpeechRecognition?: RecognitionConstructor };
+    const Recognition = browser.SpeechRecognition || browser.webkitSpeechRecognition;
+    if (!Recognition) {
+      setError('Este WebView no ofrece reconocimiento de voz. Probá desde Chrome o habilitá el plugin de voz nativo en la compilación Android.');
+      return;
+    }
+    try {
+      recognitionRef.current?.stop();
+      const recognition = new Recognition();
+      recognition.lang = 'es-AR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.onresult = (event) => {
+        const spoken = Array.from(event.results).slice(event.resultIndex).map((item) => item[0]?.transcript || '').join(' ').trim();
+        setListening(false);
+        recognitionRef.current = null;
+        if (spoken) void sendMessage(spoken);
+      };
+      recognition.onerror = (event) => {
+        setListening(false);
+        recognitionRef.current = null;
+        setError(event.error === 'not-allowed' ? 'Permití el acceso al micrófono para usar la voz.' : 'No pude reconocer la voz. Intentá de nuevo.');
+      };
+      recognition.onend = () => {
+        setListening(false);
+        recognitionRef.current = null;
+      };
+      recognitionRef.current = recognition;
+      recognition.start();
+      setListening(true);
+    } catch {
+      setListening(false);
+      setError('No se pudo iniciar el micrófono. Revisá los permisos de la aplicación.');
+    }
+  };
+
   return <div className="w-full max-w-md mx-auto min-h-screen bg-black text-white flex flex-col pb-24">
-    <header className="sticky top-0 bg-black border-b border-neutral-900 px-4 py-4 flex items-center gap-3">
-      <div className="w-11 h-11 rounded-full bg-[#ff1a1a] flex items-center justify-center shadow-[0_0_18px_rgba(255,26,26,.7)]"><Bot size={24} className="text-white"/></div>
-      <div><h1 className="font-bold text-base">SixSeven IA</h1><p className="text-[11px] text-neutral-400">Asistente inteligente</p></div>
+    <header className="sticky top-0 z-10 bg-black border-b border-neutral-900 px-4 py-4 flex items-center gap-3">
+      <div className="w-11 h-11 rounded-full bg-black border border-[#ff1a1a] flex items-center justify-center shadow-[0_0_18px_rgba(255,26,26,.45)]"><Bot size={24} className="text-[#ff1a1a]"/></div>
+      <div><h1 className="font-bold text-base">SixSeven IA</h1><p className="text-[11px] text-neutral-400">Asistente por texto y voz</p></div>
       <Sparkles size={19} className="ml-auto text-[#ff1a1a]"/>
+      <button onClick={() => { setVoiceEnabled((value) => !value); if (voiceEnabled && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }} aria-label={voiceEnabled ? 'Desactivar voz' : 'Activar voz'} className="p-2 text-neutral-300">{voiceEnabled ? <Volume2 size={19}/> : <VolumeX size={19}/>}</button>
     </header>
-    <div className="flex-1 px-4 py-5 space-y-3">
-      {messages.length===0 && <div className="mt-16 text-center px-5">
-        <div className="w-20 h-20 mx-auto rounded-full bg-[#ff1a1a] flex items-center justify-center shadow-[0_0_28px_rgba(255,26,26,.55)]"><Bot size={42}/></div>
+    <div ref={scrollRef} className="flex-1 px-4 py-5 space-y-3 overflow-y-auto">
+      {messages.length === 0 && <div className="mt-12 text-center px-5">
+        <div className="w-20 h-20 mx-auto rounded-full bg-black border border-[#ff1a1a] flex items-center justify-center shadow-[0_0_28px_rgba(255,26,26,.35)]"><Bot size={42} className="text-[#ff1a1a]"/></div>
         <h2 className="mt-5 text-xl font-bold">Hola, soy SixSeven IA</h2>
-        <p className="mt-2 text-sm text-neutral-400">Esta es la pantalla de prueba del asistente. La conexión con el motor de IA todavía está pendiente.</p>
+        <p className="mt-2 text-sm text-neutral-400">Preguntame lo que necesites o tocá el micrófono y hablame.</p>
+        <p className="mt-3 text-xs text-neutral-500">También podés decir: “abrir chats”, “abrir estados”, “abrir música” o “abrir perfil”.</p>
       </div>}
-      {messages.map((m,i)=><div key={i} className={`max-w-[88%] rounded-2xl px-3.5 py-3 text-sm whitespace-pre-wrap ${m.role==='user'?'ml-auto bg-[#b91020] text-white':'mr-auto bg-neutral-900 border border-neutral-800 text-neutral-200'}`}>{m.text}</div>)}
+      {messages.map((item, index) => <div key={index} className={'max-w-[88%] rounded-2xl px-3.5 py-3 text-sm whitespace-pre-wrap ' + (item.role === 'user' ? 'ml-auto bg-[#b91020] text-white' : 'mr-auto bg-neutral-900 border border-neutral-800 text-neutral-200')}>{item.text}</div>)}
+      {loading && <div className="mr-auto rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-3 text-sm text-neutral-400 flex items-center gap-2"><LoaderCircle size={15} className="animate-spin"/> Pensando…</div>}
     </div>
+    {error && <p role="alert" className="mx-3 mb-2 rounded-lg border border-red-900 bg-red-950/40 p-2 text-xs text-red-200">{error}</p>}
     <div className="sticky bottom-20 bg-black px-3 py-3 border-t border-neutral-900">
       <div className="flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-950 p-2 focus-within:border-red-700">
-        <input value={message} onChange={e=>setMessage(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send();}} placeholder="Escribí un mensaje para probar..." className="flex-1 min-w-0 bg-transparent px-2 py-2 text-sm text-white placeholder-neutral-500 outline-none"/>
-        <button onClick={send} disabled={!message.trim()} aria-label="Enviar mensaje" className="w-10 h-10 shrink-0 rounded-xl bg-[#ff1a1a] text-white flex items-center justify-center disabled:opacity-40"><Send size={18}/></button>
+        <button onClick={listening ? () => recognitionRef.current?.stop() : startListening} disabled={loading} aria-label={listening ? 'Detener micrófono' : 'Hablar con SixSeven IA'} className={'w-10 h-10 shrink-0 rounded-xl flex items-center justify-center border ' + (listening ? 'bg-red-700 border-red-500 text-white animate-pulse' : 'bg-black border-neutral-800 text-[#ff1a1a]')}>
+          {listening ? <MicOff size={18}/> : <Mic size={18}/>}
+        </button>
+        <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void sendMessage(); }} placeholder="Escribí o hablá..." className="flex-1 min-w-0 bg-transparent px-2 py-2 text-sm text-white placeholder-neutral-500 outline-none"/>
+        <button onClick={() => void sendMessage()} disabled={!message.trim() || loading} aria-label="Enviar mensaje" className="w-10 h-10 shrink-0 rounded-xl bg-[#ff1a1a] text-white flex items-center justify-center disabled:opacity-40"><Send size={18}/></button>
       </div>
-      <p className="text-[10px] text-neutral-600 text-center mt-2">Modo de prueba · conexión de IA pendiente</p>
+      <p className="text-[10px] text-neutral-600 text-center mt-2">{listening ? 'Te estoy escuchando…' : 'Motor Gemini · respuesta por voz opcional'}</p>
     </div>
   </div>;
 };
