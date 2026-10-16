@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { ChatDoc, myChatsQuery } from '../services/chats';
 import wordmark from '../assets/logo-wordmark.png';
 import { playSixSevenSound } from '../utils/audio';
+import { NotesStrip } from './NotesStrip';
 
 export interface WhatsAppChat {
   id: string;
@@ -102,6 +103,8 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           />
         </div>
       </header>
+
+      <NotesStrip />
 
       <div className="flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
         <button onClick={onAddStory} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
