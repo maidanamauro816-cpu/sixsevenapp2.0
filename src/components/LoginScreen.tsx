@@ -98,10 +98,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000000] text-white flex flex-col justify-between items-center px-6 py-10 selection:bg-red-600">
-      {/* Background ambient red glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="relative min-h-screen w-full bg-black text-white flex flex-col justify-between items-center px-6 py-10 selection:bg-red-600">
       {/* Invisible reCAPTCHA container */}
       <div id="recaptcha-container" />
 
