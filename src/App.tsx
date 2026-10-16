@@ -141,6 +141,7 @@ function MainApp() {
           <WhatsAppChatList
             onOpenChat={(chat) => setActiveChat(chat)}
             onAddStory={() => setCreatingStory(true)}
+            onViewStories={() => setCurrentTab('estados')}
             onNewChat={() => setNewChatOpen(true)}
             onOpenContacts={() => setShowContacts(true)}
           />
