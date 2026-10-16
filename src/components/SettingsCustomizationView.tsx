@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Bell, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2 } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2 } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
 
 interface Props { onBack: () => void }
@@ -55,6 +55,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
   useEffect(() => {
     // SixSeven's brand accent is fixed: neon red. Only safe dark surfaces are customizable.
     document.documentElement.style.setProperty('--sx-theme-bg', chatBackground);
+    document.documentElement.style.setProperty('--sx-header-bg', headerBackground);
     document.documentElement.style.setProperty('--sx-theme-accent', '#ff1a1a');
     document.documentElement.style.setProperty('--sx-font', fonts.find(f=>f.id===font)?.css || fonts[0].css);
     document.documentElement.dataset.sxTheme = 'neon';
