@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 import { Camera, Sparkles, Send, CheckCircle2, Flame, Wand2, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { playSixSevenSound, playSuccessChime } from '../utils/audio';
@@ -22,8 +24,32 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
   const [selectedSticker, setSelectedSticker] = useState('🔥 6 7');
   const [storyText, setStoryText] = useState('¡Viviendo el momento en SixSeven! 🔥');
   const [published, setPublished] = useState(false);
+  const [songTitle, setSongTitle] = useState('');
+  const [publishError, setPublishError] = useState('');
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
+    if (!user || !profile) { setPublishError('Iniciá sesión para publicar un estado.'); return; }
+    if (!storyText.trim()) { setPublishError('Escribí algo para tu estado.'); return; }
+    setPublishError('');
+    setPublished(true);
+    try {
+      await addDoc(collection(db, 'stories'), {
+        uid: profile.uid,
+        name: profile.displayName || user.displayName || 'Usuario',
+        avatar: profile.photoURL || user.photoURL || '',
+        text: storyText.trim().slice(0, 300),
+        sticker: selectedSticker,
+        filter: selectedFilter.id,
+        songTitle: songTitle.trim().slice(0, 100),
+        createdAt: serverTimestamp(),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+    } catch (error) {
+      console.error('No se pudo guardar el estado:', error);
+      setPublishError('No se pudo guardar. Revisá las reglas y la conexión de Firebase.');
+      setPublished(false);
+      return;
+    }
     playSixSevenSound();
     playSuccessChime();
     boostAura67(67);
@@ -35,7 +61,6 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
       colors: ['#ff0000', '#ffffff', '#fbbf24'],
     });
 
-    setPublished(true);
     setTimeout(() => {
       setPublished(false);
       onStoryPublished();
@@ -119,6 +144,12 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
         </div>
       </div>
 
+      <div className="mt-3">
+        <label className="block text-xs font-bold text-neutral-300 mb-1">Música para el estado (opcional)</label>
+        <input value={songTitle} onChange={(e) => setSongTitle(e.target.value)} maxLength={100} placeholder="Artista · canción" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-red-500" />
+        <p className="text-[10px] text-neutral-500 mt-1">Por ahora guarda el título; la reproducción desde el catálogo se integrará después.</p>
+      </div>
+      {publishError && <p role="alert" className="mt-3 text-xs text-red-400">{publishError}</p>}
       {/* Stickers Row */}
       <div className="mt-4">
         <label className="block text-xs font-bold text-neutral-300 mb-2">
