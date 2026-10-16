@@ -85,6 +85,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
           return (
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div
+                data-sx-message-bubble="true"
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug ${
                   mine
                     ? 'bg-gradient-to-br from-[#d4141c] to-[#a00d14] text-white rounded-br-md shadow-[0_0_12px_rgba(255,0,0,0.3)]'
