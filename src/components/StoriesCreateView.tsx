@@ -86,14 +86,14 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
       <div className="flex items-center justify-between py-2 border-b border-neutral-900 mb-4">
         <div>
           <h2 className="text-base font-black text-white flex items-center gap-1.5">
-            <span>Crear Historia</span>
+            <span>Crear estado</span>
             <span className="text-red-500">📸</span>
           </h2>
-          <p className="text-[10px] text-neutral-400">Publica historias de 24 horas para tus seguidores</p>
+          <p className="text-[10px] text-neutral-400">Compartí una actualización que dura 24 horas</p>
         </div>
 
         <span className="text-[10px] font-black bg-red-600 text-white px-2 py-0.5 rounded-full">
-          NUEVA HISTORIA
+          NUEVO ESTADO
         </span>
       </div>
 
@@ -130,7 +130,7 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-neutral-800">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-xs font-black text-white">6 7 CAM</span>
+            <span className="text-xs font-black text-white">ESTADO</span>
           </div>
 
           <div className="bg-red-600 text-white font-black text-xs px-2.5 py-1 rounded-full shadow-md">
@@ -138,16 +138,16 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
           </div>
         </div>
 
-        {/* Center 6 7 Giant Visual */}
-        <div className="relative z-10 my-auto text-center space-y-2">
-          <div className="inline-flex items-baseline font-black text-8xl tracking-tighter leading-none select-none drop-shadow-[0_0_40px_rgba(255,0,0,0.85)] animate-pulse">
-            <span className="text-white">6</span>
-            <span className="text-[#ff0000] ml-1">7</span>
-          </div>
-
-          <p className="text-sm font-extrabold text-white drop-shadow px-4">
-            {storyText}
-          </p>
+        {/* Vista previa limpia, estilo estado de mensajería */}
+        <div className="relative z-10 my-auto text-center space-y-3">
+          {mediaPreview ? (
+            mediaType === 'video'
+              ? <video src={mediaPreview} playsInline muted className="max-h-[48vh] max-w-full mx-auto rounded-xl object-contain" />
+              : <img src={mediaPreview} alt="Vista previa del estado" className="max-h-[48vh] max-w-full mx-auto rounded-xl object-contain" />
+          ) : (
+            <p className="text-lg font-semibold text-white drop-shadow px-4">{storyText}</p>
+          )}
+          {mediaPreview && storyText.trim() && <p className="text-sm font-semibold text-white drop-shadow px-4">{storyText}</p>}
         </div>
 
         {/* Bottom Filter Selector */}
