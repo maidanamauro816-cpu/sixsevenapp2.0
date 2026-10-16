@@ -127,6 +127,8 @@ service cloud.firestore {
         && incoming().emoji is string && incoming().emoji.size() <= 16
         && incoming().color is string && incoming().color.size() <= 20
         && incoming().songTitle is string && incoming().songTitle.size() <= 100
+        && (!('mediaUrl' in incoming()) || (incoming().mediaUrl is string && incoming().mediaUrl.size() <= 1000))
+        && (!('mediaType' in incoming()) || incoming().mediaType in ['', 'image', 'video'])
         && incoming().expiresAt is timestamp;
       allow delete: if isSignedIn() && noteId == request.auth.uid;
     }
@@ -136,7 +138,7 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && incoming().uid == request.auth.uid
         && incoming().keys().hasAll(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'createdAt', 'expiresAt'])
-        && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'createdAt', 'expiresAt'])
+        && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'mediaUrl', 'mediaType', 'createdAt', 'expiresAt'])
         && incoming().name is string && incoming().name.size() <= 80
         && incoming().avatar is string && incoming().avatar.size() <= 500
         && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 300
