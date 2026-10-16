@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Archive, Plus, MessageCircle, Pencil } from 'lucide-react';
+import { Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus } from 'lucide-react';
 import { onSnapshot } from 'firebase/firestore';
 import { StoryStatus } from './MauroProfileBanner';
 import { useAuth } from '../context/AuthContext';
@@ -50,9 +50,10 @@ interface WhatsAppChatListProps {
   onOpenStory?: (story: StoryStatus) => void;
   onAddStory: () => void;
   onNewChat: () => void;
+  onOpenContacts: () => void;
 }
 
-export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onNewChat }) => {
+export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onNewChat, onOpenContacts }) => {
   const { profile, user } = useAuth();
   const [chats, setChats] = useState<WhatsAppChat[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,6 +90,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           <img src={wordmark} alt="SixSeven" className="h-9 w-auto select-none" draggable={false} />
           <div className="flex items-center gap-3 text-[#ff2a2a]">
             <button className="p-1 cursor-pointer" title="Archivados"><Archive size={20} /></button>
+            <button onClick={onOpenContacts} className="p-1 cursor-pointer" title="Contactos"><UserRoundPlus size={20} /></button>
             <button onClick={onNewChat} className="p-1 cursor-pointer" title="Nuevo chat"><Pencil size={19} /></button>
           </div>
         </div>
