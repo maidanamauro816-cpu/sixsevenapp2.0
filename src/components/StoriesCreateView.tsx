@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
+import { uploadFileWithTimeout } from '../services/mediaUpload';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Camera, Sparkles, Send, CheckCircle2, Flame, Wand2, Image as ImageIcon } from 'lucide-react';
@@ -41,7 +42,7 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
       if (mediaFile && profile) {
         const safeName = mediaFile.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
         const fileRef = storageRef(getStorage(), `stories/${profile.uid}/${Date.now()}-${safeName}`);
-        const uploaded = await uploadBytes(fileRef, mediaFile, { contentType: mediaFile.type });
+        const uploaded = await uploadFileWithTimeout(fileRef, mediaFile, { contentType: mediaFile.type });
         mediaUrl = await getDownloadURL(uploaded.ref);
       }
       await addDoc(collection(db, 'stories'), {
