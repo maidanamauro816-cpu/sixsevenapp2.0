@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Camera, Crown, Pencil, Check, ImagePlus, LoaderCircle } from 'lucide-react';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../context/AuthContext';
 import { AVATARS } from '../assets/avatars';
 import { useToast } from './Toast';
@@ -24,15 +24,37 @@ export const MyProfileView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     if (file.size > 12 * 1024 * 1024) { show('La imagen debe pesar hasta 12 MB'); return; }
     setUploading(kind);
     try {
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) || 'imagen';
       const path = `users/${user.uid}/${kind}-${Date.now()}-${safeName}`;
-      const uploaded = await uploadBytes(storageRef(getStorage(), path), file, { contentType: file.type });
-      const url = await getDownloadURL(uploaded.ref);
+      const storage = getStorage();
+      const imageRef = storageRef(storage, path);
+      // La carga resumible permite detectar errores de permisos/red y cancelar si queda bloqueada.
+      const url = await new Promise<string>((resolve, reject) => {
+        const task = uploadBytesResumable(imageRef, file, { contentType: file.type });
+        const timeout = window.setTimeout(() => {
+          task.cancel();
+          reject(new Error('La subida tardó demasiado. Revisá la conexión y que Firebase Storage esté habilitado.'));
+        }, 45000);
+        task.on('state_changed', undefined, (error) => {
+          window.clearTimeout(timeout);
+          reject(error);
+        }, async () => {
+          window.clearTimeout(timeout);
+          try {
+            resolve(await getDownloadURL(task.snapshot.ref));
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
       await updateProfileMedia(kind === 'avatar' ? { photoURL: url } : { coverURL: url });
       show(kind === 'avatar' ? 'Foto de perfil actualizada' : 'Foto de portada actualizada');
     } catch (error) {
       console.error('No se pudo subir la imagen del perfil:', error);
-      show('No se pudo guardar. Revisá Firebase Storage y sus reglas.');
+      const code = typeof error === 'object' && error !== null && 'code' in error ? String((error as { code?: unknown }).code) : '';
+      if (code === 'storage/unauthorized') show('Firebase rechazó la foto: revisá las reglas de Firebase Storage.');
+      else if (code === 'storage/unknown' || code === 'storage/retry-limit-exceeded') show('Falló la conexión al subir la foto. Probá con una imagen más pequeña o con otra red.');
+      else show(error instanceof Error ? error.message : 'No se pudo guardar la imagen. Revisá Firebase Storage y sus reglas.');
     } finally { setUploading(null); }
   };
 
