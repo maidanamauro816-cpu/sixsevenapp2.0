@@ -33,7 +33,6 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
   onAddStory,
 }) => {
   const { user, profile, updateProfilePhoto, updateCoverPhoto } = useAuth();
-  const [copiedBio] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const profileInputRef = useRef<HTMLInputElement>(null);
@@ -119,7 +118,7 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
               Disponible • La casa del 6 7 🔥
             </p>
             <p className="text-[10px] text-red-400 font-semibold">
-              {photoBusy ? 'Guardando foto…' : copiedBio ? '¡Listo! 🚀' : `@${profile?.username || 'sixseven'}`}
+              {photoBusy ? 'Guardando foto…' : `@${profile?.username || 'sixseven'}`}
             </p>
           </div>
         </div>
