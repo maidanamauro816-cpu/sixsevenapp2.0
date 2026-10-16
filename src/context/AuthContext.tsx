@@ -13,7 +13,8 @@ import {
   ConfirmationResult,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref as storageRef, getDownloadURL } from 'firebase/storage';
+import { uploadFileWithTimeout } from '../services/mediaUpload';
 import { auth, db, storage, googleProvider, handleFirestoreError, OperationType } from '../firebase';
 import { UserProfile } from '../types';
 import { isNative } from '../native';
@@ -235,7 +236,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const extension = (mime.split('/')[1] || file.name.split('.').pop() || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '');
     try {
       const target = storageRef(storage, 'users/' + user.uid + '/profile/avatar-' + Date.now() + '.' + extension);
-      const uploaded = await uploadBytes(target, file, { contentType: mime });
+      const uploaded = await uploadFileWithTimeout(target, file, { contentType: mime });
       const url = await getDownloadURL(uploaded.ref);
       await updateFirebaseProfile(user, { photoURL: url });
       await setDoc(doc(db, 'users', user.uid), { uid: user.uid, photoURL: url }, { merge: true });
@@ -265,7 +266,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const extension = (mime.split('/')[1] || file.name.split('.').pop() || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '');
     try {
       const target = storageRef(storage, 'users/' + user.uid + '/profile/cover-' + Date.now() + '.' + extension);
-      const uploaded = await uploadBytes(target, file, { contentType: mime });
+      const uploaded = await uploadFileWithTimeout(target, file, { contentType: mime });
       const url = await getDownloadURL(uploaded.ref);
       await setDoc(doc(db, 'users', user.uid), { uid: user.uid, coverURL: url }, { merge: true });
       setProfile((current) => current ? { ...current, coverURL: url } : {
