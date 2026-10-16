@@ -158,7 +158,7 @@ function MainApp() {
 
         {currentTab === 'musica' && <MusicView />}
 
-        {currentTab === 'ia' && <SixSevenIA />}
+        {currentTab === 'ia' && <SixSevenIA onNavigate={setCurrentTab} />}
 
         {/* Perfil: menú de cuenta */}
         {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} onOpenCustomization={() => setShowCustomization(true)} />}
