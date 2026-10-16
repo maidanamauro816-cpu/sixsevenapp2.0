@@ -28,6 +28,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   boostAura67: (amount?: number) => Promise<void>;
   updateBio: (bio: string) => Promise<void>;
+  updateProfileMedia: (media: { photoURL?: string; coverURL?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -221,6 +222,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfileMedia = async (media: { photoURL?: string; coverURL?: string }) => {
+    if (!user?.uid || !profile) throw new Error('Iniciá sesión para cambiar las fotos.');
+    await updateDoc(doc(db, 'users', user.uid), media);
+    setProfile({ ...profile, ...media });
+  };
+
   const boostAura67 = async (amount = 67) => {
     if (!profile) return;
     const newScore = (profile.score67 || 0) + amount;
@@ -250,6 +257,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         boostAura67,
         updateBio,
+        updateProfileMedia,
       }}
     >
       {children}
