@@ -22,7 +22,7 @@ const permissions = [
 for (const permission of permissions) {
   const tag = `<uses-permission android:name="${permission}" />`;
   if (!manifest.includes(permission)) {
-    manifest = manifest.replace('</manifest>', `  ${tag}\\n</manifest>`);
+    manifest = manifest.replace('</manifest>', `  ${tag}\n</manifest>`);
   }
 }
 
@@ -44,7 +44,7 @@ fs.writeFileSync(manifestPath, manifest);
 
 let strings = fs.readFileSync(stringsPath, 'utf8');
 if (!strings.includes('audio_player_service_description')) {
-  strings = strings.replace('</resources>', '  <string name="audio_player_service_description">Permite reproducir música en segundo plano.</string>\\n</resources>');
+  strings = strings.replace('</resources>', '  <string name="audio_player_service_description">Permite reproducir música en segundo plano.</string>\n</resources>');
 }
 fs.writeFileSync(stringsPath, strings);
 console.log('Configuración nativa de audio en segundo plano aplicada.');
