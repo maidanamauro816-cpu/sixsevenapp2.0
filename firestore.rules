@@ -113,6 +113,23 @@ service cloud.firestore {
       }
     }
 
+    // Notes visible to signed-in users; each user may manage only their own note.
+    match /notes/{noteId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn()
+        && noteId == request.auth.uid
+        && incoming().uid == request.auth.uid
+        && incoming().keys().hasAll(['uid', 'name', 'photoURL', 'text', 'emoji', 'color', 'songTitle', 'createdAt', 'expiresAt'])
+        && incoming().keys().hasOnly(['uid', 'name', 'photoURL', 'text', 'emoji', 'color', 'songTitle', 'createdAt', 'expiresAt'])
+        && incoming().name is string && incoming().name.size() <= 80
+        && incoming().photoURL is string && incoming().photoURL.size() <= 500
+        && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 80
+        && incoming().emoji is string && incoming().emoji.size() <= 16
+        && incoming().color is string && incoming().color.size() <= 20
+        && incoming().songTitle is string && incoming().songTitle.size() <= 100
+        && incoming().expiresAt is timestamp;
+      allow delete: if isSignedIn() && noteId == request.auth.uid;
+    }
     // Posts Collection
     match /posts/{postId} {
       allow read: if isSignedIn();
