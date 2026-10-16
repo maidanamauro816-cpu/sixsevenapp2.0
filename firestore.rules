@@ -143,8 +143,8 @@ service cloud.firestore {
         && incoming().sticker is string && incoming().sticker.size() <= 50
         && incoming().filter is string && incoming().filter.size() <= 30
         && incoming().songTitle is string && incoming().songTitle.size() <= 100
-        && incoming().mediaUrl is string && incoming().mediaUrl.size() <= 1000
-        && incoming().mediaType in ['', 'image', 'video']
+        && (!('mediaUrl' in incoming()) || (incoming().mediaUrl is string && incoming().mediaUrl.size() <= 1000))
+        && (!('mediaType' in incoming()) || incoming().mediaType in ['', 'image', 'video'])
         && incoming().expiresAt is timestamp;
       allow update: if false;
       allow delete: if isSignedIn() && existing().uid == request.auth.uid;
