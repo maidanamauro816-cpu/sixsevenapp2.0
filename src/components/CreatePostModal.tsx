@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Sparkles, Music, Wand2, Video, CheckCircle2 } from 'lucide-react';
+import { X, Sparkles, Music, Wand2, Video, CheckCircle2, ImagePlus } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAuth } from '../context/AuthContext';
 import { Post } from '../types';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { playSixSevenSound, playSuccessChime, playBassDrop } from '../utils/audio';
 
 interface CreatePostModalProps {
@@ -74,6 +75,10 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   const [soundTitle, setSoundTitle] = useState(SOUND_TRACKS[0]);
   const [selectedSticker, setSelectedSticker] = useState('🔥 6 7 ON TOP');
   const [posting, setPosting] = useState(false);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState('');
+  const [mediaType, setMediaType] = useState<'image' | 'video' | ''>('');
+  const [publishError, setPublishError] = useState('');
 
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const animRef = useRef<number | null>(null);
@@ -202,6 +207,20 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
     playSixSevenSound();
 
     const newPostId = `post_${Date.now()}`;
+    let uploadedMediaUrl = '';
+    try {
+      if (mediaFile) {
+        const safeName = mediaFile.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
+        const fileRef = storageRef(getStorage(), `posts/${user.uid}/${Date.now()}-${safeName}`);
+        const uploaded = await uploadBytes(fileRef, mediaFile, { contentType: mediaFile.type });
+        uploadedMediaUrl = await getDownloadURL(uploaded.ref);
+      }
+    } catch (error) {
+      console.error('No se pudo subir el multimedia de la publicación:', error);
+      setPublishError('No se pudo subir el archivo. Revisá Firebase Storage y la conexión.');
+      setPosting(false);
+      return;
+    }
     const newPost: Post = {
       id: newPostId,
       authorId: user.uid,
@@ -209,6 +228,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
       authorHandle: profile?.username || 'sixseven_star',
       authorPhoto: profile?.photoURL || user.photoURL || 'https://api.dicebear.com/7.x/bottts/svg?seed=67',
       caption: caption.trim(),
+      mediaUrl: uploadedMediaUrl || undefined,
+      mediaType: mediaType || undefined,
       soundTitle,
       memeTag: '#67meme',
       likesCount: 67,
@@ -229,6 +250,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
         authorHandle: newPost.authorHandle,
         authorPhoto: newPost.authorPhoto,
         caption: newPost.caption,
+        mediaUrl: newPost.mediaUrl || '',
+        mediaType: newPost.mediaType || '',
         soundTitle: newPost.soundTitle,
         memeTag: newPost.memeTag,
         likesCount: newPost.likesCount,
@@ -239,7 +262,10 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
         createdAt: newPost.createdAt,
       });
     } catch (err) {
-      console.warn('Firestore write warning:', err);
+      console.error('No se pudo guardar la publicación:', err);
+      setPublishError('No se pudo guardar la publicación. Revisá Firebase y volvé a intentar.');
+      setPosting(false);
+      return;
     }
 
     // Reward aura points
@@ -281,6 +307,27 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
         </div>
 
         <form onSubmit={handlePublish} className="mt-4 space-y-4">
+
+          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-3">
+            <label className="flex items-center justify-center gap-2 rounded-xl border border-red-900/70 bg-red-950/30 px-4 py-3 text-sm font-bold text-red-200 cursor-pointer">
+              <ImagePlus size={18} /> {mediaFile ? 'Cambiar foto o video' : 'Adjuntar foto o video desde el teléfono'}
+              <input type="file" accept="image/*,video/*" className="hidden" onChange={event => {
+                const file=event.currentTarget.files?.[0]; event.currentTarget.value=''; if(!file) return;
+                if(!file.type.startsWith('image/') && !file.type.startsWith('video/')) { setPublishError('Elegí una foto o un video.'); return; }
+                const maxBytes=file.type.startsWith('video/') ? 50*1024*1024 : 12*1024*1024;
+                if(file.size>maxBytes) { setPublishError(file.type.startsWith('video/')?'El video debe pesar hasta 50 MB.':'La foto debe pesar hasta 12 MB.'); return; }
+                if(mediaPreview) URL.revokeObjectURL(mediaPreview);
+                setMediaFile(file); setMediaType(file.type.startsWith('video/')?'video':'image'); setMediaPreview(URL.createObjectURL(file)); setPublishError('');
+              }} />
+            </label>
+            {mediaPreview && <div className="relative mt-3 overflow-hidden rounded-xl border border-neutral-800">
+              {mediaType==='video' ? <video src={mediaPreview} controls playsInline className="w-full max-h-64 object-contain bg-black"/> : <img src={mediaPreview} alt="Vista previa de la publicación" className="w-full max-h-64 object-contain bg-black"/>}
+              <button type="button" onClick={()=>{URL.revokeObjectURL(mediaPreview);setMediaPreview('');setMediaFile(null);setMediaType('');}} className="absolute top-2 right-2 rounded-full bg-black/80 px-3 py-1 text-xs font-bold">Quitar</button>
+            </div>}
+            <p className="mt-2 text-[10px] text-neutral-500">Fotos hasta 12 MB · videos hasta 50 MB · se guardan en Firebase al publicar.</p>
+            {publishError && <p role="alert" className="mt-2 text-xs text-red-400">{publishError}</p>}
+          </div>
+
           {/* Live Preview Canvas & Animation Selector */}
           <div>
             <label className="block text-xs font-bold text-neutral-300 mb-1.5 flex items-center gap-1.5">
