@@ -170,7 +170,8 @@ export const MusicView: React.FC = () => {
             value={Math.min(currentTime, duration || 1)}
             onChange={(event) => {
               const value = Number(event.target.value);
-              if (native) { if (initRef.current) void AudioPlayer.seek({ audioId: audioIdRef.current, timeInSeconds: value }); }\n              else if (audioRef.current) audioRef.current.currentTime = value;
+              if (native) { if (initRef.current) void AudioPlayer.seek({ audioId: audioIdRef.current, timeInSeconds: value }); }
+              else if (audioRef.current) audioRef.current.currentTime = value;
               setCurrentTime(value);
             }}
             className="w-full accent-red-600"
