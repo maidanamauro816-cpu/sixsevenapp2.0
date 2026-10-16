@@ -88,10 +88,10 @@ export async function searchUsers(term: string, myUid: string): Promise<UserProf
   const raw = term.trim().toLowerCase();
   if (raw.length < 2) return [];
   const nameTerm = raw.replace(/^@+/, '').trim();
-  const usernameTerm = nameTerm.replace(/\\s+/g, '');
+  const usernameTerm = nameTerm.replace(/\s+/g, '');
   const users = collection(db, 'users');
   const range = (field: string, value: string) =>
-    getDocs(query(users, where(field, '>=', value), where(field, '<=', value + '\\uf8ff'), limit(20)));
+    getDocs(query(users, where(field, '>=', value), where(field, '<=', value + '\uf8ff'), limit(20)));
 
   // Buscar por nombre normalizado y por @usuario; también contemplar perfiles antiguos
   // que todavía no tengan displayNameLower sincronizado.
@@ -104,8 +104,8 @@ export async function searchUsers(term: string, myUid: string): Promise<UserProf
     jobs.push(range('displayName', originalCase));
   }
 
-  const digits = raw.replace(/[^\\d+]/g, '');
-  if (digits.replace(/\\D/g, '').length >= 7) {
+  const digits = raw.replace(/[^\d+]/g, '');
+  if (digits.replace(/\D/g, '').length >= 7) {
     const phone = digits.startsWith('+') ? digits : `+${digits}`;
     jobs.push(getDocs(query(users, where('phoneNumber', '==', phone), limit(10))));
   }
