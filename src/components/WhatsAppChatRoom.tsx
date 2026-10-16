@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, MoreVertical, Smile, Send, CheckCheck, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
+import { ChevronLeft, Phone, Video, MoreVertical, Smile, Send, CheckCheck, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
 import { onSnapshot } from 'firebase/firestore';
 import { WhatsAppChat } from './WhatsAppChatList';
 import { useAuth } from '../context/AuthContext';
@@ -154,7 +154,11 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
           </div>
           <h2 className="ml-1 text-sm font-bold leading-tight truncate max-w-[200px]">{chat.name}</h2>
         </div>
-        <button className="p-1 pr-3 pt-2 text-neutral-300 cursor-pointer" title="Más"><MoreVertical size={20} /></button>
+        <div className="flex items-center gap-3 pr-3 pt-2">
+          <button type="button" onClick={() => setError('Las llamadas llegan en una próxima versión.')} className="p-1 text-[#ff2a2a] cursor-pointer" title="Llamar"><Phone size={19} /></button>
+          <button type="button" onClick={() => setError('Las videollamadas llegan en una próxima versión.')} className="p-1 text-[#ff2a2a] cursor-pointer" title="Videollamada"><Video size={20} /></button>
+          <button type="button" className="p-1 text-neutral-300 cursor-pointer" title="Más"><MoreVertical size={20} /></button>
+        </div>
       </header>
 
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2.5">

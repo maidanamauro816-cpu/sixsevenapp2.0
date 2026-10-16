@@ -11,7 +11,7 @@ interface BottomNavProps {
 const TABS: { id: WhatsAppTab; label: string; Icon: typeof MessageCircle }[] = [
   { id: 'chats', label: 'Chats', Icon: MessageCircle },
   { id: 'llamadas', label: 'Llamadas', Icon: Phone },
-  { id: 'estados', label: 'Estados', Icon: Camera },
+  { id: 'estados', label: 'Historias', Icon: Camera },
   { id: 'musica', label: 'Música', Icon: Music2 },
   { id: 'ia', label: 'SixSeven IA', Icon: Bot },
   { id: 'perfil', label: 'Perfil', Icon: User },
