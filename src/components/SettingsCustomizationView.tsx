@@ -1,3 +1,4 @@
+import { CopyrightFooter } from './CopyrightFooter';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2 } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
@@ -147,6 +148,8 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
         {notice&&<p className="text-xs text-neutral-300">{notice}</p>}
         <p className="text-[11px] text-neutral-500">Las fotos se guardan en este dispositivo por ahora; todavía no se sincronizan con otros dispositivos o cuentas.</p>
       </section>}
+
+      {section==='menu' && <CopyrightFooter />}
 
       <button onClick={back} className="w-full rounded-xl bg-[#ff1a1a] py-3 font-bold text-white shadow-[0_0_12px_rgba(255,26,26,.22)]">{section==='menu'?'Volver':'Guardar y volver'}</button>
     </div>

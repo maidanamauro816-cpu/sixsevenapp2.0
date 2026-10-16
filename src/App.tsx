@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SocialProvider } from './context/SocialContext';
 import { LoginScreen } from './components/LoginScreen';
 import { WhatsAppBottomNav, WhatsAppTab } from './components/WhatsAppBottomNav';
 import { WhatsAppChatList, WhatsAppChat } from './components/WhatsAppChatList';
@@ -145,6 +146,7 @@ function MainApp() {
             onViewStories={() => setCurrentTab('estados')}
             onNewChat={() => setNewChatOpen(true)}
             onOpenContacts={() => setShowContacts(true)}
+            onOpenSettings={() => setShowCustomization(true)}
           />
         )}
 
@@ -298,7 +300,9 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <SocialProvider>
+        <MainApp />
+      </SocialProvider>
     </AuthProvider>
   );
 }

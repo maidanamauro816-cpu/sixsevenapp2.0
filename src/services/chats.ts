@@ -43,7 +43,7 @@ const memberOf = (u: Pick<UserProfile, 'displayName' | 'photoURL'>): ChatMember 
 });
 
 /** Abre (y crea si hace falta) el chat 1 a 1 entre yo y otra persona. */
-export async function openChatWith(me: UserProfile, other: UserProfile): Promise<ChatDoc> {
+export async function openChatWith(me: Pick<UserProfile, 'uid' | 'displayName' | 'photoURL'>, other: Pick<UserProfile, 'uid' | 'displayName' | 'photoURL'>): Promise<ChatDoc> {
   const id = chatIdFor(me.uid, other.uid);
   const ref = doc(db, 'chats', id);
   const snap = await getDoc(ref);

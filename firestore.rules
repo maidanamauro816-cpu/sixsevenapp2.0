@@ -98,7 +98,8 @@ service cloud.firestore {
         && incoming().participants.size() == 2
         && request.auth.uid in incoming().participants
         && incoming().participants[0] < incoming().participants[1]
-        && chatId == incoming().participants[0] + '_' + incoming().participants[1];
+        && chatId == incoming().participants[0] + '_' + incoming().participants[1]
+        && exists(/databases/$(database)/documents/friendships/$(chatId));
       allow update: if isSignedIn()
         && request.auth.uid in existing().participants
         && incoming().participants == existing().participants
@@ -117,6 +118,42 @@ service cloud.firestore {
           && (!('mediaName' in incoming()) || (incoming().mediaName is string && incoming().mediaName.size() <= 150))
           && (!('mimeType' in incoming()) || (incoming().mimeType is string && incoming().mimeType.size() <= 100));
       }
+    }
+
+    function pairOf(a, b) {
+      return a < b ? a + '_' + b : b + '_' + a;
+    }
+
+    // Solicitudes de amistad / chat (id = quien envía + '_' + quien recibe)
+    match /friendRequests/{reqId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+      allow create: if isSignedIn()
+        && incoming().keys().hasOnly(['from', 'to', 'fromName', 'fromPhoto', 'fromUsername', 'toName', 'toPhoto', 'toUsername', 'status', 'createdAt', 'updatedAt'])
+        && incoming().from == request.auth.uid
+        && incoming().to is string && incoming().to != incoming().from
+        && reqId == incoming().from + '_' + incoming().to
+        && incoming().status == 'pending';
+      allow update: if isSignedIn()
+        && existing().to == request.auth.uid
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && incoming().status in ['accepted', 'declined'];
+      allow delete: if isSignedIn() && (existing().from == request.auth.uid || existing().to == request.auth.uid);
+    }
+
+    // Amistades (id = uid menor + '_' + uid mayor). Se crea al aceptar una solicitud.
+    match /friendships/{pairKey} {
+      allow read: if isSignedIn() && (resource == null || request.auth.uid in resource.data.users);
+      allow create: if isSignedIn()
+        && incoming().keys().hasOnly(['users', 'members', 'createdAt'])
+        && incoming().users.size() == 2
+        && request.auth.uid in incoming().users
+        && incoming().users[0] < incoming().users[1]
+        && pairKey == incoming().users[0] + '_' + incoming().users[1]
+        && get(/databases/$(database)/documents/friendRequests/$(
+             incoming().users[0] == request.auth.uid
+               ? incoming().users[1] + '_' + request.auth.uid
+               : incoming().users[0] + '_' + request.auth.uid
+           )).data.status == 'accepted';
     }
 
     // Notes visible to signed-in users; each user may manage only their own note.

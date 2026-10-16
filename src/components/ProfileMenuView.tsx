@@ -5,6 +5,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { AVATARS } from '../assets/avatars';
 import { useToast } from './Toast';
+import { CopyrightFooter } from './CopyrightFooter';
 
 interface ProfileMenuViewProps {
   onOpenProfile: () => void;
@@ -78,6 +79,7 @@ export const ProfileMenuView: React.FC<ProfileMenuViewProps> = ({ onOpenProfile,
           <span className="text-sm">Cerrar sesión</span>
         </button>
       </div>
+      <CopyrightFooter />
       {toast}
     </div>
   );

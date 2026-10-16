@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus, Images } from 'lucide-react';
+import { Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus, Images, Settings } from 'lucide-react';
+import { useSocial } from '../context/SocialContext';
 import { onSnapshot } from 'firebase/firestore';
 import { StoryStatus } from './MauroProfileBanner';
 import { useAuth } from '../context/AuthContext';
@@ -51,9 +52,12 @@ interface WhatsAppChatListProps {
   onViewStories: () => void;
   onNewChat: () => void;
   onOpenContacts: () => void;
+  onOpenSettings: () => void;
 }
 
-export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onViewStories, onNewChat, onOpenContacts }) => {
+export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onViewStories, onNewChat, onOpenContacts, onOpenSettings }) => {
+  const { incoming } = useSocial();
+  const incomingCount = incoming.length;
   const { profile, user } = useAuth();
   const [chats, setChats] = useState<WhatsAppChat[]>([]);
   const [loading, setLoading] = useState(true);
@@ -93,8 +97,14 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           <img src={wordmark} alt="SixSeven" className="h-9 w-auto select-none" draggable={false} />
           <div className="flex items-center gap-3 text-[#ff2a2a]">
             <button className="p-1 cursor-pointer" title="Archivados"><Archive size={20} /></button>
-            <button onClick={onOpenContacts} className="p-1 cursor-pointer" title="Contactos"><UserRoundPlus size={20} /></button>
+            <button onClick={onOpenContacts} className="relative p-1 cursor-pointer" title="Amigos y solicitudes">
+              <UserRoundPlus size={20} />
+              {incomingCount > 0 && (
+                <span className="absolute -top-0.5 -right-1 min-w-4 h-4 px-1 rounded-full bg-[#ff1a1a] text-white text-[9px] font-bold flex items-center justify-center shadow-[0_0_8px_rgba(255,0,0,0.8)]">{incomingCount}</span>
+              )}
+            </button>
             <button onClick={onNewChat} className="p-1 cursor-pointer" title="Nuevo chat"><Pencil size={19} /></button>
+            <button onClick={onOpenSettings} className="p-1 cursor-pointer" title="Configuración"><Settings size={20} /></button>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-2 rounded-full bg-neutral-900 border border-neutral-800 px-3.5 py-2 focus-within:border-red-600">
@@ -108,6 +118,16 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           />
         </div>
       </header>
+
+      {incomingCount > 0 && (
+        <button onClick={onOpenContacts} className="mx-4 mt-2 w-[calc(100%-2rem)] neon rounded-xl px-4 py-2.5 flex items-center gap-3 text-left cursor-pointer">
+          <UserRoundPlus size={18} className="text-[#ff2a2a]" />
+          <span className="flex-1 text-xs">
+            <b>{incomingCount === 1 ? incoming[0].fromName : `${incomingCount} personas`}</b> quiere{incomingCount === 1 ? '' : 'n'} agregarte
+          </span>
+          <span className="text-[11px] font-bold text-[#ff2a2a]">Ver</span>
+        </button>
+      )}
 
       {homeLayout === 'profile-cover' && (
         <div className="relative mx-3 mt-2 h-40 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
