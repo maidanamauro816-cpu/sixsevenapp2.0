@@ -16,6 +16,7 @@ import { ContactsView } from './components/ContactsView';
 import { NewChatView } from './components/NewChatView';
 import { useToast } from './components/Toast';
 import { ProfileMenuView } from './components/ProfileMenuView';
+import { SettingsCustomizationView } from './components/SettingsCustomizationView';
 import { MyProfileView } from './components/MyProfileView';
 import { isNative } from './native';
 import { StoriesCreateView } from './components/StoriesCreateView';
@@ -49,6 +50,7 @@ function MainApp() {
   // Mi perfil (pantalla completa)
   const [showMyProfile, setShowMyProfile] = useState(false);
   const [showContacts, setShowContacts] = useState(false);
+  const [showCustomization, setShowCustomization] = useState(false);
 
   // Easter egg
   const [easterEggOpen, setEasterEggOpen] = useState(false);
@@ -65,6 +67,7 @@ function MainApp() {
       if (newChatOpen) { setNewChatOpen(false); return; }
       if (showMyProfile) { setShowMyProfile(false); return; }
       if (showContacts) { setShowContacts(false); return; }
+      if (showCustomization) { setShowCustomization(false); return; }
       if (currentTab !== 'chats') { setCurrentTab('chats'); return; }
       // At the home screen, keep SixSeven open instead of exiting on one back press.
     });
@@ -72,7 +75,7 @@ function MainApp() {
       active = false;
       void registration.then((listener) => listener.remove());
     };
-  }, [activeChat, viewingStory, creatingStory, newChatOpen, showMyProfile, showContacts, currentTab]);
+  }, [activeChat, viewingStory, creatingStory, newChatOpen, showMyProfile, showContacts, showCustomization, currentTab]);
 
   // Auto advance timer for story viewer
   React.useEffect(() => {
@@ -129,11 +132,14 @@ function MainApp() {
         {currentTab === 'musica' && <MusicView />}
 
         {/* Perfil: menú de cuenta */}
-        {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} />}
+        {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} onOpenCustomization={() => setShowCustomization(true)} />}
       </main>
 
       {/*  Bottom Navigation (4 Icons: Chats, Llamadas, Estados, Musica) */}
       <WhatsAppBottomNav currentTab={currentTab} onChangeTab={setCurrentTab} />
+
+      {/* Personalización, tienda de temas, iconos, tonos y burbujas */}
+      {showCustomization && <SettingsCustomizationView onBack={() => setShowCustomization(false)} />}
 
       {/* Mi perfil */}
       {showMyProfile && <MyProfileView onBack={() => setShowMyProfile(false)} />}
