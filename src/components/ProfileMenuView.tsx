@@ -8,16 +8,17 @@ import { useToast } from './Toast';
 
 interface ProfileMenuViewProps {
   onOpenProfile: () => void;
+  onOpenContacts: () => void;
 }
 
-export const ProfileMenuView: React.FC<ProfileMenuViewProps> = ({ onOpenProfile }) => {
+export const ProfileMenuView: React.FC<ProfileMenuViewProps> = ({ onOpenProfile, onOpenContacts }) => {
   const { profile, user, signOut } = useAuth();
   const { toast, show } = useToast();
   const soon = () => show('Próximamente');
 
   const items = [
     { label: 'Mi perfil', Icon: User, action: onOpenProfile },
-    { label: 'Amigos', Icon: Users, action: soon },
+    { label: 'Amigos', Icon: Users, action: onOpenContacts },
     { label: 'Grupos', Icon: Users, action: soon },
     { label: 'Mensajes guardados', Icon: Bookmark, action: soon },
     { label: 'Temas y personalización', Icon: Palette, action: soon },
