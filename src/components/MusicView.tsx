@@ -11,7 +11,9 @@ export const MusicView: React.FC = () => {
   const [duration, setDuration] = useState(0);
   const current = tracks[index];
 
-  useEffect(() => () => tracks.forEach((track) => URL.revokeObjectURL(track.url)), [tracks]);
+  const tracksRef = useRef(tracks);
+  tracksRef.current = tracks;
+  useEffect(() => () => tracksRef.current.forEach((track) => URL.revokeObjectURL(track.url)), []);
 
   useEffect(() => {
     const audio = audioRef.current;
