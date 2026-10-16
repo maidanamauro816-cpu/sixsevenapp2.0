@@ -111,7 +111,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
         </div>
       </div>}
       {error && <p className="text-center text-xs text-red-400 pb-1">{error}</p>}
-      <form onSubmit={handleSend className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-2">
+      <form onSubmit={handleSend} className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-2">
         <div className="flex-1 flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-3 py-2 focus-within:border-red-600">
           <button type="button" aria-label="Abrir emojis" aria-expanded={emojiOpen} onClick={() => setEmojiOpen((open) => !open)} className="text-[#ff2a2a] cursor-pointer">
             <Smile size={20} />
