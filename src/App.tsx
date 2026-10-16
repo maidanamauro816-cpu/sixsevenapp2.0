@@ -4,12 +4,14 @@
  */
 
 import React, { useState } from 'react';
+import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginScreen } from './components/LoginScreen';
 import { WhatsAppBottomNav, WhatsAppTab } from './components/WhatsAppBottomNav';
 import { WhatsAppChatList, WhatsAppChat } from './components/WhatsAppChatList';
 import { WhatsAppChatRoom } from './components/WhatsAppChatRoom';
 import { ComingSoon } from './components/ComingSoon';
+import { MusicView } from './components/MusicView';
 import { NewChatView } from './components/NewChatView';
 import { useToast } from './components/Toast';
 import { ProfileMenuView } from './components/ProfileMenuView';
@@ -47,6 +49,26 @@ function MainApp() {
 
   // Easter egg
   const [easterEggOpen, setEasterEggOpen] = useState(false);
+
+  // Handle Android hardware back button without unexpectedly exiting the app.
+  React.useEffect(() => {
+    if (!isNative) return;
+    let active = true;
+    const registration = CapacitorApp.addListener('backButton', () => {
+      if (!active) return;
+      if (viewingStory) { setViewingStory(null); return; }
+      if (creatingStory) { setCreatingStory(false); return; }
+      if (activeChat) { setActiveChat(null); return; }
+      if (newChatOpen) { setNewChatOpen(false); return; }
+      if (showMyProfile) { setShowMyProfile(false); return; }
+      if (currentTab !== 'chats') { setCurrentTab('chats'); return; }
+      // At the home screen, keep SixSeven open instead of exiting on one back press.
+    });
+    return () => {
+      active = false;
+      void registration.then((listener) => listener.remove());
+    };
+  }, [activeChat, viewingStory, creatingStory, newChatOpen, showMyProfile, currentTab]);
 
   // Auto advance timer for story viewer
   React.useEffect(() => {
@@ -100,7 +122,9 @@ function MainApp() {
           <ComingSoon title="Historias" text="Las historias llegan en una próxima versión." />
         )}
 
-        {/* 4. Perfil: menú de cuenta */}
+        {currentTab === 'musica' && <MusicView />}
+
+        {/* Perfil: menú de cuenta */}
         {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} />}
       </main>
 
