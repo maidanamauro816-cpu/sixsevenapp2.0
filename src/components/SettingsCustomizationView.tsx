@@ -1,10 +1,10 @@
 import { CopyrightFooter } from './CopyrightFooter';
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2 } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2, Download, Upload } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
 
 interface Props { onBack: () => void }
-type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia';
+type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas';
 
 const read = (key: string, fallback = '') => { try { return localStorage.getItem('sixseven:' + key) || fallback; } catch { return fallback; } };
 const save = (key: string, value: string) => { try { localStorage.setItem('sixseven:' + key, value); } catch {} };
@@ -14,6 +14,7 @@ const sections: { id: Exclude<Section,'menu'>; title: string; subtitle: string; 
   { id:'mensajes', title:'Mensajes', subtitle:'Burbujas y visualización de chats', icon:MessageSquare },
   { id:'teclado', title:'Teclado', subtitle:'Tipografía de la aplicación', icon:Keyboard },
   { id:'apariencia', title:'Estilos y apariencia', subtitle:'Diseño principal, perfil y portada', icon:Layout },
+  { id:'temas', title:'Temas y copias', subtitle:'Exportar, importar y restaurar tu configuración', icon:Palette },
 ];
 const sounds = [{id:'classic',name:'SixSeven clásico'},{id:'soft',name:'Suave'},{id:'digital',name:'Digital'},{id:'off',name:'Silencio'}];
 const fonts = [{id:'system',name:'Predeterminada',css:'system-ui, sans-serif'},{id:'rounded',name:'Redondeada',css:'Trebuchet MS, sans-serif'},{id:'serif',name:'Elegante',css:'Georgia, serif'},{id:'mono',name:'Tecnológica',css:'ui-monospace, monospace'}];
@@ -84,6 +85,59 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     } catch { setNotice('No se pudo guardar la imagen. Probá con otra foto.'); }
     finally { setBusy(false); }
   };
+  const exportTheme = () => {
+    const payload = {
+      app: 'SixSeven',
+      format: 'sixseven-theme',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      settings: { chatBackground, headerBackground, bubble, font, layout, messageSound, callSound },
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'sixseven-tema.json';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    setNotice('Copia del tema preparada para guardar.');
+  };
+
+  const importTheme = async (file?: File) => {
+    if (!file) return;
+    setNotice('');
+    try {
+      if (file.size > 100_000) throw new Error('El archivo es demasiado grande.');
+      const data = JSON.parse(await file.text());
+      if (data?.format !== 'sixseven-theme' || data?.version !== 1 || !data?.settings) {
+        throw new Error('Este archivo no es un tema compatible de SixSeven.');
+      }
+      const s = data.settings;
+      const validColor = (v: unknown) => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v);
+      const validOneOf = (v: unknown, values: string[]) => typeof v === 'string' && values.includes(v);
+      if (!validColor(s.chatBackground) || !validColor(s.headerBackground) ||
+          !validOneOf(s.bubble, bubbles.map(x => x.id)) ||
+          !validOneOf(s.font, fonts.map(x => x.id)) ||
+          !validOneOf(s.layout, ['classic', 'profile-cover']) ||
+          !validOneOf(s.messageSound, sounds.map(x => x.id)) ||
+          !validOneOf(s.callSound, sounds.map(x => x.id))) {
+        throw new Error('El tema contiene valores no válidos.');
+      }
+      setChatBackground(s.chatBackground);
+      setHeaderBackground(s.headerBackground);
+      setBubble(s.bubble);
+      setFont(s.font);
+      setLayout(s.layout);
+      setMessageSound(s.messageSound);
+      setCallSound(s.callSound);
+      setNotice('Tema importado. Los cambios se aplicarán automáticamente.');
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'No se pudo importar el tema.');
+    }
+  };
+
   const card='rounded-2xl border border-neutral-800 bg-neutral-950 p-4 space-y-3';
   const row='flex w-full items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-left';
   const back = () => section==='menu' ? onBack() : setSection('menu');
@@ -132,6 +186,23 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
         <h2 className="font-bold flex items-center gap-2"><Keyboard size={18} className="text-red-500"/> Tipografía</h2>
         <p className="text-xs text-neutral-400">Cambia la letra dentro de SixSeven. El teclado Android se configura por separado en los ajustes del teléfono.</p>
         {fonts.map(f=><button key={f.id} onClick={()=>setFont(f.id)} className={'flex w-full items-center justify-between rounded-xl border p-3 '+(font===f.id?'border-red-500':'border-neutral-800')}><span style={{fontFamily:f.css}}>{f.name} · Aa 123</span>{font===f.id&&<Check size={16} className="text-red-500"/>}</button>)}
+      </section>}
+
+      {section==='temas' && <section className={card}>
+        <h2 className="font-bold flex items-center gap-2"><Palette size={18} className="text-red-500"/> Temas de SixSeven</h2>
+        <p className="text-xs text-neutral-400">Guardá tu combinación de colores, burbujas, tipografía, diseño y tonos en un archivo. Podés compartirlo o recuperarlo después de reinstalar.</p>
+        <button onClick={exportTheme} className="flex w-full items-center gap-3 rounded-xl border border-red-900/70 bg-neutral-900 p-3 text-left">
+          <Download size={20} className="text-red-500"/><span className="flex-1"><b className="block text-sm">Exportar mi tema</b><small className="text-neutral-400">Crear un archivo JSON de SixSeven</small></span>
+        </button>
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3">
+          <Upload size={20} className="text-red-500"/><span className="flex-1"><b className="block text-sm">Importar un tema</b><small className="text-neutral-400">Abrir un archivo JSON exportado por SixSeven</small></span>
+          <input type="file" accept=".json,application/json" className="hidden" onChange={e=>{const file=e.target.files?.[0]; e.target.value=''; void importTheme(file);}}/>
+        </label>
+        <div className="rounded-xl border border-neutral-800 bg-black p-3">
+          <p className="text-xs font-semibold text-white">Incluye</p>
+          <p className="mt-1 text-xs text-neutral-400">Fondos, burbujas, tipografía, diseño de inicio y tonos. No incluye fotos, mensajes, credenciales ni datos personales.</p>
+        </div>
+        {notice && <p role="status" className="text-xs text-neutral-300">{notice}</p>}
       </section>}
 
       {section==='apariencia' && <section className={card}>
