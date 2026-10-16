@@ -64,6 +64,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     document.body.style.fontFamily = chosenFont.css;
     save('theme',theme); save('bubble',bubble); save('font',font); save('icon',icon);
     save('messageSound',messageSound); save('callSound',callSound); save('loginSound',loginSound);
+    window.dispatchEvent(new Event('sixseven:iconChanged'));
   },[theme,bubble,font,icon,messageSound,callSound,loginSound]);
 
   const testSound = (type:'message'|'call'|'login') => {
