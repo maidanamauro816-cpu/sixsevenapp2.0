@@ -12,6 +12,7 @@ import { WhatsAppChatList, WhatsAppChat } from './components/WhatsAppChatList';
 import { WhatsAppChatRoom } from './components/WhatsAppChatRoom';
 import { ComingSoon } from './components/ComingSoon';
 import { MusicView } from './components/MusicView';
+import { SixSevenIA } from './components/SixSevenIA';
 import { ContactsView } from './components/ContactsView';
 import { NewChatView } from './components/NewChatView';
 import { useToast } from './components/Toast';
@@ -156,6 +157,8 @@ function MainApp() {
         )}
 
         {currentTab === 'musica' && <MusicView />}
+
+        {currentTab === 'ia' && <SixSevenIA />}
 
         {/* Perfil: menú de cuenta */}
         {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} onOpenCustomization={() => setShowCustomization(true)} />}
