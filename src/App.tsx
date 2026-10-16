@@ -140,6 +140,7 @@ function MainApp() {
             onOpenChat={(chat) => setActiveChat(chat)}
             onAddStory={() => setCreatingStory(true)}
             onNewChat={() => setNewChatOpen(true)}
+            onOpenContacts={() => setShowContacts(true)}
           />
         )}
 
