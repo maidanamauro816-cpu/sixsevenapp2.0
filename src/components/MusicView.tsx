@@ -60,7 +60,7 @@ export const MusicView: React.FC = () => {
     setSearchingOnline(true); setOnlineError(''); setOnlineResults([]);
     try {
       const params = new URLSearchParams();
-      params.set('q', `mediatype:audio AND licenseurl:* AND title:(${term.replace(/[+\\-!(){}\\[\\]^\"~*?:\\\\/]/g, ' ').trim()})`);
+      params.set('q', `mediatype:audio AND licenseurl:* AND title:(${term.replace(/[()]/g, ' ').trim()})`);
       ['identifier', 'title', 'creator', 'licenseurl'].forEach((field) => params.append('fl[]', field));
       params.set('rows', '24'); params.set('page', '1'); params.set('output', 'json'); params.append('sort[]', 'downloads desc');
       const response = await fetch(`https://archive.org/advancedsearch.php?${params.toString()}`);
