@@ -92,7 +92,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
           {themes.map(t=><button key={t.id} onClick={()=>setTheme(t.id)} className={'rounded-xl border p-3 text-left transition '+(theme===t.id?'border-current ring-1 ring-current':'border-neutral-800')} style={{background:t.bg,color:t.id==='white'?'#171717':'#fff'}}>
             <div className="mb-3 flex h-10 items-center gap-1"><span className="h-7 w-7 rounded-full border border-white/30" style={{background:t.accent}}/><span className="h-2 flex-1 rounded-full" style={{background:t.accent,opacity:.65}}/></div>
             <div className="flex items-center justify-between gap-1"><b className="text-xs">{t.name}</b>{theme===t.id&&<Check size={15} style={{color:t.accent}}/>}</div>
-            <p className="mt-1 text-[10px] opacity-70">{t.note</p>
+            <p className="mt-1 text-[10px] opacity-70">{t.note}</p>
           </button>)}
         </div>
       </section>
