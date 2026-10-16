@@ -136,7 +136,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
   };
   const addGif = async () => {
     const url = gifUrl.trim();
-    if (!/^https?:\\/\\//i.test(url) || !/\\.(gif|webp)(\\?.*)?$/i.test(url)) { setError('Pegá un enlace directo que termine en .gif o .webp.'); return; }
+    if (!/^https?:\/\//i.test(url) || !/\.(gif|webp)(\?.*)?$/i.test(url)) { setError('Pegá un enlace directo que termine en .gif o .webp.'); return; }
     if (!myUid) { setError('Iniciá sesión para enviar GIFs.'); return; }
     setUploading(true); setError(null);
     try { await sendRemoteGifMessage(chat.id, myUid, chat.otherUid, url); setGifOpen(false); setGifUrl(''); playConfiguredSound('message'); }
