@@ -11,6 +11,9 @@ export interface StoryStatus {
   time: string;
   textSnippet: string;
   hasSeen?: boolean;
+  uid?: string;
+  mediaUrl?: string;
+  mediaType?: 'image' | 'video' | '';
 }
 
 export const STORIES_WHATSAPP: StoryStatus[] = [
