@@ -13,7 +13,7 @@ interface StoriesCreateViewProps {
 }
 
 const FILTERS = [
-  { id: 'f_neon', name: 'Neón 6 7', color: 'from-red-600/30 to-black' },
+  { id: 'f_neon', name: 'Neón SixSeven', color: 'from-red-600/30 to-black' },
   { id: 'f_ambar', name: 'Ámbar', color: 'from-amber-600/30 to-black' },
   { id: 'f_glitch', name: 'Cyber Glitch', color: 'from-cyan-600/30 to-black' },
   { id: 'f_gold', name: 'Aura Dorada', color: 'from-yellow-600/30 to-black' },
@@ -22,8 +22,8 @@ const FILTERS = [
 export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPublished }) => {
   const { user, profile, boostAura67 } = useAuth();
   const [selectedFilter, setSelectedFilter] = useState(FILTERS[0]);
-  const [selectedSticker, setSelectedSticker] = useState('🔥 6 7');
-  const [storyText, setStoryText] = useState('¡Viviendo el momento en SixSeven! 🔥');
+  const [selectedSticker, setSelectedSticker] = useState('🔥 SixSeven');
+  const [storyText, setStoryText] = useState('¡Compartiendo mi momento! 🔥');
   const [published, setPublished] = useState(false);
   const [songTitle, setSongTitle] = useState('');
   const [publishError, setPublishError] = useState('');
@@ -86,14 +86,14 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
       <div className="flex items-center justify-between py-2 border-b border-neutral-900 mb-4">
         <div>
           <h2 className="text-base font-black text-white flex items-center gap-1.5">
-            <span>Crear Historia</span>
+            <span>Crear estado</span>
             <span className="text-red-500">📸</span>
           </h2>
-          <p className="text-[10px] text-neutral-400">Publica historias de 24 horas para tus seguidores</p>
+          <p className="text-[10px] text-neutral-400">Compartí una foto, un video o un mensaje durante 24 horas</p>
         </div>
 
         <span className="text-[10px] font-black bg-red-600 text-white px-2 py-0.5 rounded-full">
-          NUEVA HISTORIA
+          NUEVO ESTADO
         </span>
       </div>
 
@@ -121,16 +121,16 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
         <p className="mt-2 text-[10px] text-neutral-500">Fotos hasta 12 MB y videos hasta 50 MB. Se suben a Firebase al publicar.</p>
       </div>
 
-      {/* Story Camera Viewport Simulator */}
+      {/* Vista previa del estado */}
       <div className="relative w-full aspect-9/14 rounded-3xl bg-neutral-950 border-2 border-neutral-800 overflow-hidden flex flex-col justify-between p-4 shadow-[0_0_30px_rgba(255,0,0,0.2)]">
         {/* Filter overlay */}
         <div className={`absolute inset-0 bg-gradient-to-b ${selectedFilter.color} pointer-events-none`} />
 
-        {/* Top Story Brand Watermark */}
+        {/* Encabezado de vista previa */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-neutral-800">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-xs font-black text-white">6 7 CAM</span>
+            <span className="text-xs font-black text-white">MI ESTADO</span>
           </div>
 
           <div className="bg-red-600 text-white font-black text-xs px-2.5 py-1 rounded-full shadow-md">
@@ -138,16 +138,9 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
           </div>
         </div>
 
-        {/* Center 6 7 Giant Visual */}
+        {/* Vista previa del texto o multimedia del estado */}
         <div className="relative z-10 my-auto text-center space-y-2">
-          <div className="inline-flex items-baseline font-black text-8xl tracking-tighter leading-none select-none drop-shadow-[0_0_40px_rgba(255,0,0,0.85)] animate-pulse">
-            <span className="text-white">6</span>
-            <span className="text-[#ff0000] ml-1">7</span>
-          </div>
-
-          <p className="text-sm font-extrabold text-white drop-shadow px-4">
-            {storyText}
-          </p>
+          {mediaPreview ? (mediaType === 'video' ? <video src={mediaPreview} muted playsInline className="mx-auto max-h-64 max-w-full object-contain rounded-xl" /> : <img src={mediaPreview} alt="Vista previa del estado" className="mx-auto max-h-64 max-w-full object-contain rounded-xl" />) : <p className="text-base font-extrabold text-white drop-shadow px-4">{storyText}</p>}
         </div>
 
         {/* Bottom Filter Selector */}
@@ -171,7 +164,7 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
           <div className="flex gap-2">
             <input
               type="text"
-              placeholder="Escribe en tu historia..."
+              placeholder="Escribí tu estado..."
               value={storyText}
               onChange={(e) => setStoryText(e.target.value)}
               maxLength={80}
@@ -183,17 +176,17 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
 
       <div className="mt-3">
         <label className="block text-xs font-bold text-neutral-300 mb-1">Música para el estado (opcional)</label>
-        <input value={songTitle} onChange={(e) => setSongTitle(e.target.value)} maxLength={100} placeholder="Artista · canción" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-red-500" />
+        <input value={songTitle} onChange={(e) => setSongTitle(e.target.value)} maxLength={100} placeholder="Artista · canción (opcional)" className="w-full bg-neutral-950 border border-neutral-800 rounded-xl px-3 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-red-500" />
         <p className="text-[10px] text-neutral-500 mt-1">Por ahora guarda el título; la reproducción desde el catálogo se integrará después.</p>
       </div>
       {publishError && <p role="alert" className="mt-3 text-xs text-red-400">{publishError}</p>}
       {/* Stickers Row */}
       <div className="mt-4">
         <label className="block text-xs font-bold text-neutral-300 mb-2">
-          Elige un sticker del 6 7:
+          Elegí un sticker (opcional):
         </label>
         <div className="flex flex-wrap gap-2">
-          {['🔥 6 7', '🐐 GOAT', '6+1=67', '⚡ VIRAL', '🗿 SIGMA'].map((stk) => (
+          {['🔥 SixSeven', '🐐 GOAT', '⚡ VIRAL', '🗿 SIGMA', '💬 Hola'].map((stk) => (
             <button
               key={stk}
               onClick={() => setSelectedSticker(stk)}
@@ -219,12 +212,12 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
           {published ? (
             <>
               <CheckCircle2 size={18} className="text-white" />
-              <span>¡Historia Publicada con Éxito! 🎉</span>
+              <span>¡Estado publicado! 🎉</span>
             </>
           ) : (
             <>
               <Send size={18} />
-              <span>Publicar en Tu Historia 📸 (+67 Aura)</span>
+              <span>Publicar estado 📸</span>
             </>
           )}
         </button>
