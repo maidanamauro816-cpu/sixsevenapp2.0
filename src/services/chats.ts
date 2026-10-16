@@ -85,24 +85,55 @@ export const myChatsQuery = (uid: string) =>
 
 /** Busca personas por nombre, usuario o número de teléfono exacto (+54...). */
 export async function searchUsers(term: string, myUid: string): Promise<UserProfile[]> {
-  const t = term.trim().toLowerCase();
-  if (t.length < 2) return [];
+  const raw = term.trim().toLowerCase();
+  if (raw.length < 2) return [];
+  const nameTerm = raw.replace(/^@+/, '').trim();
+  const usernameTerm = nameTerm.replace(/\\s+/g, '');
   const users = collection(db, 'users');
   const range = (field: string, value: string) =>
-    getDocs(query(users, where(field, '>=', value), where(field, '<=', value + ''), limit(15)));
+    getDocs(query(users, where(field, '>=', value), where(field, '<=', value + '\\uf8ff'), limit(20)));
 
-  const jobs = [range('displayNameLower', t), range('username', t.replace(/^@/, ''))];
-  const digits = t.replace(/[^\d+]/g, '');
-  if (digits.replace(/\D/g, '').length >= 7) {
-    const phone = digits.startsWith('+') ? digits : `+${digits}`;
-    jobs.push(getDocs(query(users, where('phoneNumber', '==', phone), limit(5))));
+  // Buscar por nombre normalizado y por @usuario; también contemplar perfiles antiguos
+  // que todavía no tengan displayNameLower sincronizado.
+  const jobs: Promise<import('firebase/firestore').QuerySnapshot>[] = [
+    range('username', usernameTerm),
+  ];
+  if (nameTerm) {
+    jobs.push(range('displayNameLower', nameTerm));
+    const originalCase = nameTerm.charAt(0).toUpperCase() + nameTerm.slice(1);
+    jobs.push(range('displayName', originalCase));
   }
+
+  const digits = raw.replace(/[^\\d+]/g, '');
+  if (digits.replace(/\\D/g, '').length >= 7) {
+    const phone = digits.startsWith('+') ? digits : `+${digits}`;
+    jobs.push(getDocs(query(users, where('phoneNumber', '==', phone), limit(10))));
+  }
+
   const results = await Promise.allSettled(jobs);
+  const rejected = results.filter((result) => result.status === 'rejected');
+  if (rejected.length === results.length) {
+    console.error('Todas las búsquedas de usuarios fallaron:', rejected);
+    throw new Error('No se pudo consultar la lista de usuarios. Revisá la conexión y las reglas de Firestore.');
+  }
+
   const found = new Map<string, UserProfile>();
-  results.forEach((r) => {
-    if (r.status === 'fulfilled') r.value.forEach((d) => found.set(d.id, d.data() as UserProfile));
-    else console.warn('Búsqueda parcial falló:', r.reason);
+  results.forEach((result) => {
+    if (result.status === 'fulfilled') {
+      result.value.forEach((item) => {
+        const user = item.data() as UserProfile;
+        if (user.uid && user.uid !== myUid) found.set(user.uid, user);
+      });
+    } else {
+      console.warn('Una variante de búsqueda de usuarios falló:', result.reason);
+    }
   });
-  found.delete(myUid);
-  return [...found.values()];
+
+  return [...found.values()].sort((a, b) => {
+    const aUser = (a.username || '').toLowerCase();
+    const bUser = (b.username || '').toLowerCase();
+    const aExact = aUser === usernameTerm ? 0 : 1;
+    const bExact = bUser === usernameTerm ? 0 : 1;
+    return aExact - bExact || aUser.localeCompare(bUser);
+  }).slice(0, 25);
 }
