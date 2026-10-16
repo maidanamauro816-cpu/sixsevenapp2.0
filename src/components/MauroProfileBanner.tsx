@@ -100,6 +100,7 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
                 className="w-full h-full object-cover rounded-full bg-neutral-800"
               />
             </div>
+            <span className="absolute bottom-0 left-0 w-6 h-6 rounded-full bg-red-600 border-2 border-black flex items-center justify-center text-white shadow-md"><Camera size={12}/></span>
             {/* Online Indicator */}
             <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-black" />
           </div>
