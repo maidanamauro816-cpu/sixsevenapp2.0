@@ -5,7 +5,8 @@ import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio
 interface Props { onBack: () => void }
 
 const themes = [
-  { id:'neon', name:'SX Neon', bg:'#050505', accent:'#ff1a1a', note:'Negro + rojo neón' },
+  { id:'neon', name:'SX Neon', bg:'#050505', accent:'#e32636', note:'Negro + rojo neón equilibrado' },
+  { id:'white', name:'Blanco limpio', bg:'#f5f5f5', accent:'#d91f36', note:'Fondo claro y texto oscuro' },
   { id:'midnight', name:'Dark Midnight', bg:'#080b12', accent:'#7c8cff', note:'Azul nocturno' },
   { id:'pink', name:'Rosa Anime', bg:'#160914', accent:'#ff62bd', note:'Rosa y violeta' },
   { id:'dragon', name:'Guerrero Cósmico', bg:'#160b05', accent:'#ff8a19', note:'Inspirado en anime de combate' },
@@ -62,6 +63,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     document.documentElement.dataset.sxBubble = bubble;
     document.documentElement.dataset.sxTheme = theme;
     document.body.style.fontFamily = chosenFont.css;
+    document.documentElement.style.colorScheme = theme === 'white' ? 'light' : 'dark';
     save('theme',theme); save('bubble',bubble); save('font',font); save('icon',icon);
     save('messageSound',messageSound); save('callSound',callSound); save('loginSound',loginSound);
     window.dispatchEvent(new Event('sixseven:iconChanged'));
@@ -87,10 +89,10 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
         <h2 className="flex items-center gap-2 font-bold"><Palette size={18} className="text-red-400"/> 15 temas incluidos</h2>
         <p className="text-xs text-neutral-400">Todos vienen dentro de la app; no necesitan descargas. Estilos originales inspirados en anime, fantasía y juegos.</p>
         <div className="grid grid-cols-2 gap-2">
-          {themes.map(t=><button key={t.id} onClick={()=>setTheme(t.id)} className={'rounded-xl border p-3 text-left transition '+(theme===t.id?'border-white ring-1 ring-white':'border-neutral-800')} style={{background:t.bg,color:'#fff'}}>
+          {themes.map(t=><button key={t.id} onClick={()=>setTheme(t.id)} className={'rounded-xl border p-3 text-left transition '+(theme===t.id?'border-current ring-1 ring-current':'border-neutral-800')} style={{background:t.bg,color:t.id==='white'?'#171717':'#fff'}}>
             <div className="mb-3 flex h-10 items-center gap-1"><span className="h-7 w-7 rounded-full border border-white/30" style={{background:t.accent}}/><span className="h-2 flex-1 rounded-full" style={{background:t.accent,opacity:.65}}/></div>
             <div className="flex items-center justify-between gap-1"><b className="text-xs">{t.name}</b>{theme===t.id&&<Check size={15} style={{color:t.accent}}/>}</div>
-            <p className="mt-1 text-[10px] text-white/60">{t.note}</p>
+            <p className="mt-1 text-[10px] opacity-70">{t.note</p>
           </button>)}
         </div>
       </section>
