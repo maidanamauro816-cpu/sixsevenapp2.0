@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  User, Users, Bookmark, Palette, Settings, CircleHelp, Crown, ChevronRight, ArrowLeftRight, LogOut,
+  User, Users, Bookmark, Settings, CircleHelp, Crown, ChevronRight, ArrowLeftRight, LogOut,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { AVATARS } from '../assets/avatars';
@@ -28,8 +28,7 @@ export const ProfileMenuView: React.FC<ProfileMenuViewProps> = ({ onOpenProfile,
     { label: 'Amigos', Icon: Users, action: onOpenContacts },
     { label: 'Grupos', Icon: Users, action: soon },
     { label: 'Mensajes guardados', Icon: Bookmark, action: soon },
-    { label: 'Tienda de temas y personalización', Icon: Palette, action: onOpenCustomization },
-    { label: 'Ajustes', Icon: Settings, action: onOpenCustomization },
+    { label: 'Configuración', Icon: Settings, action: onOpenCustomization },
     { label: 'Ayuda', Icon: CircleHelp, action: soon },
   ];
 
