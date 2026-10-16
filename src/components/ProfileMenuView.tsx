@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   User, Users, Bookmark, Palette, Settings, CircleHelp, Crown, ChevronRight, ArrowLeftRight, LogOut,
 } from 'lucide-react';
@@ -14,6 +14,12 @@ interface ProfileMenuViewProps {
 
 export const ProfileMenuView: React.FC<ProfileMenuViewProps> = ({ onOpenProfile, onOpenContacts, onOpenCustomization }) => {
   const { profile, user, signOut } = useAuth();
+  const [selectedIcon, setSelectedIcon] = useState(() => { try { return localStorage.getItem('sixseven:icon') || 'SX'; } catch { return 'SX'; } });
+  useEffect(() => {
+    const refresh = () => { try { setSelectedIcon(localStorage.getItem('sixseven:icon') || 'SX'); } catch {} };
+    window.addEventListener('sixseven:iconChanged', refresh);
+    return () => window.removeEventListener('sixseven:iconChanged', refresh);
+  }, []);
   const { toast, show } = useToast();
   const soon = () => show('Próximamente');
 
@@ -39,7 +45,7 @@ export const ProfileMenuView: React.FC<ProfileMenuViewProps> = ({ onOpenProfile,
           <h1 className="text-lg font-bold truncate">{profile?.displayName || 'Mi cuenta'}</h1>
           <p className="text-sm text-emerald-400">En línea</p>
         </div>
-        <Crown size={22} className="text-[#ff2a2a] drop-shadow-[0_0_6px_rgba(255,0,0,0.8)]" />
+        <div className="flex h-10 min-w-10 flex-col items-center justify-center rounded-xl border border-red-600 bg-black px-1 text-red-500 shadow-[0_0_10px_rgba(255,0,0,.45)]">{selectedIcon === 'SX' && <Crown size={13}/>}<span className="text-sm font-black leading-none">{selectedIcon}</span></div>
       </div>
 
       <ul className="mt-2">
