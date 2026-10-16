@@ -214,3 +214,17 @@ class MemeBeatLoop {
 }
 
 export const memeBeat = new MemeBeatLoop();
+
+
+/** Reproduce el tono elegido en Personalización. */
+export function playConfiguredSound(kind: 'message' | 'call' | 'login') {
+  try {
+    const selected = localStorage.getItem('sixseven:' + (kind === 'message' ? 'messageSound' : kind === 'call' ? 'callSound' : 'loginSound')) || (kind === 'call' ? 'digital' : 'classic');
+    if (selected === 'off') return;
+    if (selected === 'soft') { playSuccessChime(); return; }
+    if (selected === 'digital') { playLikePop(); return; }
+    playSixSevenSound();
+  } catch {
+    // Si el almacenamiento no está disponible, no interrumpir el chat.
+  }
+}
