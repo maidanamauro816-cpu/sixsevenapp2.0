@@ -1,10 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { AudioPlayer } from '@mediagrid/capacitor-native-audio';
 import { AudioLines, Music2, Pause, Play, SkipBack, SkipForward, Upload, X } from 'lucide-react';
 
 export const MusicView: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [tracks, setTracks] = useState<{ name: string; url: string }[]>([]);
+  const [tracks, setTracks] = useState<{ name: string; url: string; nativeSource?: string }[]>([]);
+  const native = Capacitor.isNativePlatform();
+  const audioIdRef = useRef('sixseven-music-player');
+  const initRef = useRef(false);
+  const [nativeReady, setNativeReady] = useState(false);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -13,9 +20,52 @@ export const MusicView: React.FC = () => {
 
   const tracksRef = useRef(tracks);
   tracksRef.current = tracks;
-  useEffect(() => () => tracksRef.current.forEach((track) => URL.revokeObjectURL(track.url)), []);
+  useEffect(() => () => tracksRef.current.forEach((track) => { if (track.url.startsWith('blob:')) URL.revokeObjectURL(track.url); }), []);
 
   useEffect(() => {
+    if (!native || !current?.nativeSource) return;
+    let cancelled = false;
+    const audioId = audioIdRef.current;
+    const prepare = async () => {
+      try {
+        if (initRef.current) {
+          await AudioPlayer.destroy({ audioId }).catch(() => undefined);
+          initRef.current = false;
+        }
+        await AudioPlayer.create({
+          audioId, audioSource: current.nativeSource!, friendlyTitle: current.name,
+          artistName: 'SixSeven', albumTitle: 'Mi música', useForNotification: true,
+          isBackgroundMusic: false, showSeekForward: true, showSeekBackward: true,
+        });
+        await AudioPlayer.onAudioReady({ audioId }, async () => {
+          if (cancelled) return;
+          const info = await AudioPlayer.getDuration({ audioId }).catch(() => ({ duration: 0 }));
+          setDuration(info.duration || 0);
+          setNativeReady(true);
+        });
+        await AudioPlayer.onAudioEnd({ audioId }, () => {
+          setPlaying(false); setCurrentTime(0);
+          setIndex((previous) => tracksRef.current.length ? (previous + 1) % tracksRef.current.length : 0);
+        });
+        await AudioPlayer.onPlaybackStatusChange({ audioId }, (event) => {
+          if (event.status === 'playing') setPlaying(true);
+          if (event.status === 'paused' || event.status === 'stopped') setPlaying(false);
+        });
+        await AudioPlayer.initialize({ audioId });
+        initRef.current = true;
+        if (!cancelled) setNativeReady(true);
+        if (playing) await AudioPlayer.play({ audioId });
+      } catch (error) {
+        console.error('No se pudo preparar el reproductor nativo:', error);
+        if (!cancelled) { setNativeReady(false); setPlaying(false); }
+      }
+    };
+    void prepare();
+    return () => { cancelled = true; };
+  }, [native, current?.nativeSource]);
+
+  useEffect(() => {
+    if (native) return;
     const audio = audioRef.current;
     if (!audio || !current) return;
     audio.src = current.url;
@@ -23,28 +73,53 @@ export const MusicView: React.FC = () => {
     setCurrentTime(0);
     setDuration(0);
     if (playing) void audio.play().catch(() => setPlaying(false));
-  }, [current?.url]);
+  }, [current?.url, native]);
 
   useEffect(() => {
+    if (native) {
+      if (!initRef.current || !current?.nativeSource) return;
+      const audioId = audioIdRef.current;
+      if (playing) void AudioPlayer.play({ audioId }).catch(() => setPlaying(false));
+      else void AudioPlayer.pause({ audioId }).catch(() => undefined);
+      return;
+    }
     const audio = audioRef.current;
     if (!audio || !current) return;
     if (playing) void audio.play().catch(() => setPlaying(false));
     else audio.pause();
-  }, [playing, current?.url]);
+  }, [playing, current?.url, current?.nativeSource, native]);
 
   const addFiles = (files: FileList | null) => {
     if (!files?.length) return;
-    const added = Array.from(files).filter((file) => file.type.startsWith('audio/')).map((file) => ({
-      name: file.name.replace(/\.[^.]+$/, ''),
-      url: URL.createObjectURL(file),
-    }));
-    if (!added.length) return;
-    setTracks((previous) => {
-      const next = [...previous, ...added];
-      if (previous.length === 0) setIndex(0);
-      return next;
-    });
-    setPlaying(false);
+    const add = async () => {
+      const audioFiles = Array.from(files).filter((file) => file.type.startsWith('audio/'));
+      const added: { name: string; url: string; nativeSource?: string }[] = [];
+      for (const file of audioFiles) {
+        const name = file.name.replace(/\.[^.]+$/, '');
+        if (native) {
+          try {
+            const bytes = new Uint8Array(await file.arrayBuffer());
+            let binary = '';
+            for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+            const saved = await Filesystem.writeFile({
+              path: `sixseven-music/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`,
+              data: btoa(binary), directory: Directory.Cache, recursive: true,
+            });
+            added.push({ name, url: '', nativeSource: saved.uri });
+          } catch (error) {
+            console.error('No se pudo importar el archivo para audio nativo:', error);
+          }
+        } else added.push({ name, url: URL.createObjectURL(file) });
+      }
+      if (!added.length) return;
+      setTracks((previous) => {
+        const next = [...previous, ...added];
+        if (previous.length === 0) setIndex(0);
+        return next;
+      });
+      setPlaying(false);
+    };
+    void add();
   };
 
   const selectTrack = (next: number) => {
@@ -74,7 +149,7 @@ export const MusicView: React.FC = () => {
           <AudioLines size={86} strokeWidth={1.2} className={playing ? 'text-red-500 animate-pulse' : 'text-red-900'} />
         </div>
         <p className="text-center text-lg font-bold truncate">{current?.name || 'Elegí una canción'}</p>
-        <p className="text-center text-xs text-neutral-500 mt-1">{current ? 'Archivo de tu dispositivo' : 'MP3, M4A, WAV y otros formatos compatibles'}</p>
+        <p className="text-center text-xs text-neutral-500 mt-1">{current ? (native ? (nativeReady ? 'Reproductor nativo listo' : 'Preparando reproducción nativa…') : 'Archivo de tu dispositivo') : 'MP3, M4A, WAV y otros formatos compatibles'}</p>
 
         <audio
           ref={audioRef}
@@ -95,7 +170,8 @@ export const MusicView: React.FC = () => {
             value={Math.min(currentTime, duration || 1)}
             onChange={(event) => {
               const value = Number(event.target.value);
-              if (audioRef.current) audioRef.current.currentTime = value;
+              if (native) { if (initRef.current) void AudioPlayer.seek({ audioId: audioIdRef.current, timeInSeconds: value }); }
+              else if (audioRef.current) audioRef.current.currentTime = value;
               setCurrentTime(value);
             }}
             className="w-full accent-red-600"

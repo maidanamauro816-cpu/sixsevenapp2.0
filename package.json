@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "build:android": "vite build && cap sync android",
+    "build:android": "vite build && cap sync android && node scripts/configure-android-audio.mjs",
     "assets": "capacitor-assets generate --android"
   },
   "dependencies": {
@@ -28,7 +28,9 @@
     "@capacitor/core": "^7.4.0",
     "@capacitor/android": "^7.4.0",
     "@capacitor-firebase/authentication": "^7.3.0",
-    "@capacitor/app": "^7.0.1"
+    "@capacitor/app": "^7.0.1",
+    "@mediagrid/capacitor-native-audio": "^2.0.0",
+    "@capacitor/filesystem": "^7.1.4"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",

@@ -11,7 +11,7 @@ interface BottomNavProps {
 const TABS: { id: WhatsAppTab; label: string; Icon: typeof MessageCircle }[] = [
   { id: 'chats', label: 'Chats', Icon: MessageCircle },
   { id: 'llamadas', label: 'Llamadas', Icon: Phone },
-  { id: 'estados', label: 'Historias', Icon: Camera },
+  { id: 'estados', label: 'Estados', Icon: Camera },
   { id: 'musica', label: 'Música', Icon: Music2 },
   { id: 'perfil', label: 'Perfil', Icon: User },
 ];
@@ -27,13 +27,13 @@ export const WhatsAppBottomNav: React.FC<BottomNavProps> = ({ currentTab, onChan
               key={id}
               onClick={() => onChangeTab(id)}
               className={`flex flex-col items-center justify-center py-1 px-2 sm:px-4 cursor-pointer transition-colors ${
-                active ? 'text-[#ff2a2a]' : 'text-neutral-500 hover:text-neutral-300'
+                active ? 'text-[var(--sx-theme-accent,#e32636)]' : 'text-neutral-500 hover:text-neutral-300'
               }`}
             >
               <Icon
                 size={22}
                 strokeWidth={active ? 2.4 : 1.8}
-                className={active ? 'drop-shadow-[0_0_8px_rgba(255,0,0,0.8)]' : ''}
+                className={active ? 'drop-shadow-[0_0_8px_var(--sx-theme-accent,#e32636)]' : ''}
               />
               <span className="text-[10px] font-semibold mt-1 tracking-tight">{label}</span>
             </button>

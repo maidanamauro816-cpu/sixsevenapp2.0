@@ -2,7 +2,7 @@ name: Build SixSeven APK
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, feature/native-background-audio]
   workflow_dispatch:
 
 permissions:
@@ -56,6 +56,9 @@ jobs:
 
       - name: Sincronizar web -> Android
         run: npx cap sync android
+
+      - name: Configurar audio nativo en segundo plano
+        run: node scripts/configure-android-audio.mjs
 
       - name: Firma estable (mismo SHA-1 en cada build)
         run: |
