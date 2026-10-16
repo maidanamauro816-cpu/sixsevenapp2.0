@@ -12,6 +12,7 @@ import { WhatsAppChatList, WhatsAppChat } from './components/WhatsAppChatList';
 import { WhatsAppChatRoom } from './components/WhatsAppChatRoom';
 import { ComingSoon } from './components/ComingSoon';
 import { MusicView } from './components/MusicView';
+import { ContactsView } from './components/ContactsView';
 import { NewChatView } from './components/NewChatView';
 import { useToast } from './components/Toast';
 import { ProfileMenuView } from './components/ProfileMenuView';
@@ -46,6 +47,7 @@ function MainApp() {
 
   // Mi perfil (pantalla completa)
   const [showMyProfile, setShowMyProfile] = useState(false);
+  const [showContacts, setShowContacts] = useState(false);
 
   // Easter egg
   const [easterEggOpen, setEasterEggOpen] = useState(false);
@@ -61,6 +63,7 @@ function MainApp() {
       if (activeChat) { setActiveChat(null); return; }
       if (newChatOpen) { setNewChatOpen(false); return; }
       if (showMyProfile) { setShowMyProfile(false); return; }
+      if (showContacts) { setShowContacts(false); return; }
       if (currentTab !== 'chats') { setCurrentTab('chats'); return; }
       // At the home screen, keep SixSeven open instead of exiting on one back press.
     });
@@ -68,7 +71,7 @@ function MainApp() {
       active = false;
       void registration.then((listener) => listener.remove());
     };
-  }, [activeChat, viewingStory, creatingStory, newChatOpen, showMyProfile, currentTab]);
+  }, [activeChat, viewingStory, creatingStory, newChatOpen, showMyProfile, showContacts, currentTab]);
 
   // Auto advance timer for story viewer
   React.useEffect(() => {
@@ -125,7 +128,7 @@ function MainApp() {
         {currentTab === 'musica' && <MusicView />}
 
         {/* Perfil: menú de cuenta */}
-        {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} />}
+        {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} />}
       </main>
 
       {/*  Bottom Navigation (4 Icons: Chats, Llamadas, Estados, Musica) */}
@@ -133,6 +136,17 @@ function MainApp() {
 
       {/* Mi perfil */}
       {showMyProfile && <MyProfileView onBack={() => setShowMyProfile(false)} />}
+
+      {/* Contactos y amigos */}
+      {showContacts && (
+        <ContactsView
+          onBack={() => setShowContacts(false)}
+          onOpenChat={(chat) => {
+            setShowContacts(false);
+            setActiveChat(chat);
+          }}
+        />
+      )}
 
       {toast}
 
