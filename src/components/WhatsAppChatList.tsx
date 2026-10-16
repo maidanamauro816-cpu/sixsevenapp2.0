@@ -87,8 +87,8 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
   useEffect(() => { const refresh = () => { try { setHomeLayout(localStorage.getItem('sixseven:homeLayout') || 'classic'); setCoverPhoto(localStorage.getItem('sixseven:coverPhoto') || ''); } catch {} }; window.addEventListener('sixseven:appearanceChanged', refresh); return () => window.removeEventListener('sixseven:appearanceChanged', refresh); }, []);
 
   return (
-    <div className="w-full max-w-md mx-auto min-h-screen bg-black text-white pb-24 selection:bg-red-600">
-      <header className="sticky top-0 z-40 bg-[var(--sx-header-bg,#000000)] px-4 pb-2 safe-top">
+    <div className="sx-chat-list-surface w-full max-w-md mx-auto min-h-screen bg-black text-white pb-24 selection:bg-red-600">
+      <header className="sx-main-header sticky top-0 z-40 bg-black px-4 pb-2 safe-top">
         <div className="flex items-center justify-between pt-3">
           <img src={wordmark} alt="SixSeven" className="h-9 w-auto select-none" draggable={false} />
           <div className="flex items-center gap-3 text-[#ff2a2a]">
