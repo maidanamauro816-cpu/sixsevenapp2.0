@@ -69,7 +69,9 @@ function MainApp() {
       const fonts: Record<string,string> = {system:'system-ui, sans-serif',rounded:'Trebuchet MS, sans-serif',serif:'Georgia, serif',mono:'ui-monospace, monospace',narrow:'Arial Narrow, Arial, sans-serif',comic:'Comic Sans MS, cursive'};
       const chosen = palettes[themeId] || palettes.neon;
       document.documentElement.style.setProperty('--sx-theme-bg', chosen.bg);
-      document.documentElement.style.setProperty('--sx-theme-accent', chosen.accent);
+      document.documentElement.style.setProperty('--sx-chat-bg', localStorage.getItem('sixseven:chatBackground') || chosen.bg);
+      document.documentElement.style.setProperty('--sx-header-bg', localStorage.getItem('sixseven:headerBackground') || '#000000');
+      document.documentElement.style.setProperty('--sx-theme-accent', '#ff1a1a');
       document.documentElement.style.setProperty('--sx-font', fonts[localStorage.getItem('sixseven:font') || 'system'] || fonts.system);
       document.documentElement.dataset.sxTheme = themeId;
       document.documentElement.dataset.sxBubble = localStorage.getItem('sixseven:bubble') || 'classic';
