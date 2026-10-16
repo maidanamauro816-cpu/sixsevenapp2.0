@@ -19,12 +19,12 @@ jobs:
         with:
           node-version: 22
       - name: Install app dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --legacy-peer-deps --no-audit --no-fund
       - name: TypeScript check
         run: npm run lint
       - name: Build web app
         run: npm run build
       - name: Install Firebase Function dependencies
-        run: npm install --prefix functions --no-audit --no-fund
+        run: npm install --prefix functions --legacy-peer-deps --no-audit --no-fund
       - name: Check Firebase Function syntax
         run: node --check functions/index.js
