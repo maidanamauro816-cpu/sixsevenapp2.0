@@ -20,7 +20,10 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
   const [messages, setMessages] = useState<MessageDoc[]>([]);
   const [inputText, setInputText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [emojiOpen, setEmojiOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const emojiChoices = ['😀','😂','🥹','😍','😘','😎','😭','😡','🤔','🙏','👏','❤️','🔥','💯','👍','👎','🎉','🥰','🤣','💔','✨','👑','🐐','🤝','😴','🥳','😅','💪','🫶','🤗'];
+  const insertEmoji = (emoji: string) => setInputText((current) => `${current}${emoji}`);
 
   useEffect(() => {
     if (!myUid) return;
@@ -102,10 +105,15 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
         <div ref={bottomRef} />
       </div>
 
+      {emojiOpen && <div className="mx-3 mb-2 rounded-2xl border border-red-950 bg-neutral-950 p-2 shadow-[0_0_18px_rgba(255,0,0,0.12)]">
+        <div className="grid grid-cols-10 gap-1">
+          {emojiChoices.map((emoji) => <button key={emoji} type="button" onClick={() => insertEmoji(emoji)} aria-label={`Insertar emoji ${emoji}`} className="rounded-lg p-1.5 text-xl hover:bg-neutral-800 active:scale-90">{emoji}</button>)}
+        </div>
+      </div>}
       {error && <p className="text-center text-xs text-red-400 pb-1">{error}</p>}
-      <form onSubmit={handleSend} className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-2">
+      <form onSubmit={handleSend className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-2">
         <div className="flex-1 flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-3 py-2 focus-within:border-red-600">
-          <button type="button" onClick={() => setInputText((t) => `${t}😊`)} className="text-[#ff2a2a] cursor-pointer">
+          <button type="button" aria-label="Abrir emojis" aria-expanded={emojiOpen} onClick={() => setEmojiOpen((open) => !open)} className="text-[#ff2a2a] cursor-pointer">
             <Smile size={20} />
           </button>
           <input
