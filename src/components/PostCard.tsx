@@ -393,7 +393,7 @@ export const PostCard: React.FC<PostCardProps> = ({
         onClick={handleScreenClick}
         className="absolute inset-0 cursor-pointer overflow-hidden flex items-center justify-center"
       >
-        <canvas ref={canvasRef} className="w-full h-full object-cover" />
+        {post.mediaUrl ? (post.mediaType === 'video' ? <video src={post.mediaUrl} controls playsInline className="w-full h-full object-contain bg-black" /> : <img src={post.mediaUrl} alt={post.caption} className="w-full h-full object-contain bg-black" />) : <canvas ref={canvasRef} className="w-full h-full object-cover" />}
 
         {/* Play/Pause indicator */}
         {!isPlaying && (
