@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Plus, Sparkles, Flame, Shield, Check, Camera } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { playSixSevenSound, playSuccessChime } from '../utils/audio';
+import { playSuccessChime } from '../utils/audio';
 import { AVATARS } from '../assets/avatars';
 
 export interface StoryStatus {
@@ -30,7 +30,7 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
   onAddStory,
 }) => {
   const { user, profile, updateProfilePhoto, updateCoverPhoto } = useAuth();
-  const [copiedBio, setCopiedBio] = useState(false);
+  const [copiedBio] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const profileInputRef = useRef<HTMLInputElement>(null);
