@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { collection, limit, onSnapshot, orderBy, query, Timestamp, where } from 'firebase/firestore';
-import { db } from '../firebase';
+import React, { useState } from 'react';
 import { Plus, Camera, Edit2, MoreVertical, X, Heart, Eye } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { StoryStatus, STORIES_WHATSAPP } from './MauroProfileBanner';
@@ -17,34 +15,9 @@ export const WhatsAppStatusTab: React.FC<WhatsAppStatusTabProps> = ({
   onAddStory,
 }) => {
   const { user, profile } = useAuth();
-  const [myStatusText] = useState('Viviendo el momento 🔥');
-  const [publishedStories, setPublishedStories] = useState<StoryStatus[]>([]);
+  const [myStatusText, setMyStatusText] = useState('Viviendo el momento 🔥');
+
   const mauroAvatar = AVATARS.mauro;
-
-  useEffect(() => {
-    const storiesQuery = query(collection(db, 'stories'), where('expiresAt', '>', Timestamp.now()), orderBy('expiresAt', 'asc'), limit(60));
-    const unsubscribe = onSnapshot(storiesQuery, (snapshot) => {
-      const items: StoryStatus[] = snapshot.docs.map((item) => {
-        const data = item.data();
-        const created = data.createdAt?.toDate?.() as Date | undefined;
-        return {
-          id: item.id,
-          uid: String(data.uid || ''),
-          name: String(data.name || 'Usuario SixSeven'),
-          avatar: String(data.avatar || ''),
-          time: created ? created.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'Recién',
-          textSnippet: String(data.text || ''),
-          mediaUrl: typeof data.mediaUrl === 'string' && data.mediaUrl ? data.mediaUrl : undefined,
-          mediaType: data.mediaType === 'image' || data.mediaType === 'video' ? data.mediaType : '',
-        };
-      });
-      setPublishedStories(items);
-    }, (error) => console.error('No se pudieron cargar los estados publicados:', error));
-    return unsubscribe;
-  }, []);
-
-  const ownStories = publishedStories.filter((story) => story.uid === user?.uid);
-  const ownLatest = ownStories[ownStories.length - 1];
 
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-[#000000] text-white pt-3 pb-24 px-4 overflow-y-auto selection:bg-red-600">
@@ -59,7 +32,7 @@ export const WhatsAppStatusTab: React.FC<WhatsAppStatusTabProps> = ({
       {/* Mi Estado */}
       <div className="flex items-center justify-between p-3 rounded-2xl bg-neutral-950/80 border border-neutral-900 mb-5">
         <div
-          onClick={() => ownLatest ? onOpenStory(ownLatest) : onAddStory()}
+          onClick={onAddStory}
           className="flex items-center gap-3.5 cursor-pointer flex-1"
         >
           <div className="relative shrink-0">
@@ -77,8 +50,8 @@ export const WhatsAppStatusTab: React.FC<WhatsAppStatusTabProps> = ({
 
           <div>
             <h3 className="text-sm font-bold text-white">Mi estado</h3>
-            <p className="text-xs text-neutral-400 mt-0.5">{ownLatest?.textSnippet || myStatusText}</p>
-            <span className="text-[10px] text-neutral-500">{ownStories.length ? `${ownStories.length} estado(s) · toca para ver` : 'Toca para publicar foto, video o texto'}</span>
+            <p className="text-xs text-neutral-400 mt-0.5">{myStatusText}</p>
+            <span className="text-[10px] text-neutral-500">Toca para actualizar tu estado</span>
           </div>
         </div>
 
@@ -108,7 +81,7 @@ export const WhatsAppStatusTab: React.FC<WhatsAppStatusTabProps> = ({
 
         <div className="space-y-1">
           {/* Other statuses */}
-          {publishedStories.filter((st) => st.uid !== user?.uid).map((st) => (
+          {STORIES_WHATSAPP.map((st) => (
             <button
               key={st.id}
               onClick={() => onOpenStory(st)}
@@ -126,7 +99,6 @@ export const WhatsAppStatusTab: React.FC<WhatsAppStatusTabProps> = ({
               </div>
             </button>
           ))}
-          {publishedStories.filter((st) => st.uid !== user?.uid).length === 0 && <p className="px-2 py-5 text-xs text-neutral-500">Todavía no hay estados nuevos de otros usuarios. Cuando publiquen fotos o videos, aparecerán aquí.</p>}
         </div>
       </div>
     </div>
