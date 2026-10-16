@@ -2,7 +2,8 @@ import {
   addDoc, collection, doc, getDoc, getDocs, increment, limit, orderBy, query,
   serverTimestamp, setDoc, updateDoc, where, Timestamp,
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { UserProfile } from '../types';
 
 export interface ChatMember {
@@ -20,11 +21,17 @@ export interface ChatDoc {
   unread?: Record<string, number>;
 }
 
+export type ChatMediaType = 'image' | 'video' | 'audio' | 'gif';
+
 export interface MessageDoc {
   id: string;
   senderId: string;
   text: string;
   createdAt?: Timestamp | null;
+  mediaUrl?: string;
+  mediaType?: ChatMediaType;
+  mediaName?: string;
+  mimeType?: string;
 }
 
 export const chatIdFor = (a: string, b: string) => [a, b].sort().join('_');
@@ -65,6 +72,47 @@ export async function sendMessage(chatId: string, myUid: string, otherUid: strin
     lastMessage: clean.slice(0, 200),
     lastSender: myUid,
     updatedAt: serverTimestamp(),
+    [`unread.${otherUid}`]: increment(1),
+  });
+}
+
+
+/** Sube un archivo a Firebase Storage y guarda un mensaje multimedia en Firestore. */
+export async function sendMediaMessage(
+  chatId: string, myUid: string, otherUid: string, file: File, mediaType: ChatMediaType
+) {
+  if (file.size > 50 * 1024 * 1024) throw new Error('El archivo supera los 50 MB.');
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) || `media-${Date.now()}`;
+  const objectPath = `users/${myUid}/chat-media/${chatId}/${Date.now()}_${safeName}`;
+  const objectRef = ref(storage, objectPath);
+  await uploadBytes(objectRef, file, {
+    contentType: file.type || 'application/octet-stream',
+    customMetadata: { ownerUid: myUid, chatId },
+  });
+  const mediaUrl = await getDownloadURL(objectRef);
+  const preview = mediaType === 'image' ? '📷 Foto' : mediaType === 'video' ? '🎬 Video' : mediaType === 'audio' ? '🎤 Nota de voz' : 'GIF';
+  await addDoc(collection(db, 'chats', chatId, 'messages'), {
+    senderId: myUid, text: '', mediaUrl, mediaType, mediaName: safeName,
+    mimeType: file.type || '', createdAt: serverTimestamp(),
+  });
+  await updateDoc(doc(db, 'chats', chatId), {
+    lastMessage: preview, lastSender: myUid, updatedAt: serverTimestamp(),
+    [`unread.${otherUid}`]: increment(1),
+  });
+}
+
+/** Envía un GIF mediante su URL directa (por ejemplo, un enlace .gif/.webp de Tenor). */
+export async function sendRemoteGifMessage(chatId: string, myUid: string, otherUid: string, mediaUrl: string) {
+  const url = new URL(mediaUrl);
+  if (!['http:', 'https:'].includes(url.protocol) || !/\.(gif|webp)$/i.test(url.pathname)) {
+    throw new Error('El enlace debe ser una URL directa de GIF.');
+  }
+  await addDoc(collection(db, 'chats', chatId, 'messages'), {
+    senderId: myUid, text: '', mediaUrl: url.toString(), mediaType: 'gif',
+    mediaName: 'GIF', mimeType: 'image/gif', createdAt: serverTimestamp(),
+  });
+  await updateDoc(doc(db, 'chats', chatId), {
+    lastMessage: 'GIF', lastSender: myUid, updatedAt: serverTimestamp(),
     [`unread.${otherUid}`]: increment(1),
   });
 }
