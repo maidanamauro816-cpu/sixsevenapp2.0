@@ -4,7 +4,7 @@ import { onSnapshot } from 'firebase/firestore';
 import { WhatsAppChat } from './WhatsAppChatList';
 import { useAuth } from '../context/AuthContext';
 import { MessageDoc, markRead, messagesQuery, sendMessage } from '../services/chats';
-import { playLikePop } from '../utils/audio';
+import { playConfiguredSound } from '../utils/audio';
 
 interface WhatsAppChatRoomProps {
   chat: WhatsAppChat;
@@ -22,6 +22,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
   const [error, setError] = useState<string | null>(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const previousMessageIds = useRef<string[]>([]);
   const emojiChoices = ['😀','😂','🥹','😍','😘','😎','😭','😡','🤔','🙏','👏','❤️','🔥','💯','👍','👎','🎉','🥰','🤣','💔','✨','👑','🐐','🤝','😴','🥳','😅','💪','🫶','🤗'];
   const insertEmoji = (emoji: string) => setInputText((current) => `${current}${emoji}`);
 
@@ -31,7 +32,12 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
     const unsub = onSnapshot(
       messagesQuery(chat.id),
       (snap) => {
-        setMessages(snap.docs.map((d) => ({ id: d.id, ...(d.data({ serverTimestamps: 'estimate' }) as Omit<MessageDoc, 'id'>) })));
+        const nextMessages = snap.docs.map((d) => ({ id: d.id, ...(d.data({ serverTimestamps: 'estimate' }) as Omit<MessageDoc, 'id'>) }));
+        if (previousMessageIds.current.length > 0 && nextMessages.some((message) => message.senderId !== myUid && !previousMessageIds.current.includes(message.id))) {
+          playConfiguredSound('message');
+        }
+        previousMessageIds.current = nextMessages.map((message) => message.id);
+        setMessages(nextMessages);
         // si llegó un mensaje mientras el chat está abierto, queda leído
         if (!snap.metadata.hasPendingWrites) markRead(chat.id, myUid);
       },
@@ -53,7 +59,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
     if (!text || !myUid) return;
     setInputText('');
     setError(null);
-    playLikePop();
+    playConfiguredSound('message');
     try {
       await sendMessage(chat.id, myUid, chat.otherUid, text);
     } catch (err) {
