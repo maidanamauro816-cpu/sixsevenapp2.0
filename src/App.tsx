@@ -19,6 +19,7 @@ import { ProfileMenuView } from './components/ProfileMenuView';
 import { MyProfileView } from './components/MyProfileView';
 import { isNative } from './native';
 import { StoriesCreateView } from './components/StoriesCreateView';
+import { StoriesFeed } from './components/StoriesFeed';
 import { StoryStatus } from './components/MauroProfileBanner';
 import { SixSevenEasterEgg } from './components/SixSevenEasterEgg';
 import { PWAInstallButton } from './components/PWAInstallButton';
@@ -112,7 +113,7 @@ function MainApp() {
         {currentTab === 'chats' && (
           <WhatsAppChatList
             onOpenChat={(chat) => setActiveChat(chat)}
-            onAddStory={() => show('Historias: próximamente')}
+            onAddStory={() => setCreatingStory(true)}
             onNewChat={() => setNewChatOpen(true)}
           />
         )}
@@ -122,7 +123,7 @@ function MainApp() {
         )}
 
         {currentTab === 'estados' && (
-          <ComingSoon title="Historias" text="Las historias llegan en una próxima versión." />
+          <StoriesFeed onCreate={() => setCreatingStory(true)} />
         )}
 
         {currentTab === 'musica' && <MusicView />}
