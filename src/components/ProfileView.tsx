@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LogOut, Sparkles, Heart, Grid, Share2, Edit3, Flame, Shield, User, Download, Smartphone, Camera } from 'lucide-react';
+import { LogOut, Sparkles, Heart, Grid, Share2, Edit3, Flame, Shield, User, Download, Smartphone } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Post } from '../types';
 import { playSixSevenSound, playSuccessChime } from '../utils/audio';
@@ -16,14 +16,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onSelectPost,
   onRequestLogin,
 }) => {
-  const { user, profile, signOut, boostAura67, updateProfilePhoto } = useAuth();
+  const { user, profile, signOut, boostAura67 } = useAuth();
   const [tab, setTab] = useState<'posts' | 'liked'>('posts');
   const [editingBio, setEditingBio] = useState(false);
   const [bioText, setBioText] = useState(profile?.bio || 'Certified 6 7 Meme Master 🔥 6 7 on top!');
   const [copiedShare, setCopiedShare] = useState(false);
-  const [photoBusy, setPhotoBusy] = useState(false);
-  const [photoError, setPhotoError] = useState('');
-  const photoInputRef = React.useRef<HTMLInputElement>(null);
   const { isInstallable, isInstalled, install } = usePWAInstall();
 
   if (!user || !profile) {
@@ -49,15 +46,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const userPosts = posts.filter((p) => p.authorId === user.uid);
   const likedPosts = posts.filter((p) => p.userLiked);
 
-  const handleProfilePhoto = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0]; event.currentTarget.value = '';
-    if (!file) return;
-    setPhotoBusy(true); setPhotoError('');
-    try { await updateProfilePhoto(file); playSuccessChime(); }
-    catch (error) { setPhotoError(error instanceof Error ? error.message : 'No se pudo guardar la foto.'); }
-    finally { setPhotoBusy(false); }
-  };
-
   const handleShareProfile = () => {
     playSixSevenSound();
     navigator.clipboard?.writeText(window.location.href);
@@ -76,7 +64,6 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       {/* Top Profile Header */}
       <div className="flex flex-col items-center text-center">
         {/* Avatar with Glowing 6 7 Ring */}
-        <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={(event) => void handleProfilePhoto(event)} />
         <div className="relative mb-3">
           <div className="w-22 h-22 rounded-full border-2 border-red-500 p-0.5 shadow-[0_0_20px_rgba(239,68,68,0.5)]">
             <img
@@ -85,12 +72,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               className="w-full h-full object-cover rounded-full bg-neutral-900"
             />
           </div>
-          <button type="button" onClick={() => photoInputRef.current?.click()} disabled={photoBusy} aria-label="Cambiar foto de perfil" className="absolute -bottom-1 -right-2 bg-red-600 text-white p-2 rounded-full border-2 border-black shadow-md disabled:opacity-60"><Camera size={14}/></button>
-          <span className="absolute top-0 right-0 bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border border-black shadow-md">6 7</span>
+          <span className="absolute bottom-0 right-1 bg-red-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border border-black shadow-md">
+            6 7
+          </span>
         </div>
-
-        {photoError && <p role="alert" className="mb-2 text-[11px] text-red-300">{photoError}</p>}
-        {photoBusy && <p className="mb-2 text-[11px] text-neutral-300">Subiendo foto…</p>}
 
         {/* Name & Handle */}
         <h2 className="text-base font-black text-white flex items-center gap-1.5">
