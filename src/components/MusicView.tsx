@@ -20,7 +20,7 @@ export const MusicView: React.FC = () => {
 
   const tracksRef = useRef(tracks);
   tracksRef.current = tracks;
-  useEffect(() => () => tracksRef.current.forEach((track) => { if (track.url.startsWith('blob:')) if (track.url.startsWith('blob:')) URL.revokeObjectURL(track.url);\n              if (native && i === index && initRef.current) { void AudioPlayer.stop({ audioId: audioIdRef.current }).catch(() => undefined); initRef.current = false; } }), []);
+  useEffect(() => () => tracksRef.current.forEach((track) => { if (track.url.startsWith('blob:')) URL.revokeObjectURL(track.url); }), []);
 
   useEffect(() => {
     if (!native || !current?.nativeSource) return;
