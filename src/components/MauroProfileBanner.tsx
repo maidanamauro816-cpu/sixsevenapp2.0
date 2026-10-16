@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Plus, Sparkles, Flame, Shield, Check, Camera } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { playSixSevenSound, playSuccessChime } from '../utils/audio';
@@ -29,29 +29,49 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
   onSelectStory,
   onAddStory,
 }) => {
-  const { user, profile } = useAuth();
+  const { user, profile, updateProfilePhoto, updateCoverPhoto } = useAuth();
   const [copiedBio, setCopiedBio] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoError, setPhotoError] = useState('');
+  const profileInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const mauroCover =
     'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&auto=format&fit=crop&q=80';
   const mauroAvatar =
     'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=250&auto=format&fit=crop&q=80';
 
-  const handleBannerClick = () => {
-    playSixSevenSound();
-    setCopiedBio(true);
-    setTimeout(() => setCopiedBio(false), 2000);
+  const handleBannerClick = () => profileInputRef.current?.click();
+
+  const handleProfileFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0]; event.currentTarget.value = '';
+    if (!file) return;
+    setPhotoBusy(true); setPhotoError('');
+    try { await updateProfilePhoto(file); playSuccessChime(); }
+    catch (error) { setPhotoError(error instanceof Error ? error.message : 'No se pudo cambiar la foto de perfil.'); }
+    finally { setPhotoBusy(false); }
+  };
+  const handleCoverFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0]; event.currentTarget.value = '';
+    if (!file) return;
+    setPhotoBusy(true); setPhotoError('');
+    try { await updateCoverPhoto(file); playSuccessChime(); }
+    catch (error) { setPhotoError(error instanceof Error ? error.message : 'No se pudo cambiar la portada.'); }
+    finally { setPhotoBusy(false); }
   };
 
   return (
     <div className="w-full bg-black border-b border-neutral-900 overflow-hidden select-none">
+      <input ref={profileInputRef} type="file" accept="image/*" className="hidden" onChange={(event) => void handleProfileFile(event)} />
+      <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(event) => void handleCoverFile(event)} />
       {/* Cover Photo */}
       <div className="relative w-full h-28 bg-neutral-900 overflow-hidden">
         <img
-          src={mauroCover}
+          src={profile?.coverURL || mauroCover}
           alt="Portada de Mauro"
           className="w-full h-full object-cover opacity-70"
         />
+        <button type="button" onClick={() => coverInputRef.current?.click()} disabled={photoBusy} className="absolute bottom-2 right-3 z-10 flex items-center gap-1.5 rounded-full border border-red-400/50 bg-black/80 px-2.5 py-1.5 text-[10px] font-bold text-white disabled:opacity-60" aria-label="Cambiar foto de portada"><Camera size={13}/>{photoBusy ? 'Guardando…' : 'Cambiar portada'}</button>
         {/* Dark Red Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-red-950/30" />
 
@@ -61,6 +81,7 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
         </div>
       </div>
 
+      {photoError && <div role="alert" className="mx-3 mt-2 rounded-lg border border-red-900 bg-red-950/60 px-3 py-2 text-[11px] text-red-200">{photoError}</div>}
       {/* Profile Bar: Big Profile Picture Mauro + Horizontal Stories next to it */}
       <div className="px-3 pb-3 -mt-10">
         <div className="flex items-end gap-3.5">
@@ -68,12 +89,12 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
           <div
             onClick={handleBannerClick}
             className="relative shrink-0 cursor-pointer group"
-            title="Perfil de Mauro"
+            title="Cambiar foto de perfil"
           >
             <div className="w-20 h-20 rounded-full p-1 bg-black border-2 border-red-600 shadow-[0_0_20px_rgba(255,0,0,0.6)] group-hover:scale-105 transition-transform">
               <img
-                src={mauroAvatar}
-                alt="Mauro"
+                src={profile?.photoURL || user?.photoURL || mauroAvatar}
+                alt={profile?.displayName || user?.displayName || 'Foto de perfil'}
                 className="w-full h-full object-cover rounded-full bg-neutral-800"
               />
             </div>
@@ -85,7 +106,7 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
           <div className="flex-1 pb-1">
             <div className="flex items-center gap-1.5">
               <h2 className="text-sm font-black text-white tracking-tight leading-tight">
-                Mauro
+                {profile?.displayName || user?.displayName || 'Mauro'}
               </h2>
               <span className="text-[9px] bg-red-600 text-white font-black px-1.5 py-0.2 rounded shadow-[0_0_6px_#ff0000]">
                 6 7 PRO
@@ -95,7 +116,7 @@ export const MauroProfileBanner: React.FC<MauroProfileBannerProps> = ({
               Disponible • La casa del 6 7 🔥
             </p>
             <p className="text-[10px] text-red-400 font-semibold">
-              {copiedBio ? '¡Copiado al portapapeles! 🚀' : '+67 9 11 6767-6767'}
+              {photoBusy ? 'Guardando foto…' : copiedBio ? '¡Listo! 🚀' : `@${profile?.username || 'sixseven'}`}
             </p>
           </div>
         </div>
