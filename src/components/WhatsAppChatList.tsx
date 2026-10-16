@@ -81,11 +81,14 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
 
   const q = query.trim().toLowerCase();
   const filtered = chats.filter((c) => !q || c.name.toLowerCase().includes(q) || c.lastMessage.toLowerCase().includes(q));
-  const myPhoto = profile?.photoURL || user?.photoURL || '';
+  const myPhoto = (() => { try { return localStorage.getItem('sixseven:profilePhoto') || profile?.photoURL || user?.photoURL || ''; } catch { return profile?.photoURL || user?.photoURL || ''; } })();
+  const [homeLayout, setHomeLayout] = useState(() => { try { return localStorage.getItem('sixseven:homeLayout') || 'classic'; } catch { return 'classic'; } });
+  const [coverPhoto, setCoverPhoto] = useState(() => { try { return localStorage.getItem('sixseven:coverPhoto') || ''; } catch { return ''; } });
+  useEffect(() => { const refresh = () => { try { setHomeLayout(localStorage.getItem('sixseven:homeLayout') || 'classic'); setCoverPhoto(localStorage.getItem('sixseven:coverPhoto') || ''); } catch {} }; window.addEventListener('sixseven:appearanceChanged', refresh); return () => window.removeEventListener('sixseven:appearanceChanged', refresh); }, []);
 
   return (
     <div className="w-full max-w-md mx-auto min-h-screen bg-black text-white pb-24 selection:bg-red-600">
-      <header className="sticky top-0 z-40 bg-black px-4 pb-2 safe-top">
+      <header className="sticky top-0 z-40 bg-[var(--sx-header-bg,#000000)] px-4 pb-2 safe-top">
         <div className="flex items-center justify-between pt-3">
           <img src={wordmark} alt="SixSeven" className="h-9 w-auto select-none" draggable={false} />
           <div className="flex items-center gap-3 text-[#ff2a2a]">
@@ -105,6 +108,18 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           />
         </div>
       </header>
+
+      {homeLayout === 'profile-cover' && (
+        <div className="relative mx-3 mt-2 h-40 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
+          {coverPhoto && <img src={coverPhoto} alt="Foto de portada" className="absolute inset-0 h-full w-full object-cover" />}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/35 to-black/80" />
+          <div className="relative z-10 flex h-full flex-col items-center justify-center">
+            <img src={myPhoto || undefined} alt="Foto de perfil" className="h-16 w-16 rounded-full border-2 border-[#ff1a1a] bg-neutral-900 object-cover shadow-[0_0_14px_rgba(255,26,26,.35)]" />
+            <p className="mt-2 text-sm font-bold text-white drop-shadow">{profile?.displayName || user?.displayName || 'Mi perfil'}</p>
+            <p className="text-[10px] text-neutral-200">SixSeven</p>
+          </div>
+        </div>
+      )}
 
       <NotesStrip />
 
