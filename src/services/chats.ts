@@ -3,7 +3,8 @@ import {
   serverTimestamp, setDoc, updateDoc, where, Timestamp,
 } from 'firebase/firestore';
 import { db, storage } from '../firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { uploadFileWithTimeout } from './mediaUpload';
 import { UserProfile } from '../types';
 
 export interface ChatMember {
@@ -85,7 +86,7 @@ export async function sendMediaMessage(
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) || `media-${Date.now()}`;
   const objectPath = `users/${myUid}/chat-media/${chatId}/${Date.now()}_${safeName}`;
   const objectRef = ref(storage, objectPath);
-  await uploadBytes(objectRef, file, {
+  await uploadFileWithTimeout(objectRef, file, {
     contentType: file.type || 'application/octet-stream',
     customMetadata: { ownerUid: myUid, chatId },
   });
