@@ -26,6 +26,11 @@
   padding-bottom: env(safe-area-inset-bottom, 12px);
 }
 
+html, body, #root {
+  background-color: #000000 !important;
+  min-height: 100%;
+}
+
 body {
   background-color: #000000;
   color: #ffffff;
@@ -40,6 +45,8 @@ body {
   --sab: 0px; /* safe area bottom (barra de gestos) */
   --ss-red: #ff1a1a;
   --ss-red-deep: #b3101a;
+  --sx-chat-bg: #050505;
+  --sx-header-bg: #000000;
 }
 html.native {
   --sat: max(env(safe-area-inset-top, 0px), 28px);
@@ -66,7 +73,8 @@ input, textarea {
 /* SixSeven user-selectable themes and chat bubble styles */
 body { font-family: var(--sx-font, system-ui, sans-serif); }
 html[data-sx-theme] body { background-color: var(--sx-theme-bg, #000) !important; }
-html[data-sx-theme] .bg-black { background-color: var(--sx-theme-bg, #000) !important; }
+html[data-sx-theme] .sx-chat-list-surface { background-color: var(--sx-chat-bg, #050505) !important; }
+html[data-sx-theme] .sx-main-header { background-color: var(--sx-header-bg, #000000) !important; }
 html[data-sx-theme] [class*="text-[#ff2a2a]"],
 html[data-sx-theme] [class*="text-[#ff1a1a]"],
 html[data-sx-theme] [class*="text-red-500"] { color: var(--sx-theme-accent, #ff1a1a) !important; }

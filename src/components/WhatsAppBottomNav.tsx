@@ -1,7 +1,7 @@
 import React from 'react';
-import { MessageCircle, Phone, Camera, User, Music2 } from 'lucide-react';
+import { MessageCircle, Phone, Camera, User, Music2, Bot } from 'lucide-react';
 
-export type WhatsAppTab = 'chats' | 'llamadas' | 'estados' | 'musica' | 'perfil';
+export type WhatsAppTab = 'chats' | 'llamadas' | 'estados' | 'musica' | 'ia' | 'perfil';
 
 interface BottomNavProps {
   currentTab: WhatsAppTab;
@@ -11,22 +11,23 @@ interface BottomNavProps {
 const TABS: { id: WhatsAppTab; label: string; Icon: typeof MessageCircle }[] = [
   { id: 'chats', label: 'Chats', Icon: MessageCircle },
   { id: 'llamadas', label: 'Llamadas', Icon: Phone },
-  { id: 'estados', label: 'Historias', Icon: Camera },
+  { id: 'estados', label: 'Estados', Icon: Camera },
   { id: 'musica', label: 'Música', Icon: Music2 },
+  { id: 'ia', label: 'SixSeven IA', Icon: Bot },
   { id: 'perfil', label: 'Perfil', Icon: User },
 ];
 
 export const WhatsAppBottomNav: React.FC<BottomNavProps> = ({ currentTab, onChangeTab }) => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-black border-t border-red-950/70 px-3 pt-1.5 pb-safe select-none">
-      <div className="max-w-md mx-auto flex items-center justify-around">
+      <div className="max-w-md mx-auto flex items-center justify-around gap-0">
         {TABS.map(({ id, label, Icon }) => {
           const active = currentTab === id;
           return (
             <button
               key={id}
               onClick={() => onChangeTab(id)}
-              className={`flex flex-col items-center justify-center py-1 px-2 sm:px-4 cursor-pointer transition-colors ${
+              className={`flex flex-col items-center justify-center py-1 px-1 sm:px-3 cursor-pointer transition-colors ${
                 active ? 'text-[#ff2a2a]' : 'text-neutral-500 hover:text-neutral-300'
               }`}
             >

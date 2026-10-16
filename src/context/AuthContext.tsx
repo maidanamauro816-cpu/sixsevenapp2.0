@@ -7,12 +7,14 @@ import {
   GoogleAuthProvider,
   PhoneAuthProvider,
   signOut as fbSignOut,
+  updateProfile as updateFirebaseProfile,
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../firebase';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage, googleProvider, handleFirestoreError, OperationType } from '../firebase';
 import { UserProfile } from '../types';
 import { isNative } from '../native';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
@@ -28,6 +30,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   boostAura67: (amount?: number) => Promise<void>;
   updateBio: (bio: string) => Promise<void>;
+  updateProfilePhoto: (file: File) => Promise<string>;
+  updateCoverPhoto: (file: File) => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -221,6 +225,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfilePhoto = async (file: File): Promise<string> => {
+    if (!user?.uid) throw new Error('Iniciá sesión para cambiar tu foto.');
+    if (!file || (!file.type.startsWith('image/') && !/\.(jpe?g|png|webp|gif|heic)$/i.test(file.name))) {
+      throw new Error('Elegí una foto JPG, PNG o WebP válida.');
+    }
+    if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera los 10 MB. Elegí una más liviana.');
+    const mime = file.type || 'image/jpeg';
+    const extension = (mime.split('/')[1] || file.name.split('.').pop() || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '');
+    try {
+      const target = storageRef(storage, 'users/' + user.uid + '/profile/avatar-' + Date.now() + '.' + extension);
+      const uploaded = await uploadBytes(target, file, { contentType: mime });
+      const url = await getDownloadURL(uploaded.ref);
+      await updateFirebaseProfile(user, { photoURL: url });
+      await setDoc(doc(db, 'users', user.uid), { uid: user.uid, photoURL: url }, { merge: true });
+      setProfile((current) => current ? { ...current, photoURL: url } : {
+        uid: user.uid, displayName: user.displayName || 'Usuario SixSeven', username: 'usuario',
+        photoURL: url, score67: 0, followersCount: 0, followingCount: 0,
+      });
+      return url;
+    } catch (error) {
+      console.error('Error subiendo foto de perfil:', error);
+      const code = (error as { code?: string })?.code;
+      if (code === 'storage/unauthorized' || code === 'storage/unauthenticated') {
+        throw new Error('Firebase Storage rechazó la subida. Revisá las reglas de Storage y los permisos de usuario.');
+      }
+      if (code === 'storage/quota-exceeded') throw new Error('Se agotó la cuota de almacenamiento de Firebase.');
+      throw error instanceof Error ? error : new Error('No se pudo subir la foto. Revisá tu conexión e intentá de nuevo.');
+    }
+  };
+
+  const updateCoverPhoto = async (file: File): Promise<string> => {
+    if (!user?.uid) throw new Error('Iniciá sesión para cambiar la portada.');
+    if (!file || (!file.type.startsWith('image/') && !/\.(jpe?g|png|webp|gif|heic)$/i.test(file.name))) {
+      throw new Error('Elegí una imagen JPG, PNG o WebP válida.');
+    }
+    if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera los 10 MB. Elegí una más liviana.');
+    const mime = file.type || 'image/jpeg';
+    const extension = (mime.split('/')[1] || file.name.split('.').pop() || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '');
+    try {
+      const target = storageRef(storage, 'users/' + user.uid + '/profile/cover-' + Date.now() + '.' + extension);
+      const uploaded = await uploadBytes(target, file, { contentType: mime });
+      const url = await getDownloadURL(uploaded.ref);
+      await setDoc(doc(db, 'users', user.uid), { uid: user.uid, coverURL: url }, { merge: true });
+      setProfile((current) => current ? { ...current, coverURL: url } : {
+        uid: user.uid, displayName: user.displayName || 'Usuario SixSeven', username: 'usuario',
+        coverURL: url, score67: 0, followersCount: 0, followingCount: 0,
+      });
+      return url;
+    } catch (error) {
+      console.error('Error subiendo portada de perfil:', error);
+      const code = (error as { code?: string })?.code;
+      if (code === 'storage/unauthorized' || code === 'storage/unauthenticated') {
+        throw new Error('Firebase Storage rechazó la subida. Revisá las reglas de Storage y los permisos de usuario.');
+      }
+      throw error instanceof Error ? error : new Error('No se pudo subir la portada. Revisá tu conexión e intentá de nuevo.');
+    }
+  };
+
   const boostAura67 = async (amount = 67) => {
     if (!profile) return;
     const newScore = (profile.score67 || 0) + amount;
@@ -250,6 +312,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         boostAura67,
         updateBio,
+        updateProfilePhoto,
+        updateCoverPhoto,
       }}
     >
       {children}

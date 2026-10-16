@@ -5,6 +5,7 @@ export interface UserProfile {
   displayNameLower?: string;
   phoneNumber?: string;
   photoURL?: string;
+  coverURL?: string;
   bio?: string;
   score67: number;
   followersCount: number;
