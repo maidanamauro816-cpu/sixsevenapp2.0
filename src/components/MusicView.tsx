@@ -78,8 +78,8 @@ export const MusicView: React.FC = () => {
       const response = await fetch(`https://archive.org/metadata/${encodeURIComponent(item.identifier)}`);
       if (!response.ok) throw new Error('No se pudo abrir el audio.');
       const data = await response.json() as { files?: ArchiveFile[] };
-      const file = (data.files || []).find((entry) => /\\.mp3$/i.test(entry.name) && entry.private !== 'true' && entry.source !== 'metadata')
-        || (data.files || []).find((entry) => /\\.(ogg|oga|opus|m4a|wav)$/i.test(entry.name) && entry.private !== 'true' && entry.source !== 'metadata');
+      const file = (data.files || []).find((entry) => /\.mp3$/i.test(entry.name) && entry.private !== 'true' && entry.source !== 'metadata')
+        || (data.files || []).find((entry) => /\.(ogg|oga|opus|m4a|wav)$/i.test(entry.name) && entry.private !== 'true' && entry.source !== 'metadata');
       if (!file) throw new Error('Este registro no tiene un archivo de audio reproducible.');
       const path = file.name.split('/').map((part) => encodeURIComponent(part)).join('/');
       const track: MusicTrack = {
