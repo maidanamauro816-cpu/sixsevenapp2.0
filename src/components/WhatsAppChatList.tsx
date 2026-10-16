@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus } from 'lucide-react';
+import { Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus, Images } from 'lucide-react';
 import { onSnapshot } from 'firebase/firestore';
 import { StoryStatus } from './MauroProfileBanner';
 import { useAuth } from '../context/AuthContext';
 import { ChatDoc, myChatsQuery } from '../services/chats';
 import wordmark from '../assets/logo-wordmark.png';
 import { playSixSevenSound } from '../utils/audio';
-import { NotesStrip } from './NotesStrip';
 
 export interface WhatsAppChat {
   id: string;
@@ -49,11 +48,12 @@ interface WhatsAppChatListProps {
   onOpenChat: (chat: WhatsAppChat) => void;
   onOpenStory?: (story: StoryStatus) => void;
   onAddStory: () => void;
+  onViewStories: () => void;
   onNewChat: () => void;
   onOpenContacts: () => void;
 }
 
-export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onNewChat, onOpenContacts }) => {
+export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onViewStories, onNewChat, onOpenContacts }) => {
   const { profile, user } = useAuth();
   const [chats, setChats] = useState<WhatsAppChat[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,21 +121,20 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
         </div>
       )}
 
-      <NotesStrip />
-
-      <div className="flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
-        <button onClick={onAddStory} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer">
-          <div className="relative w-14 h-14 rounded-full border-2 border-red-700 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.35)]">
-            <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">
-              {myPhoto && <img src={myPhoto} alt="Tu historia" className="w-full h-full object-cover" />}
+      <section className="px-4 py-3 border-b border-neutral-900">
+        <div className="flex items-center justify-between gap-2">
+          <button onClick={onAddStory} className="flex-1 min-w-0 flex items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-left active:bg-neutral-900">
+            <div className="relative w-12 h-12 shrink-0 rounded-lg border border-red-600 bg-black overflow-hidden flex items-center justify-center">
+              {myPhoto ? <img src={myPhoto} alt="Tu foto de perfil" className="w-full h-full object-cover" /> : <Plus size={20} className="text-white" />}
+              <span className="absolute bottom-0 right-0 bg-[#ff1a1a] text-white rounded-tl-md p-0.5"><Plus size={13} /></span>
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff1a1a] border-2 border-black flex items-center justify-center">
-              <Plus size={11} strokeWidth={3} />
-            </span>
-          </div>
-          <span className="text-[10px] text-neutral-300">Tu historia</span>
-        </button>
-      </div>
+            <span className="min-w-0"><strong className="block text-xs text-white">Mi estado</strong><span className="block text-[10px] text-neutral-400">Compartí una foto o video</span></span>
+          </button>
+          <button onClick={onViewStories} className="w-[108px] shrink-0 min-h-[74px] rounded-xl border border-red-900 bg-neutral-950 p-2 flex flex-col items-center justify-center gap-1 text-center active:bg-neutral-900">
+            <Images size={21} className="text-[#ff1a1a}" /><span className="text-[11px] font-bold text-white">Ver estados</span><span className="text-[9px] text-neutral-400">Todos · 24 h</span>
+          </button>
+        </div>
+      </section>
 
       <div>
         {loading && <p className="text-center text-xs text-neutral-500 py-10">Cargando chats...</p>}
