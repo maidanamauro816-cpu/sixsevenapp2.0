@@ -7,12 +7,14 @@ import {
   GoogleAuthProvider,
   PhoneAuthProvider,
   signOut as fbSignOut,
+  updateProfile as updateFirebaseProfile,
   RecaptchaVerifier,
   signInWithPhoneNumber,
   ConfirmationResult,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../firebase';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage, googleProvider, handleFirestoreError, OperationType } from '../firebase';
 import { UserProfile } from '../types';
 import { isNative } from '../native';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
@@ -28,6 +30,8 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   boostAura67: (amount?: number) => Promise<void>;
   updateBio: (bio: string) => Promise<void>;
+  updateProfilePhoto: (file: File) => Promise<string>;
+  updateCoverPhoto: (file: File) => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -221,6 +225,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateProfilePhoto = async (file: File): Promise<string> => {
+    if (!user?.uid) throw new Error('Iniciá sesión para cambiar tu foto.');
+    if (!file.type.startsWith('image/')) throw new Error('Elegí un archivo de imagen válido.');
+    if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera los 10 MB. Elegí una más liviana.');
+    const extension = file.type.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
+    const target = storageRef(storage, `users/${user.uid}/profile/avatar-${Date.now()}.${extension}`);
+    const uploaded = await uploadBytes(target, file, { contentType: file.type || 'image/jpeg' });
+    const url = await getDownloadURL(uploaded.ref);
+    await updateFirebaseProfile(user, { photoURL: url });
+    await updateDoc(doc(db, 'users', user.uid), { photoURL: url });
+    setProfile((current) => current ? { ...current, photoURL: url } : current);
+    return url;
+  };
+
+  const updateCoverPhoto = async (file: File): Promise<string> => {
+    if (!user?.uid) throw new Error('Iniciá sesión para cambiar la portada.');
+    if (!file.type.startsWith('image/')) throw new Error('Elegí un archivo de imagen válido.');
+    if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera los 10 MB. Elegí una más liviana.');
+    const extension = file.type.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
+    const target = storageRef(storage, `users/${user.uid}/profile/cover-${Date.now()}.${extension}`);
+    const uploaded = await uploadBytes(target, file, { contentType: file.type || 'image/jpeg' });
+    const url = await getDownloadURL(uploaded.ref);
+    await updateDoc(doc(db, 'users', user.uid), { coverURL: url });
+    setProfile((current) => current ? { ...current, coverURL: url } : current);
+    return url;
+  };
+
   const boostAura67 = async (amount = 67) => {
     if (!profile) return;
     const newScore = (profile.score67 || 0) + amount;
@@ -250,6 +281,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         boostAura67,
         updateBio,
+        updateProfilePhoto,
+        updateCoverPhoto,
       }}
     >
       {children}
