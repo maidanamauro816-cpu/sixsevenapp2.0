@@ -147,21 +147,39 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = ({
                 onDoubleClick={(e) => handleDoubleTap(post.id, e)}
                 className="relative w-full aspect-square bg-gradient-to-b from-neutral-950 via-neutral-900 to-black overflow-hidden flex items-center justify-center cursor-pointer select-none border-y border-neutral-900"
               >
-                {/* Visual Graphic Representation */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                  <div className="relative inline-flex items-baseline font-black text-8xl tracking-tighter leading-none select-none drop-shadow-[0_0_40px_rgba(255,0,0,0.8)] animate-pulse">
-                    <span className="text-white">6</span>
-                    <span className="text-[#ff0000] ml-2">7</span>
+                {/* Mostrar el archivo subido; conservar la animación para publicaciones sin multimedia */}
+                {post.mediaUrl ? (
+                  post.mediaType === 'video' ? (
+                    <video
+                      src={post.mediaUrl}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="absolute inset-0 w-full h-full object-contain bg-black"
+                      aria-label={post.caption || 'Video de la publicación'}
+                    />
+                  ) : (
+                    <img
+                      src={post.mediaUrl}
+                      alt={post.caption || 'Foto de la publicación'}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-contain bg-black"
+                    />
+                  )
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                    <div className="relative inline-flex items-baseline font-black text-8xl tracking-tighter leading-none select-none drop-shadow-[0_0_40px_rgba(255,0,0,0.8)] animate-pulse">
+                      <span className="text-white">6</span>
+                      <span className="text-[#ff0000] ml-2">7</span>
+                    </div>
+                    <div className="mt-4 px-3 py-1 rounded-full bg-red-950/80 border border-red-500/40 text-red-300 font-extrabold text-xs shadow-lg">
+                      {post.memeTag || '#67meme'}
+                    </div>
+                    <p className="mt-3 text-sm font-bold text-neutral-100 max-w-xs leading-snug drop-shadow">
+                      {post.caption}
+                    </p>
                   </div>
-
-                  <div className="mt-4 px-3 py-1 rounded-full bg-red-950/80 border border-red-500/40 text-red-300 font-extrabold text-xs shadow-lg">
-                    {post.memeTag || '#67meme'}
-                  </div>
-
-                  <p className="mt-3 text-sm font-bold text-neutral-100 max-w-xs leading-snug drop-shadow">
-                    {post.caption}
-                  </p>
-                </div>
+                )}
 
                 {/* Double Tap Hint */}
                 <div className="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/60 border border-neutral-800 text-[10px] text-neutral-400 flex items-center gap-1">
