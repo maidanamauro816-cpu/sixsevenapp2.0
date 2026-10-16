@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Camera, Sparkles, Send, CheckCircle2, Flame, Wand2, Image as ImageIcon } from 'lucide-react';
@@ -26,6 +27,9 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
   const [published, setPublished] = useState(false);
   const [songTitle, setSongTitle] = useState('');
   const [publishError, setPublishError] = useState('');
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState('');
+  const [mediaType, setMediaType] = useState<'image' | 'video' | ''>('');
 
   const handlePublish = async () => {
     if (!user || !profile) { setPublishError('Iniciá sesión para publicar un estado.'); return; }
@@ -33,6 +37,13 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
     setPublishError('');
     setPublished(true);
     try {
+      let mediaUrl = '';
+      if (mediaFile && profile) {
+        const safeName = mediaFile.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
+        const fileRef = storageRef(getStorage(), `stories/${profile.uid}/${Date.now()}-${safeName}`);
+        const uploaded = await uploadBytes(fileRef, mediaFile, { contentType: mediaFile.type });
+        mediaUrl = await getDownloadURL(uploaded.ref);
+      }
       await addDoc(collection(db, 'stories'), {
         uid: profile.uid,
         name: profile.displayName || user.displayName || 'Usuario',
@@ -41,6 +52,8 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
         sticker: selectedSticker,
         filter: selectedFilter.id,
         songTitle: songTitle.trim().slice(0, 100),
+        mediaUrl,
+        mediaType,
         createdAt: serverTimestamp(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
@@ -82,6 +95,30 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
         <span className="text-[10px] font-black bg-red-600 text-white px-2 py-0.5 rounded-full">
           NUEVA HISTORIA
         </span>
+      </div>
+
+      <div className="mb-4 rounded-2xl border border-neutral-800 bg-neutral-950 p-3">
+        <label className="flex items-center justify-center gap-2 rounded-xl border border-red-900/70 bg-red-950/30 px-4 py-3 text-sm font-bold text-red-200 cursor-pointer">
+          <ImageIcon size={18} /> {mediaFile ? 'Cambiar foto o video' : 'Agregar foto o video desde el teléfono'}
+          <input type="file" accept="image/*,video/*" className="hidden" onChange={(event) => {
+            const file = event.currentTarget.files?.[0];
+            event.currentTarget.value = '';
+            if (!file) return;
+            if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) { setPublishError('Elegí una foto o un video.'); return; }
+            const maxBytes = file.type.startsWith('video/') ? 50 * 1024 * 1024 : 12 * 1024 * 1024;
+            if (file.size > maxBytes) { setPublishError(file.type.startsWith('video/') ? 'El video debe pesar hasta 50 MB.' : 'La foto debe pesar hasta 12 MB.'); return; }
+            setPublishError('');
+            if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+            setMediaFile(file);
+            setMediaType(file.type.startsWith('video/') ? 'video' : 'image');
+            setMediaPreview(URL.createObjectURL(file));
+          }} />
+        </label>
+        {mediaPreview && <div className="relative mt-3 overflow-hidden rounded-xl border border-neutral-800">
+          {mediaType === 'video' ? <video src={mediaPreview} controls playsInline className="w-full max-h-72 bg-black object-contain" /> : <img src={mediaPreview} alt="Vista previa del estado" className="w-full max-h-72 object-contain bg-black" />}
+          <button type="button" onClick={() => { URL.revokeObjectURL(mediaPreview); setMediaPreview(''); setMediaFile(null); setMediaType(''); }} className="absolute right-2 top-2 rounded-full bg-black/80 px-3 py-1 text-xs font-bold text-white">Quitar</button>
+        </div>}
+        <p className="mt-2 text-[10px] text-neutral-500">Fotos hasta 12 MB y videos hasta 50 MB. Se suben a Firebase al publicar.</p>
       </div>
 
       {/* Story Camera Viewport Simulator */}
