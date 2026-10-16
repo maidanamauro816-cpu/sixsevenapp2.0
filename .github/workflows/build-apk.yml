@@ -36,13 +36,19 @@ jobs:
       - name: Íconos y splash desde /assets
         run: npx capacitor-assets generate --android
 
-      - name: google-services.json (login nativo con Google / teléfono)
+      - name: Configurar google-services.json (login nativo con Google / teléfono)
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > google-services.json
+            echo "Configuración Firebase recibida desde GitHub Secrets"
+          fi
           if [ -f google-services.json ]; then
             cp google-services.json android/app/google-services.json
-            echo "google-services.json copiado"
+            echo "google-services.json copiado a Android"
           else
-            echo "::warning::Falta google-services.json en la raíz del repo. El APK se compila, pero el login nativo con Google/teléfono NO va a funcionar."
+            echo "::warning::Falta el secreto GOOGLE_SERVICES_JSON y el archivo google-services.json. El APK se compila, pero el login nativo con Google/teléfono puede no funcionar."
           fi
 
       - name: Permisos y orientación
