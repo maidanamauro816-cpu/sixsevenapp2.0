@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<title>SixSeven AI · Prueba de voz</title>
+<style>
+:root{color-scheme:dark;--red:#ff2028;--muted:#a4a4a4}
+*{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font:16px system-ui,sans-serif;min-height:100dvh;display:flex;justify-content:center}
+main{width:100%;max-width:440px;min-height:100dvh;padding:26px 22px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center}
+.brand{font-size:12px;letter-spacing:.28em;color:#ddd;margin-top:8px}.brand b{color:var(--red)}
+h1{font-size:25px;margin:10px 0 4px;letter-spacing:.02em}.sub{color:var(--muted);font-size:13px;text-align:center;margin:0}
+.orb-wrap{display:grid;place-items:center;flex:1;min-height:260px;width:100%}
+.orb{width:154px;height:154px;border-radius:50%;background:radial-gradient(circle at 48% 48%,#fff 0%,#ffb6b8 5%,#ff343c 15%,#a80008 35%,#310004 58%,#050505 73%);box-shadow:0 0 16px #ff202866,0 0 48px #ff20284d,inset 0 0 22px #ff202866;animation:pulse 2.6s ease-in-out infinite}
+.orb.listening{animation:pulse .85s ease-in-out infinite;box-shadow:0 0 24px #ff2028aa,0 0 70px #ff202866}
+@keyframes pulse{0%,100%{transform:scale(.96);filter:brightness(.9)}50%{transform:scale(1.04);filter:brightness(1.2)}}
+.status{color:#ff7277;font-size:13px;min-height:20px;text-align:center;margin-bottom:12px}
+button,input{font:inherit;border-radius:14px;width:100%;padding:13px 14px}
+button{border:1px solid #ff343c;background:#a80810;color:#fff;font-weight:700;cursor:pointer}
+button.secondary{background:#111;border-color:#333;color:#ddd;margin-top:8px}
+.panel{width:100%;border:1px solid #252525;background:#0c0c0c;border-radius:18px;padding:15px;margin-top:12px}
+.label{font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:7px}
+input{background:#050505;border:1px solid #303030;color:white;font-size:13px}
+.note{font-size:12px;color:#8d8d8d;line-height:1.45;margin:12px 0 0}
+#transcript,#reply{font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;min-height:20px}
+footer{font-size:10px;letter-spacing:.12em;color:#555;margin-top:18px}
+</style>
+</head>
+<body><main>
+<div class="brand">SIX<b>SEVEN</b></div>
+<h1>SixSeven AI</h1><p class="sub">Prototipo independiente · prueba de comando de voz</p>
+<div class="orb-wrap"><div id="orb" class="orb" aria-label="Esfera luminosa roja"></div></div>
+<div id="status" class="status">Preparada. Tocá “Iniciar escucha”.</div>
+<button id="start">Iniciar escucha</button>
+<button id="stop" class="secondary" disabled>Detener escucha</button>
+<section class="panel"><span class="label">Lo que escuchó</span><div id="transcript">Todavía no hay voz reconocida.</div></section>
+<section class="panel"><span class="label">Respuesta de SixSeven AI</span><div id="reply">Decí “Hey SixSeven” y después tu consulta.</div></section>
+<section class="panel"><label class="label" for="endpoint">Endpoint seguro de IA (URL del servidor)</label><input id="endpoint" type="url" placeholder="https://tu-servidor/ai" autocomplete="off"><p class="note">No pegues aquí una clave API. La clave de Gemini debe permanecer en el servidor. Si el endpoint no está desplegado, podrás probar el reconocimiento de la frase, pero la respuesta de IA no estará disponible.</p><button id="save" class="secondary">Guardar endpoint en este dispositivo</button></section>
+<p class="note">La escucha funciona mientras esta pantalla está abierta y el navegador lo permita. Android puede detenerla en segundo plano; esta prueba no ofrece escucha permanente.</p>
+<footer>PROTOTIPO DE PRUEBA · NO MODIFICA LA APP PRINCIPAL</footer>
+</main>
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+ let recognition = null, listening = false;
+ $('endpoint').value = localStorage.getItem('sixseven_voice_endpoint') || '';
+ function status(s){$('status').textContent=s}
+ $('save').addEventListener('click',()=>{localStorage.setItem('sixseven_voice_endpoint',$('endpoint').value.trim());status('Endpoint guardado en este dispositivo.')});
+ async function askAI(message){
+   const endpoint = $('endpoint').value.trim();
+   if(!endpoint){$('reply').textContent='Reconocí el comando de voz, pero falta configurar el endpoint del motor de IA en el servidor.';return}
+   $('reply').textContent='Consultando SixSeven AI…';
+   try{
+     const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})});
+     if(!res.ok) throw new Error('Servidor respondió HTTP '+res.status);
+     const data=await res.json();
+     const answer=data.reply || data.response || data.text;
+     if(typeof answer!=='string') throw new Error('La respuesta del servidor no contiene reply, response o text.');
+     $('reply').textContent=answer;
+   }catch(e){$('reply').textContent='No se pudo conectar con el motor de IA. Verificá que el endpoint exista, acepte POST desde esta app y devuelva JSON con “reply”. Detalle: '+e.message}
+ }
+ function start(){
+   if(!SR){status('Este navegador no admite reconocimiento de voz. Probá Chrome en Android.');return}
+   recognition=new SR(); recognition.lang='es-AR'; recognition.continuous=true; recognition.interimResults=true;
+   recognition.onstart=()=>{listening=true;$('orb').classList.add('listening');$('start').disabled=true;$('stop').disabled=false;status('Escuchando… decí “Hey SixSeven”.')};
+   recognition.onerror=e=>status('Reconocimiento de voz: '+e.error+'. Revisá el permiso del micrófono.');
+   recognition.onend=()=>{listening=false;$('orb').classList.remove('listening');$('start').disabled=false;$('stop').disabled=true;if(!status.textContent.startsWith('No '))status('Escucha detenida.')};
+   recognition.onresult=e=>{
+     let all='';
+     for(let i=e.resultIndex;i<e.results.length;i++) all+=e.results[i][0].transcript+' ';
+     const phrase=all.trim(); $('transcript').textContent=phrase||'…';
+     const normalized=phrase.toLocaleLowerCase('es-AR').replace(/[¡!¿?,.;:]/g,'').trim();
+     const match=normalized.match(/(?:hey|ey|hola)\s*six\s*seven\s*(.*)/i);
+     if(match){
+       const command=match[1].trim();
+       status('Frase de activación reconocida.');
+       if(command.length>2 && e.results[e.results.length-1].isFinal){void askAI(command)}
+       else if(e.results[e.results.length-1].isFinal){$('reply').textContent='Te escucho. Decí tu consulta después de “Hey SixSeven”.'}
+     }
+   };
+   try{recognition.start()}catch(e){status('No se pudo iniciar la escucha: '+e.message)}
+ }
+ $('start').addEventListener('click',start);
+ $('stop').addEventListener('click',()=>{if(recognition)recognition.stop();status('Escucha detenida por vos.')});
+})();
+</script></body></html>
