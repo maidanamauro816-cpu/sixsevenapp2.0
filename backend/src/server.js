@@ -108,6 +108,69 @@ app.get('/api/contacts', auth, async (req, res) => {
   const users = await User.find({ _id: { $ne: req.user._id }, $or: [{ username: { $regex: q } }, { displayName: { $regex: q, $options: 'i' } }] }).limit(20);
   res.json({ contacts: users.map(publicUser) });
 });
+const businessSchema = new mongoose.Schema({
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true, required: true },
+  name: { type: String, required: true, trim: true, maxlength: 100 },
+  city: { type: String, enum: ['Candelaria', 'Posadas'], required: true },
+  category: { type: String, trim: true, maxlength: 60, default: 'Comercio local' },
+  description: { type: String, trim: true, maxlength: 600, default: '' },
+  phone: { type: String, trim: true, maxlength: 30, default: '' },
+  verified: { type: Boolean, default: false },
+  active: { type: Boolean, default: true },
+  catalog: { type: [{ name: { type: String, required: true, maxlength: 100 }, description: { type: String, maxlength: 300, default: '' }, priceLabel: { type: String, maxlength: 60, default: '' }, imageKey: { type: String, maxlength: 500, default: '' }, active: { type: Boolean, default: true } }], default: [] },
+  autoReply: { enabled: { type: Boolean, default: false }, message: { type: String, maxlength: 500, default: '' } },
+}, { timestamps: true });
+businessSchema.index({ city: 1, verified: 1, active: 1 });
+const BusinessProfile = mongoose.model('BusinessProfile', businessSchema);
+
+app.get('/api/business', async (req, res) => {
+  const city = ['Candelaria', 'Posadas'].includes(String(req.query.city || '')) ? String(req.query.city) : null;
+  const filter = { verified: true, active: true, ...(city ? { city } : {}) };
+  const profiles = await BusinessProfile.find(filter).sort({ name: 1 }).limit(100).lean();
+  res.json({ businesses: profiles.map(b => ({ id: b._id.toString(), name: b.name, city: b.city, category: b.category, description: b.description, catalog: b.catalog.filter(item => item.active).map(item => ({ name: item.name, description: item.description, priceLabel: item.priceLabel, imageKey: item.imageKey })) })) });
+});
+app.get('/api/business/me', auth, async (req, res) => {
+  const profile = await BusinessProfile.findOne({ owner: req.user._id }).lean();
+  res.json({ profile: profile ? { id: profile._id.toString(), name: profile.name, city: profile.city, category: profile.category, description: profile.description, phone: profile.phone, verified: profile.verified, catalog: profile.catalog, autoReply: profile.autoReply } : null });
+});
+app.post('/api/business/profile', auth, async (req, res) => {
+  if (req.user.plan !== 'business') return res.status(403).json({ error: 'business_plan_required' });
+  const name = String(req.body?.name || '').trim();
+  const city = String(req.body?.city || '');
+  if (name.length < 2 || name.length > 100 || !['Candelaria', 'Posadas'].includes(city)) return res.status(400).json({ error: 'invalid_business_profile' });
+  const profile = await BusinessProfile.findOneAndUpdate(
+    { owner: req.user._id },
+    { $set: { name, city, category: String(req.body?.category || 'Comercio local').trim().slice(0, 60), description: String(req.body?.description || '').trim().slice(0, 600), phone: String(req.body?.phone || '').trim().slice(0, 30), verified: false, active: true } },
+    { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
+  );
+  res.status(201).json({ profile: { id: profile._id.toString(), name: profile.name, city: profile.city, verified: profile.verified } });
+});
+app.post('/api/business/catalog', auth, async (req, res) => {
+  if (req.user.plan !== 'business') return res.status(403).json({ error: 'business_plan_required' });
+  const name = String(req.body?.name || '').trim();
+  const description = String(req.body?.description || '').trim();
+  const priceLabel = String(req.body?.priceLabel || '').trim();
+  const imageKey = String(req.body?.imageKey || '').trim();
+  if (name.length < 2 || name.length > 100 || description.length > 300 || priceLabel.length > 60) return res.status(400).json({ error: 'invalid_catalog_item' });
+  if (imageKey && !imageKey.startsWith('users/' + req.user._id.toString() + '/')) return res.status(403).json({ error: 'catalog_image_access_denied' });
+  const profile = await BusinessProfile.findOne({ owner: req.user._id });
+  if (!profile) return res.status(404).json({ error: 'business_profile_required' });
+  if (profile.catalog.length >= 100) return res.status(409).json({ error: 'catalog_limit_reached' });
+  profile.catalog.push({ name, description, priceLabel, imageKey });
+  profile.verified = false;
+  await profile.save();
+  res.status(201).json({ catalog: profile.catalog });
+});
+app.post('/api/business/auto-reply', auth, async (req, res) => {
+  if (req.user.plan !== 'business') return res.status(403).json({ error: 'business_plan_required' });
+  const message = String(req.body?.message || '').trim();
+  const enabled = req.body?.enabled === true;
+  if (message.length > 500 || (enabled && !message)) return res.status(400).json({ error: 'invalid_auto_reply' });
+  const profile = await BusinessProfile.findOneAndUpdate({ owner: req.user._id }, { $set: { 'autoReply.enabled': enabled, 'autoReply.message': message, verified: false } }, { new: true });
+  if (!profile) return res.status(404).json({ error: 'business_profile_required' });
+  res.json({ enabled: profile.autoReply.enabled, message: profile.autoReply.message });
+});
+
 app.post('/api/conversations', auth, async (req, res, next) => {
   try {
     const usernames = Array.isArray(req.body?.usernames) ? [...new Set(req.body.usernames.map(v => String(v).trim().toLowerCase()).filter(v => /^[a-z0-9_.]{2,32}$/.test(v)))].slice(0, 49) : [];
