@@ -130,15 +130,17 @@ app.get('/api/messages/:conversationId', auth, async (req, res) => {
   res.json({ messages: messages.reverse().map(m => ({ id: m._id.toString(), conversationId: m.conversationId, senderId: m.senderId.toString(), text: m.text, createdAt: m.createdAt })) });
 });
 app.post('/api/sixseven/use', auth, async (req, res) => {
-  const user = req.user;
-  if (user.plan !== 'free') return res.json({ allowed: true, remaining: null, plan: user.plan });
   const today = new Date().toISOString().slice(0, 10);
-  if (user.orbUsage.day !== today) { user.orbUsage.day = today; user.orbUsage.count = 0; }
   const limit = Math.max(1, Math.min(20, Number(process.env.FREE_ORB_USES_PER_DAY || 5)));
-  if (user.orbUsage.count >= limit) return res.status(402).json({ allowed: false, remaining: 0, paywall: { title: 'Desbloqueá SIX SEVEN ilimitado', price: process.env.PREMIUM_PRICE_LABEL || 'ARS 2000/mes', trialDays: 7 } });
-  user.orbUsage.count += 1;
-  await user.save();
-  res.json({ allowed: true, remaining: limit - user.orbUsage.count, plan: user.plan });
+  if (req.user.plan !== 'free') return res.json({ allowed: true, remaining: null, plan: req.user.plan });
+  // Atomic update prevents parallel requests from exceeding the daily free allowance.
+  const updated = await User.findOneAndUpdate(
+    { _id: req.user._id, plan: 'free', $or: [{ 'orbUsage.day': { $ne: today } }, { 'orbUsage.count': { $lt: limit } }] },
+    [{ $set: { 'orbUsage.day': today, 'orbUsage.count': { $cond: [{ $ne: ['$orbUsage.day', today] }, 1, { $add: [{ $ifNull: ['$orbUsage.count', 0] }, 1] }] } } }],
+    { new: true }
+  );
+  if (!updated) return res.status(402).json({ allowed: false, remaining: 0, paywall: { title: 'Desbloqueá SIX SEVEN ilimitado', price: process.env.PREMIUM_PRICE_LABEL || 'ARS 2000/mes', trialDays: 7 } });
+  res.json({ allowed: true, remaining: Math.max(0, limit - updated.orbUsage.count), plan: updated.plan });
 });
 app.get('/api/plans', (_req, res) => res.json({ plans: [
   { id: 'free', name: 'Gratis', price: 'ARS 0', features: ['Chat ilimitado', '5 usos diarios de SIX SEVEN'] },
