@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "scripts": { "start": "node src/server.js", "dev": "node --watch src/server.js" },
-  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "check": "node --check src/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.850.0",
     "@aws-sdk/s3-request-presigner": "^3.850.0",
@@ -16,6 +22,7 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "express-async-errors": "^3.1.1"
   }
 }
