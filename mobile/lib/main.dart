@@ -21,13 +21,19 @@ class _AppState extends State<SixSevenApp> {
     home: Home(assistant: assistant));
 }
 
+abstract class ActiveChat {
+  String get messageDraft;
+  void draft(String value);
+  void send(String value);
+}
+
 class Assistant extends ChangeNotifier {
   final speech = stt.SpeechToText();
   final tts = FlutterTts();
   bool ready = false, active = false, listening = false, disposed = false, confirming = false;
   String userName = 'Mauro', status = 'En espera de “hey six seven”';
   Timer? restart;
-  _ChatState? currentChat;
+  ActiveChat? currentChat;
   Future<void> start() async {
     ready = await speech.initialize(onStatus: (s) { listening = s == 'listening'; notifyListeners(); if (!disposed && !confirming && s != 'listening') _again(); }, onError: (_) { listening = false; notifyListeners(); _again(); });
     if (ready) await _listen(); else { status = 'Reconocimiento de voz no disponible'; notifyListeners(); }
@@ -78,7 +84,7 @@ class Assistant extends ChangeNotifier {
       } else { await tts.speak('Primero abrí un chat para preparar el mensaje'); }
     } else if (p == 'enviar') {
       final state = currentChat;
-      if (state != null && state.text.text.trim().isNotEmpty) await confirm('send', state.text.text.trim(), '¿Querés enviar este mensaje?', 'Enviar');
+      if (state != null && state.messageDraft.trim().isNotEmpty) await confirm('send', state.messageDraft.trim(), '¿Querés enviar este mensaje?', 'Enviar');
       else await tts.speak('No hay mensaje preparado');
     } else if (p.startsWith('llamar a ')) {
       final n = p.substring('llamar a '.length).trim();
@@ -127,12 +133,13 @@ class Chat extends StatefulWidget {
   const Chat({super.key, required this.name, required this.assistant}); final String name; final Assistant assistant;
   @override State<Chat> createState() => _ChatState();
 }
-class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
+class _ChatState extends State<Chat> with SingleTickerProviderStateMixin implements ActiveChat {
   final text = TextEditingController(); final messages = <String>[];
   late final anim = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat();
   @override void initState() { super.initState(); widget.assistant.currentChat = this; }
-  void draft(String v) { text.text = v; text.selection = TextSelection.collapsed(offset: v.length); setState(() {}); }
-  void send(String v) { if (mounted) setState(() { messages.add(v); text.clear(); }); }
+  @override String get messageDraft => text.text;
+  @override void draft(String v) { text.text = v;
+  @override void send(String v) { if (mounted)
   @override void dispose() { if (identical(widget.assistant.currentChat, this)) widget.assistant.currentChat = null; anim.dispose(); text.dispose(); super.dispose(); }
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(widget.name), actions: [IconButton(onPressed: () => widget.assistant.command('llamar a ' + widget.name), icon: const Icon(Icons.call, color: red))]),
