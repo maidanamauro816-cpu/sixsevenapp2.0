@@ -46,6 +46,11 @@ const messageSchema = new mongoose.Schema({
 }, { timestamps: true });
 messageSchema.index({ conversationId: 1, createdAt: -1 });
 const User = mongoose.model('User', userSchema);
+const Conversation = mongoose.model('Conversation', new mongoose.Schema({
+  members: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], required: true, validate: v => v.length >= 2 },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  title: { type: String, maxlength: 100, default: '' },
+}, { timestamps: true }));
 const Message = mongoose.model('Message', messageSchema);
 const r2Ready = Boolean(process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.env.R2_BUCKET);
 const s3 = r2Ready ? new S3Client({
@@ -101,9 +106,25 @@ app.get('/api/contacts', auth, async (req, res) => {
   const users = await User.find({ _id: { $ne: req.user._id }, $or: [{ username: { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') } }, { displayName: { $regex: q, $options: 'i' } }] }).limit(20);
   res.json({ contacts: users.map(publicUser) });
 });
+app.post('/api/conversations', auth, async (req, res, next) => {
+  try {
+    const usernames = Array.isArray(req.body?.usernames) ? [...new Set(req.body.usernames.map(v => String(v).trim().toLowerCase()).filter(v => /^[a-z0-9_.]{2,32}$/.test(v)))].slice(0, 49) : [];
+    const peers = usernames.length ? await User.find({ username: { $in: usernames } }).select('_id') : [];
+    const ids = [...new Set([req.user._id.toString(), ...peers.map(u => u._id.toString())])];
+    if (ids.length < 2) return res.status(400).json({ error: 'at_least_one_valid_contact_required' });
+    const conversation = await Conversation.create({ members: ids, createdBy: req.user._id, title: String(req.body?.title || '').trim().slice(0, 100) });
+    res.status(201).json({ conversation: { id: conversation._id.toString(), members: ids, title: conversation.title, createdAt: conversation.createdAt } });
+  } catch (e) { next(e); }
+});
+app.get('/api/conversations', auth, async (req, res) => {
+  const conversations = await Conversation.find({ members: req.user._id }).sort({ updatedAt: -1 }).limit(100).lean();
+  res.json({ conversations: conversations.map(c => ({ id: c._id.toString(), members: c.members.map(String), title: c.title, updatedAt: c.updatedAt })) });
+});
 app.get('/api/messages/:conversationId', auth, async (req, res) => {
   const id = String(req.params.conversationId || '');
-  if (!/^[a-zA-Z0-9_-]{1,100}$/.test(id)) return res.status(400).json({ error: 'invalid_conversation_id' });
+  if (!mongoose.isValidObjectId(id)) return res.status(400).json({ error: 'invalid_conversation_id' });
+  const member = await Conversation.exists({ _id: id, members: req.user._id });
+  if (!member) return res.status(403).json({ error: 'conversation_access_denied' });
   const messages = await Message.find({ conversationId: id }).sort({ createdAt: -1 }).limit(50).lean();
   res.json({ messages: messages.reverse().map(m => ({ id: m._id.toString(), conversationId: m.conversationId, senderId: m.senderId.toString(), text: m.text, createdAt: m.createdAt })) });
 });
@@ -151,7 +172,9 @@ io.use((socket, next) => {
 });
 io.on('connection', socket => {
   socket.on('conversation:join', async ({ conversationId } = {}, ack = () => {}) => {
-    if (typeof conversationId !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(conversationId)) return ack({ ok: false, error: 'invalid_conversation_id' });
+    if (typeof conversationId !== 'string' || !mongoose.isValidObjectId(conversationId)) return ack({ ok: false, error: 'invalid_conversation_id' });
+    const member = await Conversation.exists({ _id: conversationId, members: socket.userId });
+    if (!member) return ack({ ok: false, error: 'conversation_access_denied' });
     socket.join(`conversation:${conversationId}`);
     ack({ ok: true });
   });
@@ -159,8 +182,10 @@ io.on('connection', socket => {
     try {
       const conversationId = String(data.conversationId || '');
       const text = String(data.text || '').trim();
-      if (!/^[a-zA-Z0-9_-]{1,100}$/.test(conversationId) || !text || text.length > 4000) return ack({ ok: false, error: 'invalid_message' });
+      if (!mongoose.isValidObjectId(conversationId) || !text || text.length > 4000) return ack({ ok: false, error: 'invalid_message' });
       if (!socket.rooms.has(`conversation:${conversationId}`)) return ack({ ok: false, error: 'join_conversation_first' });
+      const member = await Conversation.exists({ _id: conversationId, members: socket.userId });
+      if (!member) return ack({ ok: false, error: 'conversation_access_denied' });
       const message = await Message.create({ conversationId, senderId: socket.userId, text });
       const item = { id: message._id.toString(), conversationId, senderId: socket.userId, text, createdAt: message.createdAt };
       io.to(`conversation:${conversationId}`).emit('message:new', item);
