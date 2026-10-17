@@ -1,0 +1,22 @@
+name: six_seven_app
+description: SIX SEVEN APP - mensajería y asistente IA
+publish_to: none
+version: 0.1.0+1
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  http: ^1.2.2
+  socket_io_client: ^3.0.0
+  flutter_secure_storage: ^9.2.2
+  purchases_flutter: ^8.10.1
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.2.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true
