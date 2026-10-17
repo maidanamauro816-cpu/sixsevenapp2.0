@@ -138,6 +138,17 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin impleme
   late final anim = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat();
   @override void initState() { super.initState(); widget.assistant.currentChat = this; }
   @override String get messageDraft => text.text;
+  @override void draft(String v) {
+    text.text = v;
+    text.selection = TextSelection.collapsed(offset: v.length);
+    setState(() {});
+  }
+  @override void send(String v) {
+    if (mounted) {
+      setState(() { messages.add(v); text.clear(); });
+    }
+  }
+  @override String get messageDraft => text.text;
   @override void draft(String v) { text.text = v;
   @override void send(String v) { if (mounted)
   @override void dispose() { if (identical(widget.assistant.currentChat, this)) widget.assistant.currentChat = null; anim.dispose(); text.dispose(); super.dispose(); }
