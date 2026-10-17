@@ -27,6 +27,7 @@ class Assistant extends ChangeNotifier {
   bool ready = false, active = false, listening = false, disposed = false, confirming = false;
   String userName = 'Mauro', status = 'En espera de “hey six seven”';
   Timer? restart;
+  _ChatState? currentChat;
   Future<void> start() async {
     ready = await speech.initialize(onStatus: (s) { listening = s == 'listening'; notifyListeners(); if (!disposed && !confirming && s != 'listening') _again(); }, onError: (_) { listening = false; notifyListeners(); _again(); });
     if (ready) await _listen(); else { status = 'Reconocimiento de voz no disponible'; notifyListeners(); }
@@ -53,7 +54,7 @@ class Assistant extends ChangeNotifier {
       navKey.currentState?.push(MaterialPageRoute(builder: (_) => Chat(name: n, assistant: this)));
     } else if (p.startsWith('escribirle ')) {
       final text = p.substring('escribirle '.length).trim();
-      if (Chat.key.currentState != null) {
+      if (currentChat != null) {
         Chat.key.currentState!.draft(text);
         status = 'Mensaje preparado; falta confirmar envío';
         await tts.speak('Preparé el mensaje. Decí enviar para confirmar.');
@@ -106,16 +107,16 @@ class _HomeState extends State<Home> {
 }
 
 class Chat extends StatefulWidget {
-  Chat({Key? key, required this.name, required this.assistant}) : super(key: key ?? Chat.key); final String name; final Assistant assistant;
-  static final key = GlobalKey<_ChatState>();
+  const Chat({super.key, required this.name, required this.assistant}); final String name; final Assistant assistant;
   @override State<Chat> createState() => _ChatState();
 }
 class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
   final text = TextEditingController(); final messages = <String>[];
   late final anim = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat();
+  @override void initState() { super.initState(); widget.assistant.currentChat = this; }
   void draft(String v) { text.text = v; text.selection = TextSelection.collapsed(offset: v.length); setState(() {}); }
   void send(String v) { if (mounted) setState(() { messages.add(v); text.clear(); }); }
-  @override void dispose() { anim.dispose(); text.dispose(); super.dispose(); }
+  @override void dispose() { if (identical(widget.assistant.currentChat, this)) widget.assistant.currentChat = null; anim.dispose(); text.dispose(); super.dispose(); }
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(widget.name), actions: [IconButton(onPressed: () => widget.assistant.command('llamar a ' + widget.name), icon: const Icon(Icons.call, color: red))]),
     body: Stack(children: [
