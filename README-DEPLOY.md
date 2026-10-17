@@ -87,3 +87,6 @@ La API registra el límite del orbe. Las pantallas de compra son prototipos; no 
 4. Servicio de voz foreground Android con consentimiento y pruebas de batería.
 5. Integración real de RevenueCat, push, llamadas WebRTC, catálogo Business y revisión de privacidad.
 6. Pruebas de carga con escenarios realistas antes de afirmar capacidad para 1.000 usuarios.
+
+## Obtener el APK de prueba desde GitHub Actions
+El workflow `SixSeven Flutter checks` genera un APK de depuración y lo publica como artefacto si las comprobaciones pasan. Abrí https://github.com/maidanamauro816-cpu/sixsevenapp2.0/actions, elegí la ejecución exitosa de `SixSeven Flutter checks` y descargá `six-seven-debug-apk` en la sección Artifacts. Es un APK de prueba, no una versión firmada para publicar en Play Store.
