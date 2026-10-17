@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
+import { runBack } from './backStack';
 import { SplashScreen } from './components/SplashScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocialProvider } from './context/SocialContext';
@@ -90,6 +91,7 @@ function MainApp() {
     let active = true;
     const registration = CapacitorApp.addListener('backButton', () => {
       if (!active) return;
+      if (runBack()) return;
       if (viewingStory) { setViewingStory(null); return; }
       if (creatingStory) { setCreatingStory(false); return; }
       if (activeChat) { setActiveChat(null); return; }

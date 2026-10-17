@@ -158,16 +158,16 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
         </div>
       )}
 
-      {/* Fila de historias: círculos con aro rojo (Tu historia + contactos) */}
+      {/* Fila de historias: círculos con aro rojo (Mi estado + contactos) */}
       <section className="flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
         <button onClick={onAddStory} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
           <div className="relative w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
             <div className="w-full h-full rounded-full bg-neutral-950 overflow-hidden flex items-center justify-center">
-              {myPhoto ? <img src={myPhoto} alt="Tu historia" className="w-full h-full object-cover" /> : <Plus size={18} className="text-white" />}
+              {myPhoto ? <img src={myPhoto} alt="Mi estado" className="w-full h-full object-cover" /> : <Plus size={18} className="text-white" />}
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff1a1a] border-2 border-black flex items-center justify-center"><Camera size={10} /></span>
           </div>
-          <span className="text-[10px] text-neutral-300 truncate w-full text-center">Tu historia</span>
+          <span className="text-[10px] text-neutral-300 truncate w-full text-center">Mi estado</span>
         </button>
         {storyAuthors.map((a) => (
           <button key={a.uid} onClick={onViewStories} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
