@@ -85,16 +85,15 @@ class Assistant extends ChangeNotifier {
         },
       );
     } catch (_) {
-      _again();
+      active = false;
+      status = 'No pude iniciar la escucha. Tocá el orbe para reintentar.';
+      notifyListeners();
     }
   }
   Future<void> command(String p) async {
     if (p.isEmpty) return;
     if (p.contains('desactivate') || p.contains('desactívate')) { active = false; status = 'Modo pasivo'; await speech.stop(); await tts.speak('Ok ' + userName + ', me desactivo'); notifyListeners(); return; }
-    if (!active) {
-      if (p.contains('hey six seven') || p.contains('hey sixseven')) { active = true; status = 'SIX SEVEN activo'; await speech.stop(); await tts.speak('Hola ' + userName + ', ¿qué necesitas que haga por ti?'); notifyListeners(); _again(); }
-      return;
-    }
+    if (!active) return;
     if (p.startsWith('buscar al contacto ')) {
       final n = p.substring('buscar al contacto '.length).trim();
       await tts.speak('Voy a buscar a ' + n);
