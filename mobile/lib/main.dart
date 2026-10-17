@@ -156,7 +156,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin impleme
         Expanded(child: ListView(padding: const EdgeInsets.all(16), children: messages.map((m) => Align(alignment: Alignment.centerRight, child: Container(margin: const EdgeInsets.only(bottom: 8), padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: const Color(0xFF301010), borderRadius: BorderRadius.circular(16)), child: Text(m)))).toList())),
         Padding(padding: const EdgeInsets.fromLTRB(12, 8, 12, 12), child: Row(children: [
           const Icon(Icons.add_circle_outline, color: red), const SizedBox(width: 8),
-          Expanded(child: TextField(controller: text, minLines: 1, maxLines: 4, decoration: const InputDecoration(hintText: 'Escribe un mensaje'))),
+          Expanded(child: TextField(controller: text, minLines: 1, maxLines: 1, decoration: const InputDecoration(hintText: 'Escribe un mensaje'))),
           IconButton(onPressed: () { if (text.text.trim().isNotEmpty) widget.assistant.confirm('send', text.text.trim(), '¿Querés enviar este mensaje?', 'Enviar'); }, icon: const Icon(Icons.send, color: red))])),
       ]),
       Positioned(left: 0, right: 0, bottom: 93, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.active || widget.assistant.listening, onTap: () => widget.assistant.command(widget.assistant.active ? 'desactivate' : 'hey six seven'))))),
