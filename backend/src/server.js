@@ -158,6 +158,30 @@ app.post('/api/media/presign', auth, async (req, res) => {
   const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
   res.json({ uploadUrl, key, expiresInSeconds: 300, publicUrl: process.env.R2_PUBLIC_BASE_URL ? `${process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, '')}/${key}` : null });
 });
+app.post('/api/webhooks/revenuecat', async (req, res) => {
+  const secret = process.env.REVENUECAT_WEBHOOK_SECRET;
+  if (!secret) return res.status(503).json({ error: 'billing_webhook_not_configured' });
+  if (req.get('authorization') !== secret) return res.status(401).json({ error: 'invalid_webhook_authorization' });
+  const event = req.body?.event;
+  const appUserId = String(event?.app_user_id || '');
+  if (!mongoose.isValidObjectId(appUserId) || !event?.type) return res.status(400).json({ error: 'invalid_billing_event' });
+  const entitlements = Array.isArray(event.entitlement_ids) ? event.entitlement_ids : [];
+  const premiumId = process.env.PREMIUM_ENTITLEMENT_ID || 'sixseven_premium';
+  const businessId = process.env.BUSINESS_ENTITLEMENT_ID || 'sixseven_business';
+  const inactiveTypes = new Set(['EXPIRATION', 'BILLING_ISSUE']);
+  let plan = null;
+  if (inactiveTypes.has(String(event.type).toUpperCase())) plan = 'free';
+  else if (entitlements.includes(businessId)) plan = 'business';
+  else if (entitlements.includes(premiumId)) plan = 'premium';
+  if (!plan) return res.json({ received: true, ignored: true });
+  const update = { plan };
+  // Payment does not automatically verify a business identity.
+  if (plan !== 'business') update.businessVerified = false;
+  const user = await User.findByIdAndUpdate(appUserId, update, { new: true });
+  if (!user) return res.status(404).json({ error: 'billing_user_not_found' });
+  res.json({ received: true, plan: user.plan });
+});
+
 app.use((err, _req, res, _next) => {
   if (err?.message === 'origin_not_allowed') return res.status(403).json({ error: 'origin_not_allowed' });
   console.error('Unhandled API error:', err?.name || 'Error');
