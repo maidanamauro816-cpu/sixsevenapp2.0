@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus, Images, Settings } from 'lucide-react';
+import { Camera, Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus, Images, Settings } from 'lucide-react';
 import { useSocial } from '../context/SocialContext';
-import { onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 import { StoryStatus } from './MauroProfileBanner';
 import { useAuth } from '../context/AuthContext';
 import { ChatDoc, myChatsQuery } from '../services/chats';
@@ -62,6 +63,22 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
   const [chats, setChats] = useState<WhatsAppChat[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
+  const [storyAuthors, setStoryAuthors] = useState<{ uid: string; name: string; avatar: string }[]>([]);
+
+  useEffect(() => {
+    if (!profile?.uid) return;
+    return onSnapshot(collection(db, 'stories'), (snap) => {
+      const now = Date.now();
+      const seen = new Map<string, { uid: string; name: string; avatar: string }>();
+      snap.docs.forEach((d) => {
+        const st = d.data() as { uid: string; name?: string; avatar?: string; expiresAt?: { toMillis?: () => number } };
+        if (st.uid === profile.uid) return;
+        if (st.expiresAt?.toMillis && st.expiresAt.toMillis() <= now) return;
+        if (!seen.has(st.uid)) seen.set(st.uid, { uid: st.uid, name: st.name || 'Usuario', avatar: st.avatar || '' });
+      });
+      setStoryAuthors([...seen.values()]);
+    }, () => setStoryAuthors([]));
+  }, [profile?.uid]);
 
   useEffect(() => {
     if (!profile?.uid) return;
@@ -141,19 +158,25 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
         </div>
       )}
 
-      <section className="px-4 py-3 border-b border-neutral-900">
-        <div className="flex items-center justify-between gap-2">
-          <button onClick={onAddStory} className="flex-1 min-w-0 flex items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-left active:bg-neutral-900">
-            <div className="relative w-12 h-12 shrink-0 rounded-lg border border-red-600 bg-black overflow-hidden flex items-center justify-center">
-              {myPhoto ? <img src={myPhoto} alt="Tu foto de perfil" className="w-full h-full object-cover" /> : <Plus size={20} className="text-white" />}
-              <span className="absolute bottom-0 right-0 bg-[#ff1a1a] text-white rounded-tl-md p-0.5"><Plus size={13} /></span>
+      {/* Fila de historias: círculos con aro rojo (Tu historia + contactos) */}
+      <section className="flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
+        <button onClick={onAddStory} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
+          <div className="relative w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
+            <div className="w-full h-full rounded-full bg-neutral-950 overflow-hidden flex items-center justify-center">
+              {myPhoto ? <img src={myPhoto} alt="Tu historia" className="w-full h-full object-cover" /> : <Plus size={18} className="text-white" />}
             </div>
-            <span className="min-w-0"><strong className="block text-xs text-white">Mi estado</strong><span className="block text-[10px] text-neutral-400">Compartí una foto o video</span></span>
+            <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff1a1a] border-2 border-black flex items-center justify-center"><Camera size={10} /></span>
+          </div>
+          <span className="text-[10px] text-neutral-300 truncate w-full text-center">Tu historia</span>
+        </button>
+        {storyAuthors.map((a) => (
+          <button key={a.uid} onClick={onViewStories} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
+            <div className="w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
+              <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">{a.avatar && <img src={a.avatar} alt={a.name} className="w-full h-full object-cover" />}</div>
+            </div>
+            <span className="text-[10px] text-neutral-300 truncate w-full text-center">{a.name.split(' ')[0]}</span>
           </button>
-          <button onClick={onViewStories} className="w-[108px] shrink-0 min-h-[74px] rounded-xl border border-red-900 bg-neutral-950 p-2 flex flex-col items-center justify-center gap-1 text-center active:bg-neutral-900">
-            <Images size={21} className="text-[#ff1a1a}" /><span className="text-[11px] font-bold text-white">Ver estados</span><span className="text-[9px] text-neutral-400">Todos · 24 h</span>
-          </button>
-        </div>
+        ))}
       </section>
 
       <div>

@@ -104,7 +104,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
       {/* TOP: logo de SixSeven */}
       <div className="w-full flex flex-col items-center pt-8 text-center z-10 safe-top">
-        <img src={logoMark} alt="SixSeven" className="w-28 h-28 rounded-3xl select-none" draggable={false} />
+        <img src={logoMark} alt="SixSeven" className="w-36 h-auto drop-shadow-[0_0_22px_rgba(255,0,0,0.55)] select-none" draggable={false} />
         <img src={wordmark} alt="SixSeven" className="h-14 w-auto mt-5 select-none" draggable={false} />
         <p className="text-[10px] tracking-[0.3em] text-neutral-300 mt-3 uppercase">Conecta · Comparte · Sin límites</p>
       </div>

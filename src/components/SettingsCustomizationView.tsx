@@ -17,7 +17,7 @@ const sections: { id: Exclude<Section,'menu'>; title: string; subtitle: string; 
   { id:'temas', title:'Temas y copias', subtitle:'Exportar, importar y restaurar tu configuración', icon:Palette },
 ];
 const sounds = [{id:'classic',name:'SixSeven clásico'},{id:'soft',name:'Suave'},{id:'digital',name:'Digital'},{id:'off',name:'Silencio'}];
-const fonts = [{id:'system',name:'Predeterminada',css:'system-ui, sans-serif'},{id:'rounded',name:'Redondeada',css:'Trebuchet MS, sans-serif'},{id:'serif',name:'Elegante',css:'Georgia, serif'},{id:'mono',name:'Tecnológica',css:'ui-monospace, monospace'}];
+const fonts = [{id:'system',name:'Predeterminada',css:'Inter, system-ui, sans-serif'},{id:'rounded',name:'Redondeada',css:'Trebuchet MS, sans-serif'},{id:'serif',name:'Elegante',css:'Georgia, serif'},{id:'mono',name:'Tecnológica',css:'ui-monospace, monospace'}];
 const bubbles = [{id:'classic',name:'Clásica'},{id:'round',name:'Redonda'},{id:'square',name:'Cuadrada'},{id:'neon',name:'Neón suave'},{id:'soft',name:'Suave'}];
 
 async function imageToSmallDataUrl(file: File, maxSize: number) {

@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { App as CapacitorApp } from '@capacitor/app';
+import { SplashScreen } from './components/SplashScreen';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocialProvider } from './context/SocialContext';
 import { LoginScreen } from './components/LoginScreen';
@@ -30,7 +31,9 @@ import { X, Heart, Plus } from 'lucide-react';
 import { playLikePop } from './utils/audio';
 
 function MainApp() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const [minSplash, setMinSplash] = useState(true);
+  React.useEffect(() => { const t = setTimeout(() => setMinSplash(false), 1500); return () => clearTimeout(t); }, []);
   const { toast, show } = useToast();
 
   // Bottom Nav Tab: 'chats' | 'llamadas' | 'estados' | 'perfil'
@@ -68,7 +71,7 @@ function MainApp() {
         gold:{bg:'#151006',accent:'#f5c451'}, sunset:{bg:'#190a0b',accent:'#ff704f'}, matrix:{bg:'#030b05',accent:'#7dff4f'},
         lavender:{bg:'#120e19',accent:'#c4a7ff'}, crimson:{bg:'#160508',accent:'#ff3355'}, mono:{bg:'#080808',accent:'#eeeeee'}
       };
-      const fonts: Record<string,string> = {system:'system-ui, sans-serif',rounded:'Trebuchet MS, sans-serif',serif:'Georgia, serif',mono:'ui-monospace, monospace',narrow:'Arial Narrow, Arial, sans-serif',comic:'Comic Sans MS, cursive'};
+      const fonts: Record<string,string> = {system:'Inter, system-ui, sans-serif',rounded:'Trebuchet MS, sans-serif',serif:'Georgia, serif',mono:'ui-monospace, monospace',narrow:'Arial Narrow, Arial, sans-serif',comic:'Comic Sans MS, cursive'};
       const chosen = palettes[themeId] || palettes.neon;
       document.documentElement.style.setProperty('--sx-theme-bg', chosen.bg);
       document.documentElement.style.setProperty('--sx-chat-bg', localStorage.getItem('sixseven:chatBackground') || chosen.bg);
@@ -120,6 +123,9 @@ function MainApp() {
     }, 100);
     return () => clearInterval(interval);
   }, [viewingStory]);
+
+  // Pantalla de inicio (splash) mientras se revisa la sesión
+  if (loading || minSplash) return <SplashScreen />;
 
   // If user is not logged in, keep login screen
   if (!user) {
