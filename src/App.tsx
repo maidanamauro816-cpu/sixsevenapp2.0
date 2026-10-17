@@ -60,7 +60,7 @@ function MainApp() {
   // Restore theme preferences on every app launch.
   React.useEffect(() => {
     try {
-      const themeId = localStorage.getItem('sixseven:theme') || 'mono';
+      const themeId = localStorage.getItem('sixseven:theme') || 'neon';
       const palettes: Record<string, { bg: string; accent: string }> = {
         neon:{bg:'#050505',accent:'#ff1a1a'}, midnight:{bg:'#080b12',accent:'#7c8cff'}, pink:{bg:'#160914',accent:'#ff62bd'},
         dragon:{bg:'#160b05',accent:'#ff8a19'}, fire:{bg:'#10100a',accent:'#f7d64a'}, ocean:{bg:'#041219',accent:'#22d3ee'},
@@ -69,11 +69,11 @@ function MainApp() {
         lavender:{bg:'#120e19',accent:'#c4a7ff'}, crimson:{bg:'#160508',accent:'#ff3355'}, mono:{bg:'#080808',accent:'#eeeeee'}
       };
       const fonts: Record<string,string> = {system:'system-ui, sans-serif',rounded:'Trebuchet MS, sans-serif',serif:'Georgia, serif',mono:'ui-monospace, monospace',narrow:'Arial Narrow, Arial, sans-serif',comic:'Comic Sans MS, cursive'};
-      const chosen = palettes[themeId] || palettes.mono;
+      const chosen = palettes[themeId] || palettes.neon;
       document.documentElement.style.setProperty('--sx-theme-bg', chosen.bg);
       document.documentElement.style.setProperty('--sx-chat-bg', localStorage.getItem('sixseven:chatBackground') || chosen.bg);
       document.documentElement.style.setProperty('--sx-header-bg', localStorage.getItem('sixseven:headerBackground') || '#000000');
-      document.documentElement.style.setProperty('--sx-theme-accent', '#eeeeee');
+      document.documentElement.style.setProperty('--sx-theme-accent', '#ff1a1a');
       document.documentElement.style.setProperty('--sx-font', fonts[localStorage.getItem('sixseven:font') || 'system'] || fonts.system);
       document.documentElement.dataset.sxTheme = themeId;
       document.documentElement.dataset.sxBubble = localStorage.getItem('sixseven:bubble') || 'classic';
@@ -124,7 +124,7 @@ function MainApp() {
   // If user is not logged in, keep login screen
   if (!user) {
     return (
-      <div className="relative min-h-screen w-full bg-[#000000] text-white selection:bg-neutral-700">
+      <div className="relative min-h-screen w-full bg-[#000000] text-white selection:bg-red-600">
         {!isNative && <PWAInstallButton />}
         <LoginScreen onLoginSuccess={() => setCurrentTab('chats')} />
       </div>
@@ -132,7 +132,7 @@ function MainApp() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000000] text-white font-sans overflow-x-hidden selection:bg-neutral-700">
+    <div className="relative min-h-screen w-full bg-[#000000] text-white font-sans overflow-x-hidden selection:bg-red-600">
       {/* PWA In-App Install Banner */}
       {!isNative && <PWAInstallButton />}
 
