@@ -35,7 +35,24 @@ class Assistant extends ChangeNotifier {
   void _again() { restart?.cancel(); if (!disposed && !confirming) restart = Timer(const Duration(milliseconds: 700), _listen); }
   Future<void> _listen() async {
     if (!ready || disposed || confirming || speech.isListening) return;
-    try { await speech.listen(listenFor: const Duration(seconds: 45), pauseFor: const Duration(seconds: 4), partialResults: true, cancelOnError: false, listenMode: stt.ListenMode.dictation, onResult: (r) { if (r.finalResult) unawaited(command(r.recognizedWords.toLowerCase().trim())); }); } catch (_) { _again(); }
+    try {
+      await speech.listen(
+        options: stt.SpeechListenOptions(
+          listenFor: const Duration(seconds: 45),
+          pauseFor: const Duration(seconds: 4),
+          partialResults: true,
+          cancelOnError: false,
+          listenMode: stt.ListenMode.dictation,
+        ),
+        onResult: (r) {
+          if (r.finalResult) {
+            unawaited(command(r.recognizedWords.toLowerCase().trim()));
+          }
+        },
+      );
+    } catch (_) {
+      _again();
+    }
   }
   Future<void> command(String p) async {
     if (p.isEmpty) return;
