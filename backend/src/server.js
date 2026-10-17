@@ -102,7 +102,7 @@ app.post('/api/auth/login', async (req, res) => {
 });
 app.get('/api/me', auth, (req, res) => res.json({ user: publicUser(req.user) }));
 app.get('/api/contacts', auth, async (req, res) => {
-  const q = String(req.query.q || '').trim().toLowerCase().slice(0, 50);
+  const q = String(req.query.q || '').trim().toLowerCase().replace(/[^a-z0-9_. ]/g, '').slice(0, 50);
   if (q.length < 2) return res.json({ contacts: [] });
   const users = await User.find({ _id: { $ne: req.user._id }, $or: [{ username: { $regex: q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') } }, { displayName: { $regex: q, $options: 'i' } }] }).limit(20);
   res.json({ contacts: users.map(publicUser) });
