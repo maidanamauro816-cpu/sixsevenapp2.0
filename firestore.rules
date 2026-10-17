@@ -33,7 +33,7 @@ service cloud.firestore {
         data.username is string && data.username.size() >= 2 && data.username.size() <= 50 &&
         data.displayName is string && data.displayName.size() <= 80 &&
         (!('bio' in data) || (data.bio is string && data.bio.size() <= 200)) &&
-        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 500)) &&
+        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 60000)) &&
         (!('coverURL' in data) || (data.coverURL is string && data.coverURL.size() <= 500)) &&
         (!('score67' in data) || data.score67 is number);
     }
@@ -165,7 +165,7 @@ service cloud.firestore {
         && incoming().keys().hasAll(['uid', 'name', 'photoURL', 'text', 'emoji', 'color', 'songTitle', 'createdAt', 'expiresAt'])
         && incoming().keys().hasOnly(['uid', 'name', 'photoURL', 'text', 'emoji', 'color', 'songTitle', 'createdAt', 'expiresAt'])
         && incoming().name is string && incoming().name.size() <= 80
-        && incoming().photoURL is string && incoming().photoURL.size() <= 500
+        && incoming().photoURL is string && incoming().photoURL.size() <= 60000
         && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 80
         && incoming().emoji is string && incoming().emoji.size() <= 16
         && incoming().color is string && incoming().color.size() <= 20
@@ -181,7 +181,7 @@ service cloud.firestore {
         && incoming().keys().hasAll(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'createdAt', 'expiresAt'])
         && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'mediaUrl', 'mediaType', 'createdAt', 'expiresAt'])
         && incoming().name is string && incoming().name.size() <= 80
-        && incoming().avatar is string && incoming().avatar.size() <= 500
+        && incoming().avatar is string && incoming().avatar.size() <= 60000
         && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 300
         && incoming().sticker is string && incoming().sticker.size() <= 50
         && incoming().filter is string && incoming().filter.size() <= 30

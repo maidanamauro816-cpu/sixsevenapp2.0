@@ -17,6 +17,7 @@ import { ref as storageRef, getDownloadURL } from 'firebase/storage';
 import { uploadFileWithTimeout } from '../services/mediaUpload';
 import { auth, db, storage, googleProvider, handleFirestoreError, OperationType } from '../firebase';
 import { UserProfile } from '../types';
+import { fileToAvatarDataUrl } from '../utils/image';
 import { isNative } from '../native';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
@@ -232,13 +233,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Elegí una foto JPG, PNG o WebP válida.');
     }
     if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera los 10 MB. Elegí una más liviana.');
-    const mime = file.type || 'image/jpeg';
-    const extension = (mime.split('/')[1] || file.name.split('.').pop() || 'jpg').replace('jpeg', 'jpg').replace(/[^a-z0-9]/gi, '');
+    // La foto de perfil se achica (256 px) y se guarda dentro del perfil en Firestore:
+    // no depende de Firebase Storage (que exige plan Blaze) y no se queda "cargando".
     try {
-      const target = storageRef(storage, 'users/' + user.uid + '/profile/avatar-' + Date.now() + '.' + extension);
-      const uploaded = await uploadFileWithTimeout(target, file, { contentType: mime });
-      const url = await getDownloadURL(uploaded.ref);
-      await updateFirebaseProfile(user, { photoURL: url });
+      const url = await fileToAvatarDataUrl(file, 256, 0.8);
       await setDoc(doc(db, 'users', user.uid), { uid: user.uid, photoURL: url }, { merge: true });
       setProfile((current) => current ? { ...current, photoURL: url } : {
         uid: user.uid, displayName: user.displayName || 'Usuario SixSeven', username: 'usuario',
@@ -246,13 +244,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       return url;
     } catch (error) {
-      console.error('Error subiendo foto de perfil:', error);
+      console.error('Error guardando foto de perfil:', error);
       const code = (error as { code?: string })?.code;
-      if (code === 'storage/unauthorized' || code === 'storage/unauthenticated') {
-        throw new Error('Firebase Storage rechazó la subida. Revisá las reglas de Storage y los permisos de usuario.');
+      if (code === 'permission-denied') {
+        throw new Error('Firestore rechazó el cambio. Publicá las reglas nuevas (firestore.rules) en Firebase.');
       }
-      if (code === 'storage/quota-exceeded') throw new Error('Se agotó la cuota de almacenamiento de Firebase.');
-      throw error instanceof Error ? error : new Error('No se pudo subir la foto. Revisá tu conexión e intentá de nuevo.');
+      throw error instanceof Error ? error : new Error('No se pudo guardar la foto. Revisá tu conexión e intentá de nuevo.');
     }
   };
 

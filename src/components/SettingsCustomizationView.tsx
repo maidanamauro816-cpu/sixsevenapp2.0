@@ -1,4 +1,5 @@
 import { CopyrightFooter } from './CopyrightFooter';
+import { useAuth } from '../context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2, Download, Upload } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
@@ -41,6 +42,7 @@ async function imageToSmallDataUrl(file: File, maxSize: number) {
 }
 
 export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
+  const { updateProfilePhoto } = useAuth();
   const [section, setSection] = useState<Section>('menu');
   const [messageSound, setMessageSound] = useState(read('messageSound','classic'));
   const [callSound, setCallSound] = useState(read('callSound','digital'));
@@ -77,12 +79,18 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     if(!file.type.startsWith('image/')) { setNotice('Elegí un archivo de imagen.'); return; }
     setBusy(true); setNotice('');
     try {
-      const data = await imageToSmallDataUrl(file, type==='cover' ? 1000 : 420);
-      if(type==='cover') { setCover(data); save('coverPhoto',data); }
-      else { setAvatar(data); save('profilePhoto',data); }
+      if(type==='avatar') {
+        const url = await updateProfilePhoto(file);
+        setAvatar(url); save('profilePhoto',url);
+        window.dispatchEvent(new Event('sixseven:appearanceChanged'));
+        setNotice('Foto de perfil actualizada.');
+        return;
+      }
+      const data = await imageToSmallDataUrl(file, 1000);
+      setCover(data); save('coverPhoto',data);
       window.dispatchEvent(new Event('sixseven:appearanceChanged'));
       setNotice(type==='cover' ? 'Portada guardada en este dispositivo.' : 'Foto de perfil guardada en este dispositivo.');
-    } catch { setNotice('No se pudo guardar la imagen. Probá con otra foto.'); }
+    } catch (e) { setNotice(e instanceof Error ? e.message : 'No se pudo guardar la imagen. Probá con otra foto.'); }
     finally { setBusy(false); }
   };
   const exportTheme = () => {
