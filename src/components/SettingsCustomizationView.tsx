@@ -58,12 +58,12 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     // SixSeven's brand accent is fixed: neon red. Only safe dark surfaces are customizable.
     document.documentElement.style.setProperty('--sx-chat-bg', chatBackground);
     document.documentElement.style.setProperty('--sx-header-bg', headerBackground);
-    document.documentElement.style.setProperty('--sx-theme-accent', '#eeeeee');
+    document.documentElement.style.setProperty('--sx-theme-accent', '#ff1a1a');
     document.documentElement.style.setProperty('--sx-font', fonts.find(f=>f.id===font)?.css || fonts[0].css);
-    document.documentElement.dataset.sxTheme = 'mono';
+    document.documentElement.dataset.sxTheme = 'neon';
     document.documentElement.dataset.sxBubble = bubble;
     document.body.style.fontFamily = fonts.find(f=>f.id===font)?.css || fonts[0].css;
-    save('theme','mono'); save('chatBackground',chatBackground); save('headerBackground',headerBackground);
+    save('theme','neon'); save('chatBackground',chatBackground); save('headerBackground',headerBackground);
     save('bubble',bubble); save('font',font); save('messageSound',messageSound); save('callSound',callSound); save('homeLayout',layout);
     window.dispatchEvent(new Event('sixseven:appearanceChanged'));
   },[chatBackground,headerBackground,bubble,font,messageSound,callSound,layout]);
@@ -144,85 +144,85 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
 
   return <div className="fixed inset-0 z-[70] overflow-y-auto bg-black text-white px-4 pb-10 safe-top">
     <header className="sticky top-0 z-10 -mx-4 flex items-center gap-3 border-b border-neutral-900 bg-black/95 px-4 py-3 backdrop-blur">
-      <button onClick={back} className="rounded-full p-2 text-neutral-300" aria-label="Volver"><ArrowLeft size={22}/></button>
-      <div className="flex-1"><h1 className="font-black text-lg">{section==='menu'?'Configuración':sections.find(s=>s.id===section)?.title}</h1><p className="text-xs text-neutral-500">SixSeven · Negro total</p></div>
-      <Settings2 size={21} className="text-neutral-300"/>
+      <button onClick={back} className="rounded-full p-2 text-red-400" aria-label="Volver"><ArrowLeft size={22}/></button>
+      <div className="flex-1"><h1 className="font-black text-lg">{section==='menu'?'Configuración':sections.find(s=>s.id===section)?.title}</h1><p className="text-xs text-neutral-500">SixSeven · Negro + rojo neón</p></div>
+      <Settings2 size={21} className="text-red-400"/>
     </header>
 
     <div className="mx-auto max-w-md space-y-4 pt-4">
       {section==='menu' && <>
         <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4">
           <p className="font-bold">Personalizá tu SixSeven</p>
-          <p className="mt-1 text-xs text-neutral-400">Cada ajuste está separado por categoría. La interfaz usa negro y tonos neutros, con texto claro para mantener la legibilidad.</p>
+          <p className="mt-1 text-xs text-neutral-400">Cada ajuste está separado por categoría. El negro domina la interfaz; el rojo neón se reserva para el logo y detalles importantes.</p>
         </div>
         {sections.map(item=><button key={item.id} onClick={()=>setSection(item.id)} className={row}>
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-black text-neutral-300"><item.icon size={20}/></span>
-          <span className="flex-1"><b className="block text-sm">{item.title}</b><small className="text-neutral-400">{item.subtitle}</small></span><ChevronRight size={18} className="text-neutral-300"/>
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-black text-red-400"><item.icon size={20}/></span>
+          <span className="flex-1"><b className="block text-sm">{item.title}</b><small className="text-neutral-400">{item.subtitle}</small></span><ChevronRight size={18} className="text-red-400"/>
         </button>)}
       </>}
 
       {section==='pantalla' && <section className={card}>
-        <h2 className="font-bold flex items-center gap-2"><Palette size={18} className="text-neutral-300"/> Colores y contraste</h2>
-        <p className="text-xs text-neutral-400">El tema actual es monocromático: negro, gris oscuro y texto claro.</p>
+        <h2 className="font-bold flex items-center gap-2"><Palette size={18} className="text-red-400"/> Colores y contraste</h2>
+        <p className="text-xs text-neutral-400">El tema combina negro profundo con detalles rojo neón, sin paneles rojos oscuros.</p>
         <label className="block text-sm">Fondo de chats</label>
-        <div className="grid grid-cols-3 gap-2">{[{v:'#000000',n:'Negro'},{v:'#050505',n:'Negro profundo'},{v:'#101010',n:'Grafito oscuro'}].map(c=><button key={c.v} onClick={()=>setChatBackground(c.v)} className={'rounded-xl border p-3 '+(chatBackground===c.v?'border-neutral-500 ring-1 ring-neutral-500':'border-neutral-800')}><span className="mb-2 block h-8 rounded-lg border border-white/10" style={{background:c.v}}/><b className="text-xs">{c.n}</b><span className="block text-[10px] text-neutral-400">Texto blanco</span></button>)}</div>
+        <div className="grid grid-cols-3 gap-2">{[{v:'#000000',n:'Negro'},{v:'#050505',n:'Negro profundo'},{v:'#101010',n:'Grafito oscuro'}].map(c=><button key={c.v} onClick={()=>setChatBackground(c.v)} className={'rounded-xl border p-3 '+(chatBackground===c.v?'border-red-500 ring-1 ring-red-500':'border-neutral-800')}><span className="mb-2 block h-8 rounded-lg border border-white/10" style={{background:c.v}}/><b className="text-xs">{c.n}</b><span className="block text-[10px] text-neutral-400">Texto blanco</span></button>)}</div>
         <label className="block pt-2 text-sm">Barra superior</label>
-        <div className="grid grid-cols-3 gap-2">{[{v:'#000000',n:'Negro'},{v:'#080808',n:'Negro suave'},{v:'#111111',n:'Grafito'}].map(c=><button key={c.v} onClick={()=>setHeaderBackground(c.v)} className={'rounded-xl border p-3 '+(headerBackground===c.v?'border-neutral-500 ring-1 ring-neutral-500':'border-neutral-800')}><span className="mb-2 block h-8 rounded-lg border border-white/10" style={{background:c.v}}/><b className="text-xs">{c.n}</b></button>)}</div>
-        <div className="rounded-xl border border-neutral-800 p-3" style={{background:chatBackground}}><div className="rounded-lg border border-neutral-800 p-3" style={{background:headerBackground}}><p className="text-xs text-white">Vista previa · <span className="font-bold text-neutral-200">SixSeven</span></p></div><p className="mt-3 text-sm text-white">Mensaje de ejemplo</p><p className="mt-1 text-xs text-neutral-400">El texto permanece blanco o gris claro para conservar legibilidad.</p></div>
+        <div className="grid grid-cols-3 gap-2">{[{v:'#000000',n:'Negro'},{v:'#080808',n:'Negro suave'},{v:'#111111',n:'Grafito'}].map(c=><button key={c.v} onClick={()=>setHeaderBackground(c.v)} className={'rounded-xl border p-3 '+(headerBackground===c.v?'border-red-500 ring-1 ring-red-500':'border-neutral-800')}><span className="mb-2 block h-8 rounded-lg border border-white/10" style={{background:c.v}}/><b className="text-xs">{c.n}</b></button>)}</div>
+        <div className="rounded-xl border border-neutral-800 p-3" style={{background:chatBackground}}><div className="rounded-lg border border-neutral-800 p-3" style={{background:headerBackground}}><p className="text-xs text-white">Vista previa · <span className="font-bold text-[#ff1a1a]">SixSeven</span></p></div><p className="mt-3 text-sm text-white">Mensaje de ejemplo</p><p className="mt-1 text-xs text-neutral-400">El texto permanece blanco o gris claro para conservar legibilidad.</p></div>
       </section>}
 
       {section==='sonido' && <section className={card}>
-        <h2 className="font-bold flex items-center gap-2"><Volume2 size={18} className="text-neutral-300"/> Tonos</h2>
+        <h2 className="font-bold flex items-center gap-2"><Volume2 size={18} className="text-red-400"/> Tonos</h2>
         {[{label:'Mensajes',value:messageSound,set:setMessageSound},{label:'Llamadas',value:callSound,set:setCallSound}].map(item=><div key={item.label} className="flex items-center gap-2"><label className="flex-1 text-sm">{item.label}</label><select className="max-w-[180px] flex-1 rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-xs" value={item.value} onChange={e=>item.set(e.target.value)}>{sounds.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select><button onClick={()=>testSound(item.value)} className="rounded-lg border border-neutral-700 p-2 text-red-400" title="Probar tono"><Volume2 size={16}/></button></div>)}
         <p className="text-xs text-neutral-500">El sonido de bienvenida al iniciar sesión permanece desactivado.</p>
       </section>}
 
       {section==='mensajes' && <section className={card}>
-        <h2 className="font-bold flex items-center gap-2"><MessageSquare size={18} className="text-neutral-300"/> Estilo de mensajes</h2>
-        {bubbles.map(b=><button key={b.id} onClick={()=>setBubble(b.id)} className={'flex w-full items-center justify-between rounded-xl border p-3 '+(bubble===b.id?'border-neutral-500':'border-neutral-800')}><span className="text-sm">{b.name}</span><span className={'rounded-2xl bg-neutral-800 px-4 py-2 text-xs text-white '+(b.id==='neon'?'shadow-[0_0_10px_rgba(255,26,26,.25)]':'')} style={b.id==='round'?{borderRadius:999}:b.id==='square'?{borderRadius:4}:undefined}>Hola, SixSeven</span>{bubble===b.id&&<Check size={15} className="text-neutral-300"/>}</button>)}
+        <h2 className="font-bold flex items-center gap-2"><MessageSquare size={18} className="text-red-400"/> Estilo de mensajes</h2>
+        {bubbles.map(b=><button key={b.id} onClick={()=>setBubble(b.id)} className={'flex w-full items-center justify-between rounded-xl border p-3 '+(bubble===b.id?'border-red-500':'border-neutral-800')}><span className="text-sm">{b.name}</span><span className={'rounded-2xl bg-neutral-800 px-4 py-2 text-xs text-white '+(b.id==='neon'?'shadow-[0_0_10px_rgba(255,26,26,.25)]':'')} style={b.id==='round'?{borderRadius:999}:b.id==='square'?{borderRadius:4}:undefined}>Hola, SixSeven</span>{bubble===b.id&&<Check size={15} className="text-red-400"/>}</button>)}
       </section>}
 
       {section==='teclado' && <section className={card}>
-        <h2 className="font-bold flex items-center gap-2"><Keyboard size={18} className="text-neutral-300"/> Tipografía</h2>
+        <h2 className="font-bold flex items-center gap-2"><Keyboard size={18} className="text-red-400"/> Tipografía</h2>
         <p className="text-xs text-neutral-400">Cambia la letra dentro de SixSeven. El teclado Android se configura por separado en los ajustes del teléfono.</p>
-        {fonts.map(f=><button key={f.id} onClick={()=>setFont(f.id)} className={'flex w-full items-center justify-between rounded-xl border p-3 '+(font===f.id?'border-neutral-500':'border-neutral-800')}><span style={{fontFamily:f.css}}>{f.name} · Aa 123</span>{font===f.id&&<Check size={16} className="text-neutral-300"/>}</button>)}
+        {fonts.map(f=><button key={f.id} onClick={()=>setFont(f.id)} className={'flex w-full items-center justify-between rounded-xl border p-3 '+(font===f.id?'border-red-500':'border-neutral-800')}><span style={{fontFamily:f.css}}>{f.name} · Aa 123</span>{font===f.id&&<Check size={16} className="text-red-400"/>}</button>)}
       </section>}
 
       {section==='temas' && <section className={card}>
-        <h2 className="font-bold flex items-center gap-2"><Palette size={18} className="text-neutral-300"/> Temas de SixSeven</h2>
+        <h2 className="font-bold flex items-center gap-2"><Palette size={18} className="text-red-400"/> Temas de SixSeven</h2>
         <p className="text-xs text-neutral-400">Guardá tu combinación de colores, burbujas, tipografía, diseño y tonos en un archivo. Podés compartirlo o recuperarlo después de reinstalar.</p>
         <button onClick={exportTheme} className="flex w-full items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-left">
-          <Download size={20} className="text-neutral-300"/><span className="flex-1"><b className="block text-sm">Exportar mi tema</b><small className="text-neutral-400">Crear un archivo JSON de SixSeven</small></span>
+          <Download size={20} className="text-red-400"/><span className="flex-1"><b className="block text-sm">Exportar mi tema</b><small className="text-neutral-400">Crear un archivo JSON de SixSeven</small></span>
         </button>
         <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3">
-          <Upload size={20} className="text-neutral-300"/><span className="flex-1"><b className="block text-sm">Importar un tema</b><small className="text-neutral-400">Abrir un archivo JSON exportado por SixSeven</small></span>
+          <Upload size={20} className="text-red-400"/><span className="flex-1"><b className="block text-sm">Importar un tema</b><small className="text-neutral-400">Abrir un archivo JSON exportado por SixSeven</small></span>
           <input type="file" accept=".json,application/json" className="hidden" onChange={e=>{const file=e.target.files?.[0]; e.target.value=''; void importTheme(file);}}/>
         </label>
         <div className="rounded-xl border border-neutral-800 bg-black p-3">
           <p className="text-xs font-semibold text-white">Incluye</p>
           <p className="mt-1 text-xs text-neutral-400">Fondos, burbujas, tipografía, diseño de inicio y tonos. No incluye fotos, mensajes, credenciales ni datos personales.</p>
         </div>
-        {notice && <p role="status" className="text-xs text-neutral-300">{notice}</p>}
+        {notice && <p role="status" className="text-xs text-red-400">{notice}</p>}
       </section>}
 
       {section==='apariencia' && <section className={card}>
-        <h2 className="font-bold flex items-center gap-2"><Layout size={18} className="text-neutral-300"/> Estilos y apariencia</h2>
+        <h2 className="font-bold flex items-center gap-2"><Layout size={18} className="text-red-400"/> Estilos y apariencia</h2>
         <p className="text-xs text-neutral-400">Elegí cómo se presenta tu perfil en la parte superior de la pantalla principal.</p>
-        <button onClick={()=>setLayout('classic')} className={'w-full rounded-xl border p-3 text-left '+(layout==='classic'?'border-neutral-500':'border-neutral-800')}><b className="text-sm">Clásica</b><p className="text-xs text-neutral-400">Logo arriba y estados en fila horizontal, estilo Instagram.</p></button>
-        <button onClick={()=>setLayout('profile-cover')} className={'w-full rounded-xl border p-3 text-left '+(layout==='profile-cover'?'border-neutral-500':'border-neutral-800')}><b className="text-sm">Perfil centrado con portada</b><p className="text-xs text-neutral-400">Foto de portada con tu perfil centrado y los estados debajo.</p></button>
+        <button onClick={()=>setLayout('classic')} className={'w-full rounded-xl border p-3 text-left '+(layout==='classic'?'border-red-500':'border-neutral-800')}><b className="text-sm">Clásica</b><p className="text-xs text-neutral-400">Logo arriba y estados en fila horizontal, estilo Instagram.</p></button>
+        <button onClick={()=>setLayout('profile-cover')} className={'w-full rounded-xl border p-3 text-left '+(layout==='profile-cover'?'border-red-500':'border-neutral-800')}><b className="text-sm">Perfil centrado con portada</b><p className="text-xs text-neutral-400">Foto de portada con tu perfil centrado y los estados debajo.</p></button>
         <div className="relative mt-2 h-32 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900" style={cover?{backgroundImage:'linear-gradient(#0003,#0008),url('+cover+')',backgroundSize:'cover',backgroundPosition:'center'}:{background:'linear-gradient(135deg,#111,#050505)'}}>
-          <div className="absolute inset-0 flex flex-col items-center justify-center"><img src={avatar || read('profilePhoto','')} alt="" className="h-14 w-14 rounded-full border-2 border-neutral-500 bg-black object-cover" /><b className="mt-1 text-sm text-white drop-shadow">Tu perfil</b><small className="text-xs text-white/80">Vista previa de portada</small></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center"><img src={avatar || read('profilePhoto','')} alt="" className="h-14 w-14 rounded-full border-2 border-red-500 bg-black object-cover" /><b className="mt-1 text-sm text-white drop-shadow">Tu perfil</b><small className="text-xs text-white/80">Vista previa de portada</small></div>
         </div>
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3"><ImagePlus size={20} className="text-neutral-300"/><span className="flex-1"><b className="block text-sm">Cambiar foto de portada</b><small className="text-neutral-400">Imagen horizontal</small></span><input type="file" accept="image/*" className="hidden" onChange={e=>void chooseImage(e.target.files?.[0],'cover')}/></label>
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3"><UserRound size={20} className="text-neutral-300"/><span className="flex-1"><b className="block text-sm">Cambiar foto de perfil</b><small className="text-neutral-400">Imagen cuadrada</small></span><input type="file" accept="image/*" className="hidden" onChange={e=>void chooseImage(e.target.files?.[0],'avatar')}/></label>
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3"><ImagePlus size={20} className="text-red-400"/><span className="flex-1"><b className="block text-sm">Cambiar foto de portada</b><small className="text-neutral-400">Imagen horizontal</small></span><input type="file" accept="image/*" className="hidden" onChange={e=>void chooseImage(e.target.files?.[0],'cover')}/></label>
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3"><UserRound size={20} className="text-red-400"/><span className="flex-1"><b className="block text-sm">Cambiar foto de perfil</b><small className="text-neutral-400">Imagen cuadrada</small></span><input type="file" accept="image/*" className="hidden" onChange={e=>void chooseImage(e.target.files?.[0],'avatar')}/></label>
         {busy&&<p className="text-xs text-neutral-400">Procesando imagen…</p>}
-        {notice&&<p className="text-xs text-neutral-300">{notice}</p>}
+        {notice&&<p className="text-xs text-red-400">{notice}</p>}
         <p className="text-[11px] text-neutral-500">Las fotos se guardan en este dispositivo por ahora; todavía no se sincronizan con otros dispositivos o cuentas.</p>
       </section>}
 
       {section==='menu' && <CopyrightFooter />}
 
-      <button onClick={back} className="w-full rounded-xl bg-neutral-800 py-3 font-bold text-white shadow-none">{section==='menu'?'Volver':'Guardar y volver'}</button>
+      <button onClick={back} className="w-full rounded-xl bg-[#ff1a1a] py-3 font-bold text-white shadow-[0_0_12px_rgba(255,26,26,.22)]">{section==='menu'?'Volver':'Guardar y volver'}</button>
     </div>
   </div>;
 };
