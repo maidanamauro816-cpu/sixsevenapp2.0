@@ -148,9 +148,6 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin impleme
       setState(() { messages.add(v); text.clear(); });
     }
   }
-  @override String get messageDraft => text.text;
-  @override void draft(String v) { text.text = v;
-  @override void send(String v) { if (mounted)
   @override void dispose() { if (identical(widget.assistant.currentChat, this)) widget.assistant.currentChat = null; anim.dispose(); text.dispose(); super.dispose(); }
   @override Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(widget.name), actions: [IconButton(onPressed: () => widget.assistant.command('llamar a ' + widget.name), icon: const Icon(Icons.call, color: red))]),
