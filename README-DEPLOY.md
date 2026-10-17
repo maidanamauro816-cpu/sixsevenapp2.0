@@ -31,7 +31,7 @@ El script genera un `.env` local con secretos aleatorios. Nunca subas `.env` a G
 ## Oracle Cloud gratis: advertencia importante
 Crear la cuenta: https://www.oracle.com/latam/cloud/free/
 
-La cuota Always Free publicada para Ampere A1 equivale a **2 OCPU y 12 GB RAM totales** en tenencias Always Free, no 4 vCPU y 24 GB gratis permanentes. Se puede distribuir la cuota disponible entre instancias si la región tiene capacidad, pero no garantiza dos VPS con 4 vCPU/24 GB entre ambos. La disponibilidad Ampere puede fallar por capacidad. Verificá los límites que muestra la consola antes de crear recursos: https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
+**Importante:** la documentación oficial no es totalmente uniforme: la guía técnica en inglés describe 1.500 OCPU-horas/9.000 GB-horas (equivalente a 2 OCPU y 12 GB RAM), mientras que la página comercial de Oracle Latinoamérica ha publicado una bolsa de 3.000 OCPU-horas/18.000 GB-horas (4 OCPU y 24 GB RAM). La cuota real depende de la elegibilidad y de lo que la consola marque como Always Free en tu tenancy y región. Por eso no puedo prometer que todas las cuentas puedan tener dos VPS con 4 vCPU y 24 GB totales gratis. Si tu consola autoriza 4 OCPU/24 GB, podés dividir esa cuota entre dos instancias; si muestra 2/12, usá ese límite. Confirmá la etiqueta Always Free antes de crear recursos y revisá la capacidad de Ampere: https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm y https://www.oracle.com/latam/cloud/free/
 
 Pasos:
 1. Crear cuenta con datos reales y completar la verificación de Oracle.
