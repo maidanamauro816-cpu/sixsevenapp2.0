@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { Server } from 'socket.io';
 import { createServer } from 'node:http';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const required = ['MONGO_URL', 'JWT_SECRET'];
@@ -185,6 +185,16 @@ app.post('/api/webhooks/revenuecat', async (req, res) => {
   if (user.plan !== 'business') user.businessVerified = false;
   await user.save();
   res.json({ received: true, plan: user.plan });
+});
+
+app.post('/api/media/presign-download', auth, async (req, res) => {
+  if (!s3) return res.status(503).json({ error: 'r2_not_configured' });
+  const key = String(req.body?.key || '');
+  const ownedPrefix = 'users/' + req.user._id.toString() + '/';
+  if (!key.startsWith(ownedPrefix) || key.includes('..') || key.length > 500) return res.status(403).json({ error: 'media_access_denied' });
+  const command = new GetObjectCommand({ Bucket: process.env.R2_BUCKET, Key: key });
+  const downloadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
+  res.json({ downloadUrl, expiresInSeconds: 300 });
 });
 
 app.use((err, _req, res, _next) => {
