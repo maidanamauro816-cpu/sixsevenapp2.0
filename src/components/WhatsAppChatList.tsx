@@ -5,7 +5,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import { StoryStatus } from './MauroProfileBanner';
 import { useAuth } from '../context/AuthContext';
-import { ChatDoc, myChatsQuery } from '../services/chats';
+import { ChatDoc, myChatsQuery, openChatWith } from '../services/chats';
 import wordmark from '../assets/logo-wordmark.png';
 import { playSixSevenSound } from '../utils/audio';
 
@@ -57,7 +57,7 @@ interface WhatsAppChatListProps {
 }
 
 export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onViewStories, onNewChat, onOpenContacts, onOpenSettings }) => {
-  const { incoming } = useSocial();
+  const { incoming, friends } = useSocial();
   const incomingCount = incoming.length;
   const { profile, user } = useAuth();
   const [chats, setChats] = useState<WhatsAppChat[]>([]);
@@ -99,6 +99,17 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
     );
     return unsub;
   }, [profile?.uid]);
+
+  const friendsNoStory = friends
+    .map((f) => {
+      const uid = f.users.find((u) => u !== profile?.uid) || '';
+      return { uid, name: f.members?.[uid]?.name || 'Amigo', photo: f.members?.[uid]?.photo || '' };
+    })
+    .filter((f) => f.uid && !storyAuthors.some((a) => a.uid === f.uid));
+  const openFriend = async (f: { uid: string; name: string; photo: string }) => {
+    if (!profile) return;
+    try { onOpenChat(chatFromDoc(await openChatWith(profile, { uid: f.uid, displayName: f.name, photoURL: f.photo }), profile.uid)); } catch (e) { console.error(e); }
+  };
 
   const q = query.trim().toLowerCase();
   const filtered = chats.filter((c) => !q || c.name.toLowerCase().includes(q) || c.lastMessage.toLowerCase().includes(q));
@@ -167,7 +178,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#ff1a1a] border-2 border-black flex items-center justify-center"><Camera size={10} /></span>
           </div>
-          <span className="text-[10px] text-neutral-300 truncate w-full text-center">Mi estado</span>
+          <span className="text-[10px] text-neutral-300 truncate w-full text-center">Tu historia</span>
         </button>
         {storyAuthors.map((a) => (
           <button key={a.uid} onClick={onViewStories} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
@@ -175,6 +186,14 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
               <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">{a.avatar && <img src={a.avatar} alt={a.name} className="w-full h-full object-cover" />}</div>
             </div>
             <span className="text-[10px] text-neutral-300 truncate w-full text-center">{a.name.split(' ')[0]}</span>
+          </button>
+        ))}
+        {friendsNoStory.map((f) => (
+          <button key={f.uid} onClick={() => openFriend(f)} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
+            <div className="w-14 h-14 rounded-full border-2 border-red-900 p-0.5">
+              <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">{f.photo && <img src={f.photo} alt={f.name} className="w-full h-full object-cover" />}</div>
+            </div>
+            <span className="text-[10px] text-neutral-400 truncate w-full text-center">{f.name.split(' ')[0]}</span>
           </button>
         ))}
       </section>
