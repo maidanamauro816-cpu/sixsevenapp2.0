@@ -106,7 +106,7 @@ class _HomeState extends State<Home> {
 }
 
 class Chat extends StatefulWidget {
-  Chat({super.key, required this.name, required this.assistant}); final String name; final Assistant assistant;
+  Chat({Key? key, required this.name, required this.assistant}) : super(key: key ?? Chat.key); final String name; final Assistant assistant;
   static final key = GlobalKey<_ChatState>();
   @override State<Chat> createState() => _ChatState();
 }
@@ -153,7 +153,7 @@ class SmokePainter extends CustomPainter {
         final p = Offset(c.dx + math.cos(a) * radius, c.dy + math.sin(a) * radius);
         if (i == 0) { path.moveTo(p.dx, p.dy); } else { path.lineTo(p.dx, p.dy); }
       }
-      canvas.drawPath(path, Paint()..style = PaintingStyle.stroke..strokeWidth = listening ? 2 : 1.5..strokeCap = StrokeCap.round..color = (s.isEven ? const Color(0xFF303030) : const Color(0xFF181818)).withValues(alpha: .9));
+      canvas.drawPath(path, Paint()..style = PaintingStyle.stroke..strokeWidth = (listening ? 2.0 : 1.5)..strokeCap = StrokeCap.round..color = (s.isEven ? const Color(0xFF303030) : const Color(0xFF181818)).withValues(alpha: .9));
     }
     final pulse = .85 + .15 * math.sin(phase * math.pi * 2);
     canvas.drawCircle(c, r * .14 * pulse, Paint()..color = red.withValues(alpha: .96)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4));
