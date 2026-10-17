@@ -27,13 +27,28 @@ CREATE TABLE IF NOT EXISTS media_assets (
   CONSTRAINT media_content_type_length CHECK (char_length(content_type) <= 120)
 );
 
-ALTER TABLE users
-  ADD CONSTRAINT users_avatar_asset_fk
-  FOREIGN KEY (avatar_asset_id) REFERENCES media_assets(id) ON DELETE SET NULL;
+DO $
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'users_avatar_asset_fk'
+      AND conrelid = 'users'::regclass
+  ) THEN
+    ALTER TABLE users
+      ADD CONSTRAINT users_avatar_asset_fk
+      FOREIGN KEY (avatar_asset_id) REFERENCES media_assets(id) ON DELETE SET NULL;
+  END IF;
 
-ALTER TABLE users
-  ADD CONSTRAINT users_cover_asset_fk
-  FOREIGN KEY (cover_asset_id) REFERENCES media_assets(id) ON DELETE SET NULL;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'users_cover_asset_fk'
+      AND conrelid = 'users'::regclass
+  ) THEN
+    ALTER TABLE users
+      ADD CONSTRAINT users_cover_asset_fk
+      FOREIGN KEY (cover_asset_id) REFERENCES media_assets(id) ON DELETE SET NULL;
+  END IF;
+END $;
 
 CREATE TABLE IF NOT EXISTS conversations (
   id TEXT PRIMARY KEY,
