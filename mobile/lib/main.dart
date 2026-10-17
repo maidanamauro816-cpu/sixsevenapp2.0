@@ -159,7 +159,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin impleme
           Expanded(child: TextField(controller: text, minLines: 1, maxLines: 1, decoration: const InputDecoration(hintText: 'Escribe un mensaje'))),
           IconButton(onPressed: () { if (text.text.trim().isNotEmpty) widget.assistant.confirm('send', text.text.trim(), '¿Querés enviar este mensaje?', 'Enviar'); }, icon: const Icon(Icons.send, color: red))])),
       ]),
-      Positioned(left: 0, right: 0, bottom: 93, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.active || widget.assistant.listening, onTap: () => widget.assistant.command(widget.assistant.active ? 'desactivate' : 'hey six seven'))))),
+      Positioned(left: 0, right: 0, bottom: 93, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.listening, onTap: () => widget.assistant.command(widget.assistant.active ? 'desactivate' : 'hey six seven'))))),
     ]));
 }
 
@@ -168,9 +168,10 @@ class AIAssistantOrb extends StatelessWidget {
   final double phase; final bool listening; final VoidCallback onTap;
   @override Widget build(BuildContext context) {
     final d = listening ? 52.0 : 42.0;
-    return GestureDetector(onTap: onTap, child: AnimatedContainer(duration: const Duration(milliseconds: 350), width: d, height: d,
+    final pulse = listening ? 1 + .04 * math.sin(phase * math.pi * 2) : 1 + .02 * math.sin(phase * math.pi * 2);
+    return Transform.scale(scale: pulse, child: GestureDetector(onTap: onTap, child: AnimatedContainer(duration: const Duration(milliseconds: 350), width: d, height: d,
       decoration: BoxDecoration(color: black.withValues(alpha: .82), shape: BoxShape.circle, border: Border.all(color: red.withValues(alpha: .9), width: 1.3), boxShadow: [BoxShadow(color: red.withValues(alpha: .9), blurRadius: listening ? 25 : 18, spreadRadius: listening ? 2 : 1)]),
-      child: ClipOval(child: CustomPaint(painter: SmokePainter(phase, listening)))));
+      child: ClipOval(child: CustomPaint(painter: SmokePainter(phase, listening))))));
   }
 }
 class SmokePainter extends CustomPainter {
