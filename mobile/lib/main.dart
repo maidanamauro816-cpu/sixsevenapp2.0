@@ -94,7 +94,7 @@ class _HomeState extends State<Home> {
       IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Premium())), icon: const Icon(Icons.workspace_premium, color: red)),
       IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Business())), icon: const Icon(Icons.storefront, color: red))]),
     body: Column(children: [
-      const Padding(padding: EdgeInsets.all(14), child: TextField(decoration: InputDecoration(prefixIcon: Icon(Icons.search, color: red), hintText: 'Buscar contactos y chats'))),
+      Padding(padding: const EdgeInsets.all(14), child: TextField(decoration: const InputDecoration(prefixIcon: Icon(Icons.search, color: red), hintText: 'Buscar contactos y chats'))),
       Expanded(child: tab == 0 ? ListView(children: [
         Tile(name: 'Conversación de prueba', detail: 'Abrí para probar el chat', icon: Icons.person, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Chat(name: 'Contacto', assistant: widget.assistant)))),
         Tile(name: 'Contactos', detail: 'Buscar personas', icon: Icons.people, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ContactSearch(query: '')))),
