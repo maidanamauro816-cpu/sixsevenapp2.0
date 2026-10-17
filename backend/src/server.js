@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   displayName: { type: String, required: true, trim: true, maxlength: 80 },
   passwordHash: { type: String, required: true, select: false },
   plan: { type: String, enum: ['free', 'premium', 'business'], default: 'free' },
+  entitlements: { type: [String], default: [] },
   businessVerified: { type: Boolean, default: false },
   orbUsage: { day: { type: String, default: '' }, count: { type: Number, default: 0 } },
 }, { timestamps: true });
@@ -165,20 +166,24 @@ app.post('/api/webhooks/revenuecat', async (req, res) => {
   const event = req.body?.event;
   const appUserId = String(event?.app_user_id || '');
   if (!mongoose.isValidObjectId(appUserId) || !event?.type) return res.status(400).json({ error: 'invalid_billing_event' });
-  const entitlements = Array.isArray(event.entitlement_ids) ? event.entitlement_ids : [];
+  const eventEntitlements = Array.isArray(event.entitlement_ids) ? event.entitlement_ids : [];
+  const eventType = String(event.type).toUpperCase();
+  const user = await User.findById(appUserId);
+  if (!user) return res.status(404).json({ error: 'billing_user_not_found' });
+  const active = new Set(user.entitlements || []);
+  if (eventType === 'EXPIRATION') {
+    for (const id of eventEntitlements) active.delete(id);
+  } else if (['INITIAL_PURCHASE', 'RENEWAL', 'PRODUCT_CHANGE', 'UNCANCELLATION', 'NON_RENEWING_PURCHASE'].includes(eventType)) {
+    for (const id of eventEntitlements) active.add(id);
+  } else {
+    return res.json({ received: true, ignored: true });
+  }
+  user.entitlements = [...active];
   const premiumId = process.env.PREMIUM_ENTITLEMENT_ID || 'sixseven_premium';
   const businessId = process.env.BUSINESS_ENTITLEMENT_ID || 'sixseven_business';
-  const inactiveTypes = new Set(['EXPIRATION', 'BILLING_ISSUE']);
-  let plan = null;
-  if (inactiveTypes.has(String(event.type).toUpperCase())) plan = 'free';
-  else if (entitlements.includes(businessId)) plan = 'business';
-  else if (entitlements.includes(premiumId)) plan = 'premium';
-  if (!plan) return res.json({ received: true, ignored: true });
-  const update = { plan };
-  // Payment does not automatically verify a business identity.
-  if (plan !== 'business') update.businessVerified = false;
-  const user = await User.findByIdAndUpdate(appUserId, update, { new: true });
-  if (!user) return res.status(404).json({ error: 'billing_user_not_found' });
+  user.plan = active.has(businessId) ? 'business' : active.has(premiumId) ? 'premium' : 'free';
+  if (user.plan !== 'business') user.businessVerified = false;
+  await user.save();
   res.json({ received: true, plan: user.plan });
 });
 
