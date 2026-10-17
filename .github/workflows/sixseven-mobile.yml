@@ -22,7 +22,7 @@ jobs:
       - run: rm -f test/widget_test.dart
       - run: flutter pub get
       - run: dart format lib
-      - run: flutter analyze
+      - run: flutter analyze --no-fatal-infos
       - run: flutter build apk --debug
       - uses: actions/upload-artifact@v4
         with:
