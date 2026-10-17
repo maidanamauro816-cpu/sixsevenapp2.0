@@ -87,37 +87,20 @@ html[data-sx-bubble="soft"] [data-sx-message-bubble="true"] { border-radius: 1.4
 html[data-sx-bubble="neon"] [data-sx-message-bubble="true"] { border-radius: 1.1rem !important; box-shadow: 0 0 12px color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 35%, transparent) !important; }
 
 
-/* SixSeven: monochrome black theme (current visual review build) */
+
+
+/* SixSeven visual direction: deep black surfaces + selective neon-red identity accents. */
 :root {
-  --ss-red: #eeeeee;
-  --ss-red-deep: #262626;
+  --ss-red: #ff1a1a;
+  --ss-red-deep: #b3101a;
   --sx-chat-bg: #000000;
   --sx-header-bg: #000000;
   --sx-theme-bg: #000000;
-  --sx-theme-accent: #eeeeee;
+  --sx-theme-accent: #ff1a1a;
 }
-html, body, #root, html[data-sx-theme] body,
+html, body, #root { background-color: #000000 !important; }
+html[data-sx-theme] body,
 html[data-sx-theme] .sx-chat-list-surface,
-html[data-sx-theme] .sx-main-header {
-  background-color: #000000 !important;
-}
-html[data-sx-theme] [class*="text-red-"],
-html[data-sx-theme] [class*="text-[#ff1a1a]"],
-html[data-sx-theme] [class*="text-[#ff2a2a]"] {
-  color: #d4d4d4 !important;
-}
-html[data-sx-theme] [class*="border-red-"] {
-  border-color: #333333 !important;
-}
-html[data-sx-theme] [class*="bg-red-"] {
-  background-color: #171717 !important;
-}
-html[data-sx-theme] [class*="ring-red-"] {
-  --tw-ring-color: #525252 !important;
-}
-html[data-sx-theme] [class*="shadow-[0_0_"],
-html[data-sx-theme] [class*="shadow-\[0_0_"],
-html[data-sx-theme] [class*="neon"] {
-  box-shadow: none !important;
-  text-shadow: none !important;
-}
+html[data-sx-theme] .sx-main-header { background-color: #000000 !important; }
+/* Avoid dark blood-red panels in the chat list; retain red only for small brand/status accents. */
+.sx-chat-list-surface { background-color: #000000 !important; }
