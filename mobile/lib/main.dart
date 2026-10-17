@@ -126,7 +126,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
           Expanded(child: TextField(controller: text, minLines: 1, maxLines: 4, decoration: const InputDecoration(hintText: 'Escribe un mensaje'))),
           IconButton(onPressed: () { if (text.text.trim().isNotEmpty) widget.assistant.confirm('send', text.text.trim(), '¿Querés enviar este mensaje?', 'Enviar'); }, icon: const Icon(Icons.send, color: red))])),
       ]),
-      Positioned(left: 0, right: 0, bottom: 83, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.active || widget.assistant.listening, onTap: () => widget.assistant.command(widget.assistant.active ? 'desactivate' : 'hey six seven'))))),
+      Positioned(left: 0, right: 0, bottom: 108, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.active || widget.assistant.listening, onTap: () => widget.assistant.command(widget.assistant.active ? 'desactivate' : 'hey six seven'))))),
     ]));
 }
 
