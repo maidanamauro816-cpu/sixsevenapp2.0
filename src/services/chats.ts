@@ -22,7 +22,7 @@ export interface ChatDoc {
   unread?: Record<string, number>;
 }
 
-export type ChatMediaType = 'image' | 'video' | 'audio' | 'gif';
+export type ChatMediaType = 'image' | 'video' | 'audio' | 'gif' | 'sticker';
 
 export interface MessageDoc {
   id: string;
@@ -33,6 +33,7 @@ export interface MessageDoc {
   mediaType?: ChatMediaType;
   mediaName?: string;
   mimeType?: string;
+  stickerData?: string;
 }
 
 export const chatIdFor = (a: string, b: string) => [a, b].sort().join('_');
@@ -114,6 +115,18 @@ export async function sendRemoteGifMessage(chatId: string, myUid: string, otherU
   });
   await updateDoc(doc(db, 'chats', chatId), {
     lastMessage: 'GIF', lastSender: myUid, updatedAt: serverTimestamp(),
+    [`unread.${otherUid}`]: increment(1),
+  });
+}
+
+/** Envía un sticker (WebP en base64, sin fondo) como mensaje. */
+export async function sendStickerMessage(chatId: string, myUid: string, otherUid: string, stickerData: string) {
+  if (!stickerData.startsWith('data:image/') || stickerData.length > 140000) throw new Error('Sticker demasiado pesado.');
+  await addDoc(collection(db, 'chats', chatId, 'messages'), {
+    senderId: myUid, text: '', mediaType: 'sticker', stickerData, createdAt: serverTimestamp(),
+  });
+  await updateDoc(doc(db, 'chats', chatId), {
+    lastMessage: 'Sticker', lastSender: myUid, updatedAt: serverTimestamp(),
     [`unread.${otherUid}`]: increment(1),
   });
 }

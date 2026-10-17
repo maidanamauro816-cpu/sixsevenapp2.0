@@ -110,3 +110,21 @@ html[data-sx-theme] .sx-chat-list-surface,
 html[data-sx-theme] .sx-main-header { background-color: #000000 !important; }
 /* Avoid dark blood-red panels in the chat list; retain red only for small brand/status accents. */
 .sx-chat-list-surface { background-color: #000000 !important; }
+
+/* Selector de emojis: oscuro, 8 columnas, como WhatsApp */
+.sx-emoji aside.EmojiPickerReact {
+  --epr-bg-color: #0b0b0b;
+  --epr-category-label-bg-color: #0b0b0bf2;
+  --epr-picker-border-color: transparent;
+  --epr-search-input-bg-color: #171717;
+  --epr-search-border-color: #262626;
+  --epr-highlight-color: #ff1a1a;
+  --epr-hover-bg-color: #1c1c1c;
+  --epr-focus-bg-color: #2a0a0c;
+  --epr-emoji-size: 28px;
+  --epr-emoji-padding: 5px;
+  --epr-category-navigation-button-size: 28px;
+  --epr-header-padding: 6px 10px;
+  border: 0 !important;
+  border-radius: 0 !important;
+}

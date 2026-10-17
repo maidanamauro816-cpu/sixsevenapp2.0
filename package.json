@@ -28,7 +28,8 @@
     "@capacitor/core": "^7.4.0",
     "@capacitor/android": "^7.4.0",
     "@capacitor-firebase/authentication": "^7.3.0",
-    "@capacitor/app": "^7.0.1"
+    "@capacitor/app": "^7.0.1",
+    "emoji-picker-react": "^4.9.0"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",

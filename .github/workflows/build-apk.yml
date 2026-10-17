@@ -29,6 +29,8 @@ jobs:
 
       - name: Compilar la web
         run: npx vite build
+        env:
+          VITE_GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
 
       - name: Crear el proyecto Android (primera vez en cada build)
         run: npx cap add android

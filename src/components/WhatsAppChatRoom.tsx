@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, Phone, Video, MoreVertical, Smile, Send, CheckCheck, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
 import { onSnapshot } from 'firebase/firestore';
 import { WhatsAppChat } from './WhatsAppChatList';
+import { MediaPicker, PickerTab } from './MediaPicker';
+import type { GifItem } from '../services/giphy';
 import { useAuth } from '../context/AuthContext';
-import { MessageDoc, markRead, messagesQuery, sendMessage, sendMediaMessage, sendRemoteGifMessage } from '../services/chats';
+import { MessageDoc, markRead, messagesQuery, sendMessage, sendMediaMessage, sendRemoteGifMessage, sendStickerMessage } from '../services/chats';
 import { playConfiguredSound } from '../utils/audio';
 
 interface WhatsAppChatRoomProps {
@@ -23,6 +25,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
   const [gifOpen, setGifOpen] = useState(false);
+  const [pickerTab, setPickerTab] = useState<PickerTab>('emoji');
   const [gifQuery, setGifQuery] = useState('six seven');
   const [gifUrl, setGifUrl] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -134,6 +137,18 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
     const audio = new Audio(message.mediaUrl); audioRef.current = audio; audio.onended = () => setPlayingAudioId(null); audio.onerror = () => { setPlayingAudioId(null); setError('No se pudo reproducir este audio.'); }; setPlayingAudioId(message.id);
     try { await audio.play(); } catch { setPlayingAudioId(null); setError('El navegador bloqueó la reproducción. Usa los controles del reproductor.'); }
   };
+  const sendGif = async (gif: GifItem) => {
+    if (!myUid) return;
+    setError(null);
+    try { await sendRemoteGifMessage(chat.id, myUid, chat.otherUid, gif.url); playConfiguredSound('message'); }
+    catch (err) { console.error('Error enviando GIF:', err); setError('No se pudo enviar el GIF. Revisá tu conexión.'); }
+  };
+  const sendSticker = async (data: string) => {
+    if (!myUid) return;
+    setError(null);
+    try { await sendStickerMessage(chat.id, myUid, chat.otherUid, data); playConfiguredSound('message'); }
+    catch (err) { console.error('Error enviando sticker:', err); setError('No se pudo enviar el sticker. Publicá las reglas nuevas de Firestore.'); }
+  };
   const addGif = async () => {
     const url = gifUrl.trim();
     if (!/^https?:\/\//i.test(url) || !/\.(gif|webp)(\?.*)?$/i.test(url)) { setError('Pegá un enlace directo que termine en .gif o .webp.'); return; }
@@ -172,7 +187,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
               <div
                 data-sx-message-bubble="true"
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug ${
-                  mine
+                  m.mediaType === 'sticker' ? 'bg-transparent !px-0' : mine
                     ? 'bg-gradient-to-br from-[#d4141c] to-[#a00d14] text-white rounded-br-md ring-1 ring-red-400/40 shadow-[0_0_12px_rgba(255,0,0,0.3)]'
                     : 'bg-neutral-900 ring-1 ring-neutral-800 text-neutral-100 rounded-bl-md'
                 }`}
@@ -182,6 +197,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
                   {m.mediaUrl && m.mediaType === 'gif' && <div className="space-y-1"><img src={m.mediaUrl} alt="GIF" loading="lazy" className="max-w-full max-h-64 rounded-lg object-contain" /><a href={m.mediaUrl} download={m.mediaName || 'sixseven.gif'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-red-200"><Download size={12}/> Descargar GIF</a></div>}
                   {m.mediaUrl && m.mediaType === 'video' && <div className="space-y-1"><video src={m.mediaUrl} controls playsInline preload="metadata" className="max-w-full max-h-64 rounded-lg"/><a href={m.mediaUrl} download={m.mediaName || 'sixseven-video'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-red-200"><Download size={12}/> Descargar video</a></div>}
                   {m.mediaUrl && m.mediaType === 'audio' && <div className="flex items-center gap-2 min-w-48 py-1"><button type="button" onClick={() => void playAudio(m)} className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shrink-0" aria-label="Reproducir o pausar audio">{playingAudioId === m.id ? <Pause size={14}/> : <Play size={14}/>}</button><div className="min-w-0 flex-1"><div className="text-xs font-semibold truncate">{m.mediaName || 'Nota de voz'}</div><audio src={m.mediaUrl} controls preload="metadata" className="w-44 h-8" onPlay={() => setPlayingAudioId(m.id)} onEnded={() => setPlayingAudioId(null)}/></div><a href={m.mediaUrl} download={m.mediaName || 'sixseven-audio'} aria-label="Descargar audio" className="text-neutral-300"><Download size={14}/></a></div>}
+                  {m.mediaType === 'sticker' && m.stickerData && <img src={m.stickerData} alt="Sticker" className="w-36 h-36 object-contain" />}
                   {m.text && <span className="whitespace-pre-wrap break-words min-w-0">{m.text}</span>}
                   <span className="flex items-center gap-0.5 text-[10px] text-white/60 justify-end mt-1">
                     {fmt(m.createdAt?.toMillis?.())}
@@ -195,21 +211,28 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
         <div ref={bottomRef} />
       </div>
 
-      {emojiOpen && <div className="mx-3 mb-2 rounded-2xl border border-red-950 bg-neutral-950 p-2 shadow-[0_0_18px_rgba(255,0,0,0.12)]"><div className="flex justify-between mb-2"><span className="text-xs font-bold">Emojis SixSeven</span><button type="button" onClick={() => setEmojiOpen(false)} aria-label="Cerrar emojis"><X size={15}/></button></div><div className="grid grid-cols-8 gap-1 max-h-36 overflow-y-auto">{emojiChoices.concat(['⚓','🌊','🎮','🎧','🎤','🚀','🖤','💜','🌹','⚡','6️⃣','7️⃣','☠️','👀','🤩','🗿']).map((emoji) => <button key={emoji} type="button" onClick={() => insertEmoji(emoji)} aria-label={`Insertar emoji ${emoji}`} className="rounded-lg p-1.5 text-xl hover:bg-neutral-800 active:scale-90">{emoji}</button>)}</div></div>}
-      {attachOpen && <div className="mx-3 mb-2 grid grid-cols-4 gap-2 rounded-2xl border border-neutral-800 bg-neutral-950 p-3"><button type="button" onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-blue-700"><ImageIcon size={18}/></span>Foto/GIF</button><button type="button" onClick={() => videoInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-purple-700"><Film size={18}/></span>Video</button><button type="button" onClick={() => audioInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-emerald-700"><Mic size={18}/></span>Audio</button><button type="button" onClick={() => { setGifOpen(true); setAttachOpen(false); }} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-red-700 font-black text-[10px]">GIF</span>Buscar GIF</button></div>}
-      {gifOpen && <div className="mx-3 mb-2 rounded-2xl border border-neutral-800 bg-neutral-950 p-3 space-y-2"><div className="flex items-center justify-between"><span className="text-xs font-bold">GIFs para SixSeven</span><button type="button" onClick={() => setGifOpen(false)} aria-label="Cerrar GIFs"><X size={15}/></button></div><div className="flex gap-2"><input value={gifQuery} onChange={(e) => setGifQuery(e.target.value)} placeholder="Buscar GIF..." className="min-w-0 flex-1 bg-neutral-900 rounded-lg px-3 py-2 text-xs outline-none border border-neutral-800"/><button type="button" onClick={() => window.open(`https://tenor.com/search/${encodeURIComponent(gifQuery)}-gifs`, '_blank', 'noopener,noreferrer')} className="px-3 rounded-lg bg-neutral-800 text-xs flex items-center gap-1"><Search size={14}/>Buscar</button></div><p className="text-[10px] text-neutral-400">Buscá en Tenor y pegá aquí un enlace directo .gif/.webp.</p><div className="flex gap-2"><input value={gifUrl} onChange={(e) => setGifUrl(e.target.value)} placeholder="Enlace directo al GIF" className="min-w-0 flex-1 bg-neutral-900 rounded-lg px-3 py-2 text-xs outline-none border border-neutral-800"/><button type="button" disabled={uploading} onClick={() => void addGif()} className="px-3 rounded-lg bg-red-600 text-xs font-bold disabled:opacity-50">Enviar</button></div></div>}
+      {attachOpen && <div className="mx-3 mb-2 grid grid-cols-4 gap-2 rounded-2xl border border-neutral-800 bg-neutral-950 p-3"><button type="button" onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-blue-700"><ImageIcon size={18}/></span>Foto/GIF</button><button type="button" onClick={() => videoInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-purple-700"><Film size={18}/></span>Video</button><button type="button" onClick={() => audioInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-emerald-700"><Mic size={18}/></span>Audio</button><button type="button" onClick={() => { (document.activeElement as HTMLElement | null)?.blur(); setPickerTab('gif'); setEmojiOpen(true); setAttachOpen(false); }} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-red-700 font-black text-[10px]">GIF</span>Buscar GIF</button></div>}
       {error && <p role="status" className="text-center text-xs text-red-400 pb-1">{error}</p>}
       {uploading && <p className="text-center text-xs text-neutral-300 pb-1 flex justify-center items-center gap-2"><LoaderCircle size={13} className="animate-spin"/>Subiendo archivo…</p>}
       {recording && <div className="bg-red-950 text-red-200 text-center text-[11px] py-1 flex items-center justify-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"/>Grabando nota de voz · {Math.floor(recordSeconds / 60)}:{String(recordSeconds % 60).padStart(2,'0')}</div>}
       <form onSubmit={handleSend} className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-1.5">
-        <button type="button" aria-label="Abrir emojis" aria-expanded={emojiOpen} onClick={() => { setEmojiOpen((open) => !open); setAttachOpen(false); setGifOpen(false); }} className="text-[#ff2a2a] p-1"><Smile size={21}/></button>
+        <button type="button" aria-label="Abrir emojis" aria-expanded={emojiOpen} onClick={() => { (document.activeElement as HTMLElement | null)?.blur(); setPickerTab('emoji'); setEmojiOpen((open) => !open); setAttachOpen(false); setGifOpen(false); }} className="text-[#ff2a2a] p-1"><Smile size={21}/></button>
         <button type="button" aria-label="Adjuntar archivo" onClick={() => { setAttachOpen((open) => !open); setEmojiOpen(false); setGifOpen(false); }} className="text-neutral-300 p-1"><Paperclip size={20}/></button>
         <input ref={fileInputRef} type="file" accept="image/*,.gif" className="hidden" onChange={(e) => void handleFile(e,'image')}/>
         <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => void handleFile(e,'video')}/>
         <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={(e) => void handleFile(e,'audio')}/>
-        <div className="flex-1 min-w-0 flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-3 py-2 focus-within:border-red-600"><input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} placeholder="Escribe un mensaje..." maxLength={2000} className="w-full min-w-0 bg-transparent text-sm text-white placeholder-neutral-500 focus:outline-none"/></div>
+        <div className="flex-1 min-w-0 flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-3 py-2 focus-within:border-red-600"><input type="text" value={inputText} onFocus={() => setEmojiOpen(false)} onChange={(e) => setInputText(e.target.value)} placeholder="Escribe un mensaje..." maxLength={2000} className="w-full min-w-0 bg-transparent text-sm text-white placeholder-neutral-500 focus:outline-none"/></div>
         {inputText.trim() ? <button type="submit" disabled={uploading} className="w-11 h-11 rounded-full bg-[#ff1a1a] text-white flex items-center justify-center shadow-[0_0_14px_rgba(255,0,0,0.6)] active:scale-90 transition disabled:opacity-60" aria-label="Enviar mensaje"><Send size={18}/></button> : <button type="button" disabled={uploading} onClick={recording ? stopRecording : () => void startRecording()} className={`w-11 h-11 rounded-full ${recording ? 'bg-white text-red-600 animate-pulse' : 'bg-[#ff1a1a] text-white'} flex items-center justify-center shadow-[0_0_14px_rgba(255,0,0,0.5)] disabled:opacity-50`} aria-label={recording ? 'Detener grabación' : 'Grabar nota de voz'} title={recording ? 'Detener grabación' : 'Grabar nota de voz'}>{recording ? <Square size={16} fill="currentColor"/> : <Mic size={18}/>}</button>}
       </form>
+      {emojiOpen && (
+        <MediaPicker
+          tab={pickerTab}
+          onTab={setPickerTab}
+          onEmoji={insertEmoji}
+          onGif={(g) => void sendGif(g)}
+          onSticker={(d) => void sendSticker(d)}
+        />
+      )}
     </div>
   );
 };
