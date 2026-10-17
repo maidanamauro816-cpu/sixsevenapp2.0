@@ -1,0 +1,24 @@
+name: SixSeven Flutter checks
+on:
+  push:
+    branches: [main, 'feature/**', 'backup/**']
+    paths: ['mobile/**', '.github/workflows/sixseven-mobile.yml']
+  pull_request:
+    branches: [main]
+    paths: ['mobile/**', '.github/workflows/sixseven-mobile.yml']
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create .
+      - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed lib
+      - run: flutter analyze
