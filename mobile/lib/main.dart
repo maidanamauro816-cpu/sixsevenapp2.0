@@ -55,12 +55,12 @@ class Assistant extends ChangeNotifier {
     } else if (p.startsWith('escribirle ')) {
       final text = p.substring('escribirle '.length).trim();
       if (currentChat != null) {
-        Chat.key.currentState!.draft(text);
+        currentChat!.draft(text);
         status = 'Mensaje preparado; falta confirmar envío';
         await tts.speak('Preparé el mensaje. Decí enviar para confirmar.');
       } else { await tts.speak('Primero abrí un chat para preparar el mensaje'); }
     } else if (p == 'enviar') {
-      final state = Chat.key.currentState;
+      final state = currentChat;
       if (state != null && state.text.text.trim().isNotEmpty) await confirm('send', state.text.text.trim(), '¿Querés enviar este mensaje?', 'Enviar');
       else await tts.speak('No hay mensaje preparado');
     } else if (p.startsWith('llamar a ')) {
@@ -76,7 +76,7 @@ class Assistant extends ChangeNotifier {
     if (context != null) yes = await showDialog<bool>(context: context, builder: (c) => AlertDialog(
       backgroundColor: const Color(0xFF171717), title: Text(question), content: action == 'send' ? Text(value) : null,
       actions: [TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancelar')), FilledButton(style: FilledButton.styleFrom(backgroundColor: red), onPressed: () => Navigator.pop(c, true), child: Text(button))])) ?? false;
-    if (yes && action == 'send') { Chat.key.currentState?.send(value); status = 'Mensaje agregado a la conversación local'; await tts.speak('Mensaje enviado'); }
+    if (yes && action == 'send') { currentChat?.send(value); status = 'Mensaje agregado a la conversación local'; await tts.speak('Mensaje enviado'); }
     else if (yes && action == 'call') { status = 'Llamada pendiente de integración'; await tts.speak('El servicio de llamadas todavía debe conectarse'); }
     else { status = 'Acción cancelada'; await tts.speak('Acción cancelada'); }
     confirming = false; notifyListeners(); _again();
