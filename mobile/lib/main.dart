@@ -31,14 +31,37 @@ class Assistant extends ChangeNotifier {
   final speech = stt.SpeechToText();
   final tts = FlutterTts();
   bool ready = false, active = false, listening = false, disposed = false, confirming = false;
-  String userName = 'Mauro', status = 'En espera de “hey six seven”';
+  String userName = 'Mauro', status = 'Tocá el orbe para hablar';
   Timer? restart;
   ActiveChat? currentChat;
   Future<void> start() async {
-    ready = await speech.initialize(onStatus: (s) { listening = s == 'listening'; notifyListeners(); if (!disposed && !confirming && s != 'listening') _again(); }, onError: (_) { listening = false; notifyListeners(); _again(); });
-    if (ready) await _listen(); else { status = 'Reconocimiento de voz no disponible'; notifyListeners(); }
+    ready = await speech.initialize(
+      onStatus: (s) { listening = s == 'listening'; notifyListeners(); },
+      onError: (_) { listening = false; status = 'No pude escuchar. Tocá el orbe para intentar otra vez.'; notifyListeners(); },
+    );
+    if (!ready) { status = 'Reconocimiento de voz no disponible'; notifyListeners(); }
   }
-  void _again() { restart?.cancel(); if (!disposed && !confirming) restart = Timer(const Duration(milliseconds: 700), _listen); }
+  Future<void> tapToTalk() async {
+    if (!ready || disposed || confirming) return;
+    if (speech.isListening) {
+      active = false;
+      await speech.stop();
+      status = 'Tocá el orbe para volver a hablar';
+      notifyListeners();
+      return;
+    }
+    restart?.cancel();
+    active = true;
+    status = 'Preparando escucha…';
+    notifyListeners();
+    await speech.stop();
+    await tts.speak('Hola ' + userName + ', ¿qué querés que haga por ti?');
+    if (!disposed && active) {
+      status = 'Te estoy escuchando…';
+      notifyListeners();
+      await _listen();
+    }
+  }
   Future<void> _listen() async {
     if (!ready || disposed || confirming || speech.isListening) return;
     try {
@@ -52,7 +75,12 @@ class Assistant extends ChangeNotifier {
         ),
         onResult: (r) {
           if (r.finalResult) {
-            unawaited(command(r.recognizedWords.toLowerCase().trim()));
+            unawaited(() async {
+              await command(r.recognizedWords.toLowerCase().trim());
+              active = false;
+              status = 'Tocá el orbe para volver a hablar';
+              notifyListeners();
+            }());
           }
         },
       );
@@ -62,7 +90,7 @@ class Assistant extends ChangeNotifier {
   }
   Future<void> command(String p) async {
     if (p.isEmpty) return;
-    if (p.contains('desactivate') || p.contains('desactívate')) { active = false; status = 'Modo pasivo'; await speech.stop(); await tts.speak('Ok ' + userName + ', me desactivo'); notifyListeners(); _again(); return; }
+    if (p.contains('desactivate') || p.contains('desactívate')) { active = false; status = 'Modo pasivo'; await speech.stop(); await tts.speak('Ok ' + userName + ', me desactivo'); notifyListeners(); return; }
     if (!active) {
       if (p.contains('hey six seven') || p.contains('hey sixseven')) { active = true; status = 'SIX SEVEN activo'; await speech.stop(); await tts.speak('Hola ' + userName + ', ¿qué necesitas que haga por ti?'); notifyListeners(); _again(); }
       return;
@@ -102,7 +130,7 @@ class Assistant extends ChangeNotifier {
     if (yes && action == 'send') { currentChat?.send(value); status = 'Mensaje agregado a la conversación local'; await tts.speak('Mensaje enviado'); }
     else if (yes && action == 'call') { status = 'Llamada pendiente de integración'; await tts.speak('El servicio de llamadas todavía debe conectarse'); }
     else { status = 'Acción cancelada'; await tts.speak('Acción cancelada'); }
-    confirming = false; notifyListeners(); _again();
+    confirming = false; active = false; notifyListeners();
   }
   @override void dispose() { disposed = true; restart?.cancel(); speech.stop(); tts.stop(); super.dispose(); }
 }
@@ -159,7 +187,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin impleme
           Expanded(child: TextField(controller: text, minLines: 1, maxLines: 1, decoration: const InputDecoration(hintText: 'Escribe un mensaje'))),
           IconButton(onPressed: () { if (text.text.trim().isNotEmpty) widget.assistant.confirm('send', text.text.trim(), '¿Querés enviar este mensaje?', 'Enviar'); }, icon: const Icon(Icons.send, color: red))])),
       ]),
-      Positioned(left: 0, right: 0, bottom: 93, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.listening, onTap: () => widget.assistant.command(widget.assistant.active ? 'desactivate' : 'hey six seven'))))),
+      Positioned(left: 0, right: 0, bottom: 93, child: Center(child: AnimatedBuilder(animation: Listenable.merge([anim, widget.assistant]), builder: (_, __) => AIAssistantOrb(phase: anim.value, listening: widget.assistant.listening, onTap: () => widget.assistant.tapToTalk())))),
     ]));
 }
 
