@@ -43,7 +43,7 @@ class Assistant extends ChangeNotifier {
     if (!ready || disposed || confirming || speech.isListening) return;
     try {
       await speech.listen(
-        options: stt.SpeechListenOptions(
+        listenOptions: stt.SpeechListenOptions(
           listenFor: const Duration(seconds: 45),
           pauseFor: const Duration(seconds: 4),
           partialResults: true,
