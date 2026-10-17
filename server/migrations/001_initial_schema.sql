@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS media_assets (
   CONSTRAINT media_content_type_length CHECK (char_length(content_type) <= 120)
 );
 
-DO $
+DO $migration$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint
@@ -48,7 +48,7 @@ BEGIN
       ADD CONSTRAINT users_cover_asset_fk
       FOREIGN KEY (cover_asset_id) REFERENCES media_assets(id) ON DELETE SET NULL;
   END IF;
-END $;
+END $migration$;
 
 CREATE TABLE IF NOT EXISTS conversations (
   id TEXT PRIMARY KEY,
