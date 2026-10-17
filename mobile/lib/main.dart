@@ -136,25 +136,213 @@ class Assistant extends ChangeNotifier {
 }
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.assistant}); final Assistant assistant;
+  const Home({super.key, required this.assistant});
+  final Assistant assistant;
   @override State<Home> createState() => _HomeState();
 }
+
 class _HomeState extends State<Home> {
   int tab = 0;
-  @override Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Row(children: [Icon(Icons.all_inclusive, color: red, size: 30), SizedBox(width: 8), Text('SIX SEVEN', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2))]), actions: [
-      IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Premium())), icon: const Icon(Icons.workspace_premium, color: red)),
-      IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Business())), icon: const Icon(Icons.storefront, color: red))]),
-    body: Column(children: [
-      Padding(padding: const EdgeInsets.all(14), child: TextField(decoration: const InputDecoration(prefixIcon: Icon(Icons.search, color: red), hintText: 'Buscar contactos y chats'))),
-      Expanded(child: tab == 0 ? ListView(children: [
-        Tile(name: 'Conversación de prueba', detail: 'Abrí para probar el chat', icon: Icons.person, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Chat(name: 'Contacto', assistant: widget.assistant)))),
-        Tile(name: 'Contactos', detail: 'Buscar personas', icon: Icons.people, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ContactSearch(query: '')))),
-        Tile(name: 'Negocios locales', detail: 'Catálogos comerciales', icon: Icons.store, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Business()))),
-        AnimatedBuilder(animation: widget.assistant, builder: (_, __) => Padding(padding: const EdgeInsets.all(16), child: Text(widget.assistant.status, style: const TextStyle(color: Colors.white54))))]) : Center(child: Text(['Chats','Llamadas','Estados','Perfil'][tab], style: const TextStyle(fontSize: 24)))),
+  String query = '';
+  final chats = const [
+    ('Sofía', 'Dale, hablamos después 👋', '14:32', Icons.person_rounded),
+    ('Tomi', '😂😂 nos vemos a la tarde', '13:58', Icons.person_rounded),
+    ('Familia ❤️', 'Mamá: Lleguen bien', '12:41', Icons.groups_rounded),
+    ('Dani', 'Te mandé las fotos 📷', 'Ayer', Icons.person_rounded),
+    ('Fede', 'Buenísimo 🔥', 'Ayer', Icons.person_rounded),
+  ];
+
+  Widget _header() => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 12, 12, 10),
+    child: Row(children: [
+      Container(
+        width: 42, height: 42,
+        decoration: BoxDecoration(
+          color: const Color(0xFF090909), shape: BoxShape.circle,
+          border: Border.all(color: red, width: 1.5),
+          boxShadow: [BoxShadow(color: red.withValues(alpha: .22), blurRadius: 12)],
+        ),
+        child: const Stack(alignment: Alignment.center, children: [
+          Icon(Icons.workspace_premium, color: red, size: 27),
+          Text('S', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+        ]),
+      ),
+      const SizedBox(width: 10),
+      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('SIX SEVEN', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900, letterSpacing: 2)),
+        Text('MENSAJERÍA • CONECTADOS', style: TextStyle(fontSize: 8, letterSpacing: 1.3, color: Colors.white38)),
+      ])),
+      IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Premium())), icon: const Icon(Icons.workspace_premium_outlined, color: red)),
+      IconButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Business())), icon: const Icon(Icons.settings_outlined, color: red)),
     ]),
-    bottomNavigationBar: NavigationBar(backgroundColor: const Color(0xFF101010), indicatorColor: const Color(0x33FF1A1A), selectedIndex: tab, onDestinationSelected: (v) => setState(() => tab = v), destinations: const [
-      NavigationDestination(icon: Icon(Icons.chat_bubble_outline), label: 'Chats'), NavigationDestination(icon: Icon(Icons.call_outlined), label: 'Llamadas'), NavigationDestination(icon: Icon(Icons.circle_outlined), label: 'Estados'), NavigationDestination(icon: Icon(Icons.person_outline), label: 'Perfil')]));
+  );
+
+  Widget _search() => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+    child: TextField(
+      onChanged: (v) => setState(() => query = v),
+      decoration: const InputDecoration(
+        prefixIcon: Icon(Icons.search, color: red, size: 20),
+        hintText: 'Buscar chats o personas...',
+        contentPadding: EdgeInsets.symmetric(vertical: 12),
+      ),
+    ),
+  );
+
+  Widget _stories() => SizedBox(
+    height: 98,
+    child: ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      scrollDirection: Axis.horizontal,
+      children: [
+        _story('Tu historia', Icons.add, isMine: true),
+        _story('Sofía', Icons.person_rounded),
+        _story('Tomi', Icons.person_rounded),
+        _story('Familia', Icons.groups_rounded),
+        _story('Dani', Icons.person_rounded),
+        _story('Fede', Icons.person_rounded),
+      ],
+    ),
+  );
+
+  Widget _story(String name, IconData icon, {bool isMine = false}) => SizedBox(
+    width: 70,
+    child: InkWell(
+      onTap: () => setState(() => tab = 2),
+      child: Column(children: [
+        Container(
+          width: 58, height: 58,
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: isMine ? const Color(0xFF8B1111) : red, width: 2),
+            boxShadow: [BoxShadow(color: red.withValues(alpha: .13), blurRadius: 10)],
+          ),
+          child: Container(
+            decoration: const BoxDecoration(color: Color(0xFF171717), shape: BoxShape.circle),
+            child: Icon(icon, color: isMine ? Colors.white : red, size: 25),
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10, color: Colors.white70)),
+      ]),
+    ),
+  );
+
+  Widget _chatList() {
+    final filtered = chats.where((c) => c.$1.toLowerCase().contains(query.toLowerCase()) || c.$2.toLowerCase().contains(query.toLowerCase())).toList();
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 90),
+      children: [
+        _header(),
+        _search(),
+        _stories(),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(18, 8, 18, 8),
+          child: Text('MENSAJES', style: TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.8)),
+        ),
+        if (filtered.isEmpty)
+          const Padding(padding: EdgeInsets.all(28), child: Text('No hay chats que coincidan con tu búsqueda.', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54))),
+        for (final c in filtered)
+          InkWell(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Chat(name: c.$1, assistant: widget.assistant))),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFF191919), width: .7))),
+              child: Row(children: [
+                Container(
+                  width: 51, height: 51,
+                  decoration: BoxDecoration(color: const Color(0xFF171717), shape: BoxShape.circle, border: Border.all(color: const Color(0xFF303030))),
+                  child: Icon(c.$4, color: red, size: 25),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(c.$1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 5),
+                  Text(c.$2, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: Colors.white54)),
+                ])),
+                const SizedBox(width: 8),
+                Text(c.$3, style: const TextStyle(fontSize: 10, color: Colors.white38)),
+              ]),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _otherTab() {
+    final titles = ['Chats', 'Llamadas', 'Estados', 'Música', 'SixSeven IA', 'Perfil'];
+    final descriptions = [
+      '', 'Las llamadas reales se conectarán en una próxima etapa.',
+      'Compartí momentos con tus contactos.', 'Tu espacio musical llegará aquí.',
+      'Tu asistente se activa cuando tocás el orbe dentro de un chat.',
+      'Tu cuenta y personalización de SIX SEVEN.',
+    ];
+    if (tab == 5) {
+      return ListView(padding: const EdgeInsets.all(18), children: [
+        _header(),
+        const SizedBox(height: 18),
+        const CircleAvatar(radius: 42, backgroundColor: Color(0xFF1B1B1B), child: Icon(Icons.person, color: red, size: 44)),
+        const SizedBox(height: 12),
+        const Center(child: Text('Mauro', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900))),
+        const Center(child: Text('Perfil de SIX SEVEN', style: TextStyle(color: Colors.white54))),
+        const SizedBox(height: 22),
+        Tile(name: 'Configuración', detail: 'Apariencia y preferencias', icon: Icons.settings_outlined, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Premium()))),
+        Tile(name: 'SIX SEVEN Premium', detail: 'Más funciones para vos', icon: Icons.workspace_premium, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Premium()))),
+        Tile(name: 'Business', detail: 'Herramientas para negocios', icon: Icons.storefront, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const Business()))),
+      ]);
+    }
+    return Center(child: Padding(padding: const EdgeInsets.all(28), child: Column(mainAxisSize: MainAxisSize.min, children: [
+      Icon([Icons.chat_bubble_outline, Icons.call_outlined, Icons.circle_outlined, Icons.music_note, Icons.auto_awesome, Icons.person_outline][tab], size: 54, color: red),
+      const SizedBox(height: 16),
+      Text(titles[tab], style: const TextStyle(fontSize: 23, fontWeight: FontWeight.w900)),
+      const SizedBox(height: 8),
+      Text(descriptions[tab], textAlign: TextAlign.center, style: const TextStyle(color: Colors.white54)),
+      if (tab == 1) ...[
+        const SizedBox(height: 18),
+        const Text('Todavía no hay llamadas', style: TextStyle(color: Colors.white38)),
+      ],
+      if (tab == 3) ...[
+        const SizedBox(height: 18),
+        const Icon(Icons.graphic_eq, color: red, size: 30),
+      ],
+      if (tab == 4) ...[
+        const SizedBox(height: 18),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(backgroundColor: red, foregroundColor: Colors.white),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Chat(name: 'SixSeven IA', assistant: widget.assistant))),
+          icon: const Icon(Icons.chat),
+          label: const Text('Abrir chat y tocar el orbe'),
+        ),
+      ],
+    ])));
+  }
+
+  @override Widget build(BuildContext context) => Scaffold(
+    body: SafeArea(child: tab == 0 ? Stack(children: [
+      _chatList(),
+      Positioned(right: 18, bottom: 18, child: FloatingActionButton(
+        backgroundColor: red, foregroundColor: Colors.white, elevation: 8,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ContactSearch(query: ''))),
+        child: const Icon(Icons.edit_rounded),
+      )),
+    ]) : _otherTab()),
+    bottomNavigationBar: NavigationBar(
+      height: 68,
+      backgroundColor: const Color(0xFF080808),
+      indicatorColor: const Color(0x33FF1A1A),
+      selectedIndex: tab,
+      onDestinationSelected: (v) => setState(() => tab = v),
+      destinations: const [
+        NavigationDestination(icon: Icon(Icons.chat_bubble_outline), label: 'Chats'),
+        NavigationDestination(icon: Icon(Icons.call_outlined), label: 'Llamadas'),
+        NavigationDestination(icon: Icon(Icons.circle_outlined), label: 'Estados'),
+        NavigationDestination(icon: Icon(Icons.music_note_outlined), label: 'Música'),
+        NavigationDestination(icon: Icon(Icons.auto_awesome), label: 'IA'),
+        NavigationDestination(icon: Icon(Icons.person_outline), label: 'Perfil'),
+      ],
+    ),
+  );
 }
 
 class Chat extends StatefulWidget {
