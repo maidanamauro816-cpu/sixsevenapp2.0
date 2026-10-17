@@ -10,6 +10,7 @@ Rutas principales:
 - `GET /api/contacts?q=...`
 - `POST /api/sixseven/use`, `GET /api/plans`
 - `POST /api/media/presign` (URL R2 prefirmada; requiere JWT)
+- `POST /api/webhooks/revenuecat` (webhook de suscripciones; requiere `REVENUECAT_WEBHOOK_SECRET`)
 - Socket.IO: `conversation:join`, `message:send`, evento `message:new`; la pertenencia se comprueba en join y envío.
 
 ## Seguridad y límites
