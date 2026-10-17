@@ -9,7 +9,8 @@ Rutas principales:
 - `GET /api/messages/:conversationId` (requiere ser miembro)
 - `GET /api/contacts?q=...`
 - `POST /api/sixseven/use`, `GET /api/plans`
-- `POST /api/media/presign` (URL R2 prefirmada; requiere JWT)
+- `POST /api/media/presign` (URL R2 prefirmada para subir; requiere JWT)
+- `POST /api/media/presign-download` (URL temporal de descarga solo para archivos del usuario autenticado)
 - `POST /api/webhooks/revenuecat` (webhook de suscripciones; requiere `REVENUECAT_WEBHOOK_SECRET`)
 - Socket.IO: `conversation:join`, `message:send`, evento `message:new`; la pertenencia se comprueba en join y envío.
 
