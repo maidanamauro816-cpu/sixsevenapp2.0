@@ -8,6 +8,8 @@ Rutas principales:
 - `POST /api/conversations`, `GET /api/conversations`
 - `GET /api/messages/:conversationId` (requiere ser miembro)
 - `GET /api/contacts?q=...`
+- `GET /api/business?city=Candelaria|Posadas` (solo perfiles verificados)
+- `GET /api/business/me`, `POST /api/business/profile`, `POST /api/business/catalog`, `POST /api/business/auto-reply` (requieren plan Business)
 - `POST /api/sixseven/use`, `GET /api/plans`
 - `POST /api/media/presign` (URL R2 prefirmada para subir; requiere JWT)
 - `POST /api/media/presign-download` (URL temporal de descarga solo para archivos del usuario autenticado)
