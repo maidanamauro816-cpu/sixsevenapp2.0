@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Camera, Search, Archive, Plus, MessageCircle, Pencil, UserRoundPlus, Images, Settings } from 'lucide-react';
+import { Camera, Search, Archive, Plus, MessageCircle, Pencil, UserRound, UserRoundPlus, Images, Settings } from 'lucide-react';
 import { useSocial } from '../context/SocialContext';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -54,9 +54,10 @@ interface WhatsAppChatListProps {
   onNewChat: () => void;
   onOpenContacts: () => void;
   onOpenSettings: () => void;
+  onOpenProfile: () => void;
 }
 
-export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onViewStories, onNewChat, onOpenContacts, onOpenSettings }) => {
+export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, onAddStory, onViewStories, onNewChat, onOpenContacts, onOpenSettings, onOpenProfile }) => {
   const { incoming, friends } = useSocial();
   const incomingCount = incoming.length;
   const { profile, user } = useAuth();
@@ -132,7 +133,10 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
               )}
             </button>
             <button onClick={onNewChat} className="p-1 cursor-pointer" title="Nuevo chat"><Pencil size={19} /></button>
-            <button onClick={onOpenSettings} className="p-1 cursor-pointer" title="Configuración"><Settings size={20} /></button>
+            <button onClick={onOpenSettings} className="p-1 cursor-pointer" title="Configuración" aria-label="Configuración"><Settings size={20} /></button>
+            <button onClick={onOpenProfile} className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[#ff1a1a] bg-neutral-950 p-0.5 shadow-[0_0_8px_rgba(255,26,26,.3)]" title="Mi perfil" aria-label="Mi perfil">
+              {myPhoto ? <img src={myPhoto} alt="" className="h-full w-full rounded-full object-cover" /> : <span className="flex h-full w-full items-center justify-center text-neutral-300"><UserRound size={16} /></span>}
+            </button>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-2 rounded-full bg-neutral-900 border border-neutral-800 px-3.5 py-2 focus-within:border-red-600">
