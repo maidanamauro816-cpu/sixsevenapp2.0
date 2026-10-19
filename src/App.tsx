@@ -155,6 +155,7 @@ function MainApp() {
             onNewChat={() => setNewChatOpen(true)}
             onOpenContacts={() => setShowContacts(true)}
             onOpenSettings={() => setShowCustomization(true)}
+            onOpenProfile={() => setShowMyProfile(true)}
           />
         )}
 
@@ -174,7 +175,7 @@ function MainApp() {
         {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} onOpenCustomization={() => setShowCustomization(true)} />}
       </main>
 
-      {/*  Bottom Navigation (4 Icons: Chats, Llamadas, Estados, Musica) */}
+      {/* Barra principal de cinco posiciones: Chats, Estados, orbe IA, Llamadas y Música. */}
       <WhatsAppBottomNav currentTab={currentTab} onChangeTab={setCurrentTab} />
 
       {/* Personalización, tienda de temas, iconos, tonos y burbujas */}
