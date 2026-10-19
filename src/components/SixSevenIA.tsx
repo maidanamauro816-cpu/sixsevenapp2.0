@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bot, Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
+import { Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
+import { SixSevenOrb } from './SixSevenOrb';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../firebase';
 import type { WhatsAppTab } from './WhatsAppBottomNav';
@@ -144,15 +145,15 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
 
   return <div className="w-full max-w-md mx-auto min-h-screen bg-black text-white flex flex-col pb-24">
     <header className="sticky top-0 z-10 bg-black border-b border-neutral-900 px-4 py-4 flex items-center gap-3">
-      <div className="w-11 h-11 rounded-full bg-black border border-[#ff1a1a] flex items-center justify-center shadow-[0_0_18px_rgba(255,26,26,.45)]"><Bot size={24} className="text-[#ff1a1a]"/></div>
+      <div className="flex h-12 w-12 items-center justify-center"><SixSevenOrb size={44} listening={listening} /></div>
       <div><h1 className="font-bold text-base">SixSeven IA</h1><p className="text-[11px] text-neutral-400">Asistente por texto y voz</p></div>
       <Sparkles size={19} className="ml-auto text-[#ff1a1a]"/>
       <button onClick={() => { setVoiceEnabled((value) => !value); if (voiceEnabled && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }} aria-label={voiceEnabled ? 'Desactivar voz' : 'Activar voz'} className="p-2 text-neutral-300">{voiceEnabled ? <Volume2 size={19}/> : <VolumeX size={19}/>}</button>
     </header>
     <div ref={scrollRef} className="flex-1 px-4 py-5 space-y-3 overflow-y-auto">
       {messages.length === 0 && <div className="mt-12 text-center px-5">
-        <div className="w-20 h-20 mx-auto rounded-full bg-black border border-[#ff1a1a] flex items-center justify-center shadow-[0_0_28px_rgba(255,26,26,.35)]"><Bot size={42} className="text-[#ff1a1a]"/></div>
-        <h2 className="mt-5 text-xl font-bold">Hola, soy SixSeven IA</h2>
+        <div className="mx-auto flex h-24 w-24 items-center justify-center"><SixSevenOrb size={84} listening={listening} /></div>
+        <h2 className="mt-5 text-xl font-bold">Hola Mauro, ¿qué querés que haga por ti?</h2>
         <p className="mt-2 text-sm text-neutral-400">Preguntame lo que necesites o tocá el micrófono y hablame.</p>
         <p className="mt-3 text-xs text-neutral-500">También podés decir: “abrir chats”, “abrir estados”, “abrir música” o “abrir perfil”.</p>
       </div>}
