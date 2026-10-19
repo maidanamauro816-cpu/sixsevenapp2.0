@@ -208,7 +208,7 @@ function MainApp() {
       )}
 
       {/* Chat abierto (pantalla completa) */}
-      {activeChat && <WhatsAppChatRoom chat={activeChat} onBack={() => setActiveChat(null)} />}
+      {activeChat && <WhatsAppChatRoom chat={activeChat} onBack={() => setActiveChat(null)} onOpenAssistant={() => { setActiveChat(null); setCurrentTab('ia'); }} />}
 
       {/* Story Creator Modal */}
       {creatingStory && (
