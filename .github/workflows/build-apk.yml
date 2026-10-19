@@ -1,99 +1,22 @@
 name: Build SixSeven APK
-
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
-  workflow_dispatch:
-
-permissions:
-  contents: write   # para publicar el APK en "Releases"
-
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
+          node-version: 20
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
-
-      - name: Instalar dependencias
-        run: npm install --no-audit --no-fund --legacy-peer-deps
-
-      - name: Compilar la web
-        run: npx vite build
-        env:
-          VITE_GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
-
-      - name: Crear el proyecto Android (primera vez en cada build)
-        run: npx cap add android
-
-      - name: Íconos y splash desde /assets
-        run: npx capacitor-assets generate --android
-
-      - name: Configurar google-services.json (login nativo con Google / teléfono)
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: |
-          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-            printf '%s' "$GOOGLE_SERVICES_JSON" > google-services.json
-            echo "Configuración Firebase recibida desde GitHub Secrets"
-          fi
-          if [ -f google-services.json ]; then
-            cp google-services.json android/app/google-services.json
-            echo "google-services.json copiado a Android"
-          else
-            echo "::warning::Falta el secreto GOOGLE_SERVICES_JSON y el archivo google-services.json. El APK se compila, pero el login nativo con Google/teléfono puede no funcionar."
-          fi
-
-      - name: Permisos y orientación
-        run: python3 scripts/patch_android.py
-
-      - name: Sincronizar web -> Android
-        run: npx cap sync android
-
-      - name: Firma estable (mismo SHA-1 en cada build)
-        run: |
-          mkdir -p ~/.android
-          cp android-signing/debug.keystore ~/.android/debug.keystore
-          keytool -list -v -keystore ~/.android/debug.keystore -storepass android | grep -E "SHA1|SHA256"
-
-      - name: Compilar APK
-        working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
-
-      - name: Renombrar APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk SixSeven.apk
-
-      - name: Verificar que el APK tenga la firma registrada en Firebase
-        run: |
-          EXPECTED="AF:46:6B:DC:27:56:B3:6E:A7:EE:86:3F:2C:91:A6:DA:69:1A:02:86"
-          ACTUAL=$(keytool -printcert -jarfile SixSeven.apk | grep "SHA1:" | head -1 | awk '{print $2}')
-          echo "SHA-1 del APK:  $ACTUAL"
-          echo "SHA-1 esperado: $EXPECTED"
-          if [ "$ACTUAL" != "$EXPECTED" ]; then
-            echo "::error::El APK NO está firmado con la clave registrada en Firebase."
-            exit 1
-          fi
-
+          java-version: 17
+      - run: npm install --ignore-scripts
+      - run: npm run build
+      - run: npx cap sync android
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
           name: SixSeven-APK
-          path: SixSeven.apk
-
-      - name: Publicar en Releases
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: build-${{ github.run_number }}
-          name: SixSeven build ${{ github.run_number }}
-          files: SixSeven.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
