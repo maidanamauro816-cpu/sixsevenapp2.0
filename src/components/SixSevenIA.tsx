@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bot, Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
+import { Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
+import { AIAssistantOrb } from './AIAssistantOrb';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../firebase';
 import type { WhatsAppTab } from './WhatsAppBottomNav';
@@ -144,19 +145,19 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
 
   return <div className="w-full max-w-md mx-auto min-h-screen bg-black text-white flex flex-col pb-24">
     <header className="sticky top-0 z-10 bg-black border-b border-neutral-900 px-4 py-4 flex items-center gap-3">
-      <div className="w-11 h-11 rounded-full bg-black border border-[#ff1a1a] flex items-center justify-center shadow-[0_0_18px_rgba(255,26,26,.45)]"><Bot size={24} className="text-[#ff1a1a]"/></div>
+      <AIAssistantOrb compact onClick={startListening} />
       <div><h1 className="font-bold text-base">SixSeven IA</h1><p className="text-[11px] text-neutral-400">Asistente por texto y voz</p></div>
       <Sparkles size={19} className="ml-auto text-[#ff1a1a]"/>
       <button onClick={() => { setVoiceEnabled((value) => !value); if (voiceEnabled && 'speechSynthesis' in window) window.speechSynthesis.cancel(); }} aria-label={voiceEnabled ? 'Desactivar voz' : 'Activar voz'} className="p-2 text-neutral-300">{voiceEnabled ? <Volume2 size={19}/> : <VolumeX size={19}/>}</button>
     </header>
     <div ref={scrollRef} className="flex-1 px-4 py-5 space-y-3 overflow-y-auto">
       {messages.length === 0 && <div className="mt-12 text-center px-5">
-        <div className="w-20 h-20 mx-auto rounded-full bg-black border border-[#ff1a1a] flex items-center justify-center shadow-[0_0_28px_rgba(255,26,26,.35)]"><Bot size={42} className="text-[#ff1a1a]"/></div>
+        <div className="flex justify-center"><AIAssistantOrb onClick={startListening} /></div>
         <h2 className="mt-5 text-xl font-bold">Hola, soy SixSeven IA</h2>
         <p className="mt-2 text-sm text-neutral-400">Preguntame lo que necesites o tocá el micrófono y hablame.</p>
         <p className="mt-3 text-xs text-neutral-500">También podés decir: “abrir chats”, “abrir estados”, “abrir música” o “abrir perfil”.</p>
       </div>}
-      {messages.map((item, index) => <div key={index} className={'max-w-[88%] rounded-2xl px-3.5 py-3 text-sm whitespace-pre-wrap ' + (item.role === 'user' ? 'ml-auto bg-[#b91020] text-white' : 'mr-auto bg-neutral-900 border border-neutral-800 text-neutral-200')}>{item.text}</div>)}
+      {messages.map((item, index) => <div key={index} className={'max-w-[88%] rounded-2xl px-3.5 py-3 text-sm whitespace-pre-wrap ' + (item.role === 'user' ? 'ml-auto bg-neutral-900 border border-[#ff1a1a]/40 text-white' : 'mr-auto bg-neutral-900 border border-neutral-800 text-neutral-200')}>{item.text}</div>)}
       {loading && <div className="mr-auto rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-3 text-sm text-neutral-400 flex items-center gap-2"><LoaderCircle size={15} className="animate-spin"/> Pensando…</div>}
     </div>
     {error && <p role="alert" className="mx-3 mb-2 rounded-lg border border-red-900 bg-red-950/40 p-2 text-xs text-red-200">{error}</p>}
