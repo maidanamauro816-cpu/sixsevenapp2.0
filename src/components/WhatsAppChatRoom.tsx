@@ -7,16 +7,18 @@ import type { GifItem } from '../services/giphy';
 import { useAuth } from '../context/AuthContext';
 import { MessageDoc, markRead, messagesQuery, sendMessage, sendMediaMessage, sendRemoteGifMessage, sendStickerMessage } from '../services/chats';
 import { playConfiguredSound } from '../utils/audio';
+import { AIAssistantOrb } from './AIAssistantOrb';
 
 interface WhatsAppChatRoomProps {
   chat: WhatsAppChat;
   onBack: () => void;
+  onOpenAssistant?: () => void;
 }
 
 const fmt = (ms?: number) =>
   ms ? new Date(ms).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '';
 
-export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack }) => {
+export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack, onOpenAssistant }) => {
   const { profile } = useAuth();
   const myUid = profile?.uid || '';
   const [messages, setMessages] = useState<MessageDoc[]>([]);
@@ -211,6 +213,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
         <div ref={bottomRef} />
       </div>
 
+      {onOpenAssistant && <div className="absolute bottom-[82px] left-1/2 z-30 -translate-x-1/2"><AIAssistantOrb onClick={onOpenAssistant} compact /></div>}
       {attachOpen && <div className="mx-3 mb-2 grid grid-cols-4 gap-2 rounded-2xl border border-neutral-800 bg-neutral-950 p-3"><button type="button" onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-blue-700"><ImageIcon size={18}/></span>Foto/GIF</button><button type="button" onClick={() => videoInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-purple-700"><Film size={18}/></span>Video</button><button type="button" onClick={() => audioInputRef.current?.click()} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-emerald-700"><Mic size={18}/></span>Audio</button><button type="button" onClick={() => { (document.activeElement as HTMLElement | null)?.blur(); setPickerTab('gif'); setEmojiOpen(true); setAttachOpen(false); }} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-neutral-900 text-xs"><span className="p-2 rounded-full bg-red-700 font-black text-[10px]">GIF</span>Buscar GIF</button></div>}
       {error && <p role="status" className="text-center text-xs text-red-400 pb-1">{error}</p>}
       {uploading && <p className="text-center text-xs text-neutral-300 pb-1 flex justify-center items-center gap-2"><LoaderCircle size={13} className="animate-spin"/>Subiendo archivo…</p>}
