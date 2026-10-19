@@ -128,3 +128,26 @@ html[data-sx-theme] .sx-main-header { background-color: #000000 !important; }
   border: 0 !important;
   border-radius: 0 !important;
 }
+
+
+/* Orbe ocular SixSeven: brillo sutil, mirada autónoma y curva central del dock. */
+.sx-sixseven-orb { display: block; filter: drop-shadow(0 0 4px rgba(255,26,26,.38)); }
+.sx-orb-gaze { transform-box: fill-box; transform-origin: center; animation: sx-orb-gaze 7.2s ease-in-out infinite; }
+.sx-orb-listening .sx-orb-gaze { animation-duration: 1.6s; }
+.sx-orb-listening { filter: drop-shadow(0 0 9px rgba(255,26,26,.85)); }
+@keyframes sx-orb-gaze {
+  0%, 12%, 100% { transform: translate(0, 0); }
+  20%, 30% { transform: translate(5px, -1px); }
+  40%, 50% { transform: translate(-4px, 1px); }
+  60%, 70% { transform: translate(0, 4px); }
+  80%, 90% { transform: translate(1px, -4px); }
+}
+.sx-bottom-nav { min-height: calc(58px + env(safe-area-inset-bottom, 12px)); border-top: 0; padding-top: 0; box-shadow: 0 -8px 22px rgba(0,0,0,.72); }
+.sx-bottom-nav-line { top: -1px; overflow: visible; }
+.sx-orb-nav-button { background: transparent; border: 0; cursor: pointer; }
+.sx-orb-nav-halo { border: 1px solid rgba(255,26,26,.58); box-shadow: 0 0 16px rgba(255,26,26,.22), inset 0 0 12px rgba(255,26,26,.06); }
+.sx-orb-nav-active { box-shadow: 0 0 21px rgba(255,26,26,.48), inset 0 0 14px rgba(255,26,26,.1); }
+@media (prefers-reduced-motion: reduce) {
+  .sx-orb-gaze { animation: none; }
+  .sx-orb-nav-button { transition: none; }
+}
