@@ -1,22 +1,15 @@
-name: Build SixSeven Android APK
+name: Legacy manual build — use Build SixSeven Android APK
+
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/themes/**'
-      - 'cloudflare/backblaze-worker/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'capacitor.config.ts'
-      - '.github/workflows/build-android.yml'
+
 permissions:
   contents: read
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,20 +21,41 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: Install web dependencies
-        run: npm ci --no-audit --no-fund
-      - name: Build web application
+        run: npm ci --no-audit --no-fund --legacy-peer-deps
+      - name: Build web application with Gemini Worker URL
         run: npm run build
-      - name: Generate native Android project if not tracked yet
-        shell: bash
+        env:
+          VITE_BACKBLAZE_WORKER_URL: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev
+      - name: Generate Android project and assets
         run: |
-          if [ ! -d android ]; then npx cap add android; fi
-          npx cap sync android
+          npx cap add android
+          npx capacitor-assets generate --android
+      - name: Configure Firebase Android file
+        run: |
+          test -s google-services.json || { echo "::error::google-services.json is missing."; exit 1; }
+          mkdir -p android/app
+          cp google-services.json android/app/google-services.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          cfg = json.loads(Path("android/app/google-services.json").read_text())
+          assert cfg.get("project_info", {}).get("project_id") == "sixseven-c86ac"
+          assert any(c.get("client_info", {}).get("android_client_info", {}).get("package_name") == "com.sixseven.app" for c in cfg.get("client", []))
+          PY
+      - name: Apply SixSeven Android permissions and fixed signing
+        run: python3 scripts/patch_android.py
+      - name: Sync Capacitor plugins and web assets
+        run: npx cap sync android
       - name: Build debug APK
         working-directory: android
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Verify APK
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: sixseven-debug-apk
+          name: SixSeven-Android-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
