@@ -3,6 +3,7 @@ import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
 import { Camera, Pencil, Plus, X, Music2, LoaderCircle, Trash2, MoreVertical, Search } from 'lucide-react';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
+import { useSocial } from '../context/SocialContext';
 import { useBackHandler } from '../backStack';
 
 type Story = { id: string; uid: string; name: string; avatar: string; text: string; sticker: string; filter: string; songTitle: string; mediaUrl?: string; mediaType?: 'image' | 'video' | ''; audience?: 'contacts' | 'except' | 'only'; audienceList?: string[]; createdAt?: { toMillis?: () => number } | null; expiresAt?: { toMillis?: () => number } | null };
@@ -45,6 +46,7 @@ const STEP_MS = 5000;
 
 export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
   const { user, profile } = useAuth();
+  const { friends } = useSocial();
   const [stories, setStories] = useState<Story[]>([]);
   const [viewer, setViewer] = useState<{ group: Group; index: number } | null>(null);
   const [progress, setProgress] = useState(0);
@@ -69,15 +71,16 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
           const audience = story.audience || 'contacts';
           const list = (story.audienceList || []).map((entry) => String(entry).replace(/^@/, '').toLowerCase());
           const isIncluded = list.includes(currentUsername) || list.includes(uid);
-          if (audience === 'only') return isIncluded;
-          if (audience === 'except') return !isIncluded;
-          return true;
+          const isContact = friends.some((friend) => friend.users.includes(story.uid));
+          if (audience === 'only') return isContact && isIncluded;
+          if (audience === 'except') return isContact && !isIncluded;
+          return isContact;
         })
         .sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
       setStories(active);
       setLoading(false);
     }, (error) => { console.error('No se pudieron cargar los estados:', error); setLoading(false); });
-  }, [uid]);
+  }, [uid, profile?.username, friends]);
 
   const groups: Group[] = [];
   stories.forEach((story) => {
