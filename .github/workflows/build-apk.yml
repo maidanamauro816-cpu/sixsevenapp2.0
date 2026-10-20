@@ -1,20 +1,27 @@
 name: Build SixSeven APK
-on: [push]
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '21'
 
       - uses: android-actions/setup-android@v3
         with:
@@ -24,18 +31,49 @@ jobs:
       - name: Install Android SDK packages
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-      - run: npm ci --include=optional --legacy-peer-deps
+      - name: Install dependencies
+        run: npm ci --include=optional --legacy-peer-deps
 
       - name: Build web app
         run: npm run build
         env:
           VITE_BACKBLAZE_WORKER_URL: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev
 
-      - run: npx cap sync android
+      - name: Generate Android project
+        run: npx cap add android
 
-      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - name: Generate launcher icon and splash screen
+        run: npx capacitor-assets generate --android
+
+      - name: Configure Firebase Android file
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > google-services.json
+            cp google-services.json android/app/google-services.json
+          elif [ -f google-services.json ]; then
+            cp google-services.json android/app/google-services.json
+          else
+            echo "::warning::GOOGLE_SERVICES_JSON is not configured; native Firebase sign-in may need setup."
+          fi
+
+      - name: Apply SixSeven native permissions, icon aliases and signing
+        run: python3 scripts/patch_android.py
+
+      - name: Sync Capacitor web assets and plugins
+        run: npx cap sync android
+
+      - name: Build Android APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+
+      - name: Verify APK exists
+        run: test -s android/app/build/outputs/apk/debug/app-debug.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: SixSeven-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
