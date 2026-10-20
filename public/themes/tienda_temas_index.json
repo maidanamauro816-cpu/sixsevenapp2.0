@@ -1,5 +1,5 @@
 {
-  "store_version": "2.0",
+  "store_version": "2.1",
   "all_free": true,
   "last_updated": "2026-10-20",
   "themes": [
@@ -512,6 +512,471 @@
         "estado_rect_width": 72,
         "estado_rect_height": 92,
         "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "sixseven-neon-core",
+      "name": "SixSeven Neón Core",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Neón rojo y negro, con tarjetas oscuras y estados en formato cuadrado.",
+      "preview_image": "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=900",
+      "colors": {
+        "primary": "#ff2438",
+        "primary_dark": "#ff2438",
+        "scaffold_bg": "#050505",
+        "card_bg": "#1a080b",
+        "bubble_me": "#42121b",
+        "bubble_other": "#1a080b",
+        "bottom_nav_bg": "#050505",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "ocean-depths",
+      "name": "Ocean Depths",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Océano profundo con fondos marinos y burbujas cian.",
+      "preview_image": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=900",
+      "colors": {
+        "primary": "#22d3ee",
+        "primary_dark": "#22d3ee",
+        "scaffold_bg": "#03151d",
+        "card_bg": "#0a2833",
+        "bubble_me": "#103e4a",
+        "bubble_other": "#0a2833",
+        "bottom_nav_bg": "#03151d",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 28,
+        "card_radius": 18,
+        "estado_shape": "pill",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "forest-dream",
+      "name": "Forest Dream",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Verde bosque, naturaleza y detalles suaves.",
+      "preview_image": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=900",
+      "colors": {
+        "primary": "#52d273",
+        "primary_dark": "#52d273",
+        "scaffold_bg": "#07150d",
+        "card_bg": "#122c1b",
+        "bubble_me": "#1c472c",
+        "bubble_other": "#122c1b",
+        "bottom_nav_bg": "#07150d",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "galaxy-purple",
+      "name": "Galaxy Purple",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Galaxia violeta con acentos brillantes y fondo espacial.",
+      "preview_image": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=900",
+      "colors": {
+        "primary": "#b56cff",
+        "primary_dark": "#b56cff",
+        "scaffold_bg": "#10071c",
+        "card_bg": "#24123a",
+        "bubble_me": "#392052",
+        "bubble_other": "#24123a",
+        "bottom_nav_bg": "#10071c",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 24,
+        "estado_shape": "squircle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "sunset-vibes",
+      "name": "Sunset Vibes",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Atardecer naranja y coral, cálido y luminoso.",
+      "preview_image": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=900",
+      "colors": {
+        "primary": "#ff704f",
+        "primary_dark": "#ff704f",
+        "scaffold_bg": "#200b12",
+        "card_bg": "#391a25",
+        "bubble_me": "#51282a",
+        "bubble_other": "#391a25",
+        "bottom_nav_bg": "#200b12",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 28,
+        "card_radius": 18,
+        "estado_shape": "pill",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "ice-crystal",
+      "name": "Ice Crystal",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Azul hielo, cristal y tonos fríos.",
+      "preview_image": "https://images.unsplash.com/photo-1517299321609-52687d1bc55a?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1517299321609-52687d1bc55a?w=900",
+      "colors": {
+        "primary": "#91e7ff",
+        "primary_dark": "#91e7ff",
+        "scaffold_bg": "#07131e",
+        "card_bg": "#122a3b",
+        "bubble_me": "#1b4053",
+        "bubble_other": "#122a3b",
+        "bottom_nav_bg": "#07131e",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "gold-lux",
+      "name": "Gold Lux",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Negro elegante con oro y detalles premium visuales.",
+      "preview_image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=900",
+      "colors": {
+        "primary": "#f5c451",
+        "primary_dark": "#f5c451",
+        "scaffold_bg": "#100d07",
+        "card_bg": "#2a2111",
+        "bubble_me": "#473619",
+        "bubble_other": "#2a2111",
+        "bottom_nav_bg": "#100d07",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 24,
+        "estado_shape": "squircle",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "pink-kawaii",
+      "name": "Pink Kawaii",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Rosa pastel, corazones y una interfaz dulce.",
+      "preview_image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900",
+      "colors": {
+        "primary": "#ff62bd",
+        "primary_dark": "#ff62bd",
+        "scaffold_bg": "#220c1b",
+        "card_bg": "#3d1831",
+        "bubble_me": "#5a2446",
+        "bubble_other": "#3d1831",
+        "bottom_nav_bg": "#220c1b",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 28,
+        "card_radius": 18,
+        "estado_shape": "pill",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "minimal-paper",
+      "name": "Minimal Paper",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Diseño limpio, claro, con tarjetas de bordes suaves.",
+      "preview_image": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900",
+      "colors": {
+        "primary": "#414141",
+        "primary_dark": "#414141",
+        "scaffold_bg": "#f5f3ef",
+        "card_bg": "#ffffff",
+        "bubble_me": "#e6e2db",
+        "bubble_other": "#ffffff",
+        "bottom_nav_bg": "#f5f3ef",
+        "text_primary": "#171717"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "matrix-code",
+      "name": "Matrix Code",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Negro con verde terminal y estados rectangulares.",
+      "preview_image": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=900",
+      "colors": {
+        "primary": "#7dff4f",
+        "primary_dark": "#7dff4f",
+        "scaffold_bg": "#020805",
+        "card_bg": "#0b1a0e",
+        "bubble_me": "#12301a",
+        "bubble_other": "#0b1a0e",
+        "bottom_nav_bg": "#020805",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 8,
+        "card_radius": 18,
+        "estado_shape": "sharp_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 8,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "anime-sakura",
+      "name": "Anime Sakura",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Rosa sakura con contraste violeta y estética anime.",
+      "preview_image": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=900",
+      "colors": {
+        "primary": "#ff8fc7",
+        "primary_dark": "#ff8fc7",
+        "scaffold_bg": "#1b1022",
+        "card_bg": "#32203c",
+        "bubble_me": "#4b2b50",
+        "bubble_other": "#32203c",
+        "bottom_nav_bg": "#1b1022",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 24,
+        "estado_shape": "squircle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "deep-space",
+      "name": "Deep Space",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Azul noche, estrellas y burbujas índigo.",
+      "preview_image": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=900",
+      "colors": {
+        "primary": "#648cff",
+        "primary_dark": "#648cff",
+        "scaffold_bg": "#070b20",
+        "card_bg": "#121a3b",
+        "bubble_me": "#202a52",
+        "bubble_other": "#121a3b",
+        "bottom_nav_bg": "#070b20",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "desert-dune",
+      "name": "Desert Dune",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Arena y terracota, inspirado en paisajes cálidos.",
+      "preview_image": "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=900",
+      "colors": {
+        "primary": "#b56b43",
+        "primary_dark": "#b56b43",
+        "scaffold_bg": "#21160f",
+        "card_bg": "#38271c",
+        "bubble_me": "#5a3b29",
+        "bubble_other": "#38271c",
+        "bottom_nav_bg": "#21160f",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 28,
+        "card_radius": 18,
+        "estado_shape": "pill",
+        "is_rectangular_estados": false,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "classic"
+      }
+    },
+    {
+      "id": "lavender-cloud",
+      "name": "Lavender Cloud",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Lavanda suave con tarjetas claras y burbujas violeta.",
+      "preview_image": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900",
+      "colors": {
+        "primary": "#9b7ede",
+        "primary_dark": "#9b7ede",
+        "scaffold_bg": "#f3efff",
+        "card_bg": "#ffffff",
+        "bubble_me": "#e5dcff",
+        "bubble_other": "#ffffff",
+        "bottom_nav_bg": "#f3efff",
+        "text_primary": "#171717"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 24,
+        "estado_shape": "squircle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 18,
+        "layout_style": "square-status"
+      }
+    },
+    {
+      "id": "retro-wave",
+      "name": "Retro Wave",
+      "version": "1.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Violeta y fucsia neón con ambiente retro futurista.",
+      "preview_image": "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=900",
+      "wallpaper_url": "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=900",
+      "colors": {
+        "primary": "#ff4bd8",
+        "primary_dark": "#ff4bd8",
+        "scaffold_bg": "#12071e",
+        "card_bg": "#2a1038",
+        "bubble_me": "#42164d",
+        "bubble_other": "#2a1038",
+        "bottom_nav_bg": "#12071e",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 8,
+        "card_radius": 18,
+        "estado_shape": "sharp_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 8,
+        "layout_style": "square-status"
       }
     }
   ]
