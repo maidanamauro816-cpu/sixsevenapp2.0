@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import { Camera, Heart, MessageCircle, Send, Plus, X, LoaderCircle } from 'lucide-react';
 import { db } from '../firebase';
+import { uploadToBackblaze } from '../services/backblazeUpload';
 import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../backStack';
 
@@ -22,14 +23,14 @@ const timeAgo = (value?: { toMillis?: () => number } | null) => {
   return mins < 1 ? 'Ahora' : mins < 60 ? `Hace ${mins} min` : `Hace ${Math.floor(mins / 60)} h`;
 };
 
-export const InstagramStoriesView: React.FC<{ onCreateStatus: () => void }> = ({ onCreateStatus }) => {
+export const InstagramStoriesView: React.FC = () => {
   const { user, profile } = useAuth();
   const uid = profile?.uid || user?.uid || '';
   const name = profile?.displayName || user?.displayName || 'Usuario';
   const avatar = profile?.photoURL || user?.photoURL || '';
   const [stories, setStories] = useState<InstagramStory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [draft, setDraft] = useState('');
+  const [draft, setDraft] = useState('');\n  const [mediaFile, setMediaFile] = useState<File | null>(null);\n  const [mediaPreview, setMediaPreview] = useState('');\n  const [mediaType, setMediaType] = useState<'image' | 'video' | ''>('');\n  const composerRef = useRef<HTMLDivElement | null>(null);\n  const scrollToComposer = () => composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   const [publishing, setPublishing] = useState(false);
   const [viewer, setViewer] = useState<InstagramStory | null>(null);
   const [liked, setLiked] = useState<Record<string, boolean>>({});
@@ -52,7 +53,7 @@ export const InstagramStoriesView: React.FC<{ onCreateStatus: () => void }> = ({
   }, [uid]);
 
   const publish = async () => {
-    if (!uid || !draft.trim() || publishing) return;
+    if (!uid || (!draft.trim() && !mediaFile) || publishing) return;
     setPublishing(true); setNotice('');
     try {
       await addDoc(collection(db, 'instagramStories'), {
@@ -93,14 +94,14 @@ export const InstagramStoriesView: React.FC<{ onCreateStatus: () => void }> = ({
     <header className="sticky top-0 z-20 border-b border-neutral-900 bg-black/95 px-4 pt-4 pb-3 backdrop-blur">
       <div className="flex items-center justify-between">
         <div><p className="text-[10px] font-black tracking-[.25em] text-red-500">SIXSEVEN</p><h1 className="text-xl font-black">Historias</h1></div>
-        <button onClick={onCreateStatus} className="flex items-center gap-2 rounded-full border border-red-900 bg-red-950/40 px-3 py-2 text-xs font-bold text-red-200"><Camera size={16}/> Crear</button>
+        <button onClick={scrollToComposer} className="flex items-center gap-2 rounded-full border border-red-900 bg-red-950/40 px-3 py-2 text-xs font-bold text-red-200"><Camera size={16}/> Crear</button>
       </div>
     </header>
 
     <div className="border-b border-neutral-900 px-3 py-4">
       <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-bold">Historias recientes</h2><span className="text-[10px] text-neutral-500">Duran 24 horas</span></div>
       <div className="flex gap-3 overflow-x-auto pb-1 no-scrollbar">
-        <button onClick={onCreateStatus} className="w-[76px] shrink-0 text-center">
+        <button onClick={scrollToComposer} className="w-[76px] shrink-0 text-center">
           <span className="relative mx-auto flex h-[68px] w-[68px] items-center justify-center rounded-full border-2 border-dashed border-red-500 bg-neutral-950 text-red-400"><img src={avatar || undefined} alt="" className="absolute inset-1 h-[58px] w-[58px] rounded-full object-cover" /> <span className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black bg-red-600 text-white"><Plus size={14}/></span></span>
           <span className="mt-1 block truncate text-[11px]">Tu historia</span>
         </button>
@@ -125,7 +126,7 @@ export const InstagramStoriesView: React.FC<{ onCreateStatus: () => void }> = ({
       {!loading && stories.length === 0 && <p className="px-8 py-8 text-center text-xs text-neutral-500">Todavía no hay historias. Publicá la primera desde arriba.</p>}
       {stories.map((s) => <article key={s.id} className="px-4 py-4">
         <button onClick={() => setViewer(s)} className="flex w-full items-center gap-3 text-left"><span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-red-600 bg-neutral-900">{s.avatar ? <img src={s.avatar} alt="" className="h-full w-full object-cover"/> : s.name.slice(0,1)}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{s.name}</span><span className="block text-[11px] text-neutral-500">{timeAgo(s.createdAt)}</span></span></button>
-        <button onClick={() => setViewer(s)} className="mt-3 block w-full rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 via-black to-red-950/30 p-6 text-left"><p className="whitespace-pre-wrap text-base leading-relaxed">{s.text}</p></button>
+        <button onClick={() => setViewer(s)} className="mt-3 block w-full overflow-hidden rounded-2xl border border-neutral-800 bg-gradient-to-br from-neutral-900 via-black to-red-950/30 text-left">{s.mediaUrl && (s.mediaType === 'video' ? <video src={s.mediaUrl} playsInline controls className="max-h-[55vh] w-full bg-black object-contain"/> : <img src={s.mediaUrl} alt="Historia" className="max-h-[55vh] w-full bg-black object-contain"/>)}{s.text && <p className="whitespace-pre-wrap p-6 text-base leading-relaxed">{s.text}</p>}</button>
         <div className="mt-3 flex items-center gap-5">
           <button onClick={() => setLiked((prev) => ({...prev,[s.id]:!prev[s.id]}))} className={'flex items-center gap-1.5 text-xs '+(liked[s.id]?'text-red-500':'text-neutral-400')}><Heart size={19} fill={liked[s.id]?'currentColor':'none'}/>{(s.likesCount || 0) + (liked[s.id] ? 1 : 0)} Me gusta</button>
           <button onClick={() => {setCommentFor(s.id);setCommentDraft('')}} className="flex items-center gap-1.5 text-xs text-neutral-400"><MessageCircle size={19}/> Comentar{localComments[s.id]?.length ? ` · ${localComments[s.id].length}` : ''}</button>
@@ -138,7 +139,7 @@ export const InstagramStoriesView: React.FC<{ onCreateStatus: () => void }> = ({
 
     {viewer && <div className="fixed inset-0 z-[75] flex flex-col bg-black text-white">
       <header className="flex items-center gap-3 px-4 pt-safe py-4"><button onClick={()=>setViewer(null)} aria-label="Cerrar historia" className="rounded-full p-2"><X size={22}/></button><span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-neutral-900">{viewer.avatar ? <img src={viewer.avatar} alt="" className="h-full w-full object-cover"/> : viewer.name.slice(0,1)}</span><div className="flex-1"><p className="text-sm font-bold">{viewer.name}</p><p className="text-[11px] text-neutral-500">{timeAgo(viewer.createdAt)}</p></div></header>
-      <div className="flex flex-1 items-center justify-center px-6"><p className="w-full whitespace-pre-wrap rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-red-950/40 p-8 text-center text-2xl font-semibold">{viewer.text}</p></div>
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 overflow-y-auto px-4 py-4">{viewer.mediaUrl && (viewer.mediaType === 'video' ? <video src={viewer.mediaUrl} controls autoPlay playsInline className="max-h-[65vh] max-w-full rounded-2xl object-contain"/> : <img src={viewer.mediaUrl} alt="Historia" className="max-h-[65vh] max-w-full rounded-2xl object-contain"/>)}{viewer.text && <p className="w-full whitespace-pre-wrap rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-900 to-red-950/40 p-8 text-center text-2xl font-semibold">{viewer.text}</p>}</div>
       <div className="flex justify-around border-t border-neutral-900 px-4 py-4"><button onClick={()=>setLiked(p=>({...p,[viewer.id]:!p[viewer.id]}))} className="flex items-center gap-2 text-sm"><Heart fill={liked[viewer.id]?'currentColor':'none'} className={liked[viewer.id]?'text-red-500':''}/> Me gusta</button><button onClick={()=>{setCommentFor(viewer.id);setViewer(null)}} className="flex items-center gap-2 text-sm"><MessageCircle/> Comentar</button><button onClick={()=>void share(viewer)} className="flex items-center gap-2 text-sm"><Send/> Compartir</button></div>
     </div>}
   </section>;
