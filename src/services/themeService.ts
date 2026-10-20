@@ -1,0 +1,6 @@
+import type {ThemeJson} from '../data/themeStore';
+const REMOTE='https://sixseven-upload.mauromaidana.workers.dev/themes/';
+async function getJson(url:string){const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+export async function loadThemeIndex():Promise<{themes:ThemeJson[]}>{for(const url of [REMOTE+'tienda_temas_index.json','/themes/tienda_temas_index.json']){try{return await getJson(url) as {themes:ThemeJson[]}}catch{}}throw new Error('No se pudo cargar la tienda de temas.')}
+export async function downloadTheme(id:string):Promise<ThemeJson>{const safe=id.replace(/[^a-z0-9_-]/gi,'');if(!safe)throw new Error('Tema inválido.');let theme:ThemeJson|null=null;for(const url of [REMOTE+encodeURIComponent(safe)+'.json','/themes/'+encodeURIComponent(safe)+'.json']){try{theme=await getJson(url) as ThemeJson;break}catch{}}if(!theme){const index=await loadThemeIndex();theme=index.themes.find(t=>t.id===safe)||null}if(!theme)throw new Error('No se encontró el tema.');try{localStorage.setItem('sixseven:downloaded-theme:'+safe,JSON.stringify(theme));localStorage.setItem('selected_theme_id',safe)}catch{throw new Error('No hay espacio local para guardar el tema.')}return theme}
+export function restartSixSeven(){window.location.reload()}
