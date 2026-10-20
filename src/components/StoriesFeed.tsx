@@ -51,7 +51,7 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
 
   useEffect(() => {
     if (!uid) { setLoading(false); return; }
-    return onSnapshot(collection(db, 'stories'), (snapshot) => {
+    return onSnapshot(collection(db, 'statuses'), (snapshot) => {
       const now = Date.now();
       const currentUsername = String(profile?.username || '').replace(/^@/, '').toLowerCase();
       const active = snapshot.docs
@@ -119,7 +119,7 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
 
   const removeCurrent = async () => {
     if (!current) return;
-    try { await deleteDoc(doc(db, 'stories', current.id)); } catch (e) { console.error(e); }
+    try { await deleteDoc(doc(db, 'statuses', current.id)); } catch (e) { console.error(e); }
     setViewer(null);
   };
 
