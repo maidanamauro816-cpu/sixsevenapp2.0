@@ -10,7 +10,7 @@ export default function PhoneLogin() {
 
   const setupRecaptcha = () => {
     if (!(window as any).recaptchaVerifier) {
-      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'phone-login-recaptcha', {
         size: 'invisible',
       })
     }
@@ -40,7 +40,7 @@ export default function PhoneLogin() {
 
   return (
     <div style={{marginTop: 20, padding: 16, border: '1px solid #eee', borderRadius: 12}}>
-      <div id="recaptcha-container"></div>
+      <div id="phone-login-recaptcha"></div>
       <h3 style={{marginBottom: 10}}>Entrar con número</h3>
       {step === 'phone' ? (
         <>

@@ -7,6 +7,8 @@ import { errorText, explainAuthError } from '../utils/authErrors';
 import { COUNTRIES, normalizePhone, prettyPhone } from '../utils/phone';
 import logoMark from '../assets/logo-mark.png';
 import wordmark from '../assets/logo-wordmark.png';
+import PhoneLogin from './PhoneLogin';
+import { isNative } from '../native';
 
 interface LoginScreenProps {
   onLoginSuccess: () => void;
@@ -121,13 +123,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         {mode === 'main' && (
           <div className="space-y-3.5">
             {/* Button 1: Continuar con número de teléfono (black button with white border) */}
-            <button
+            {isNative && <button
               onClick={handleStartPhone}
               disabled={loading}
               className="w-full py-3.5 px-4 rounded-xl bg-black hover:bg-neutral-950 text-white font-bold text-sm border-2 border-white transition-all active:scale-98 flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
             >
               <span>Continuar con número de teléfono 📱</span>
-            </button>
+            </button>}
 
             {/* Button 2: Continuar con Google - Copia de seguridad de Chrome (white button) */}
             <button
@@ -155,6 +157,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               </svg>
               <span className="truncate">Continuar con Google</span>
             </button>
+            {!isNative && <PhoneLogin />}
           </div>
         )}
 
