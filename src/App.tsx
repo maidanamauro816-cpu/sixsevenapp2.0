@@ -148,7 +148,7 @@ function MainApp() {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000000] text-white font-sans overflow-x-hidden selection:bg-red-600">
+    <div className="relative min-h-screen w-full bg-[var(--scaffold-bg,#000000)] text-[var(--text-primary,#ffffff)] font-sans overflow-x-hidden selection:bg-red-600">
       {/* PWA In-App Install Banner */}
       {!isNative && <PWAInstallButton />}
 
