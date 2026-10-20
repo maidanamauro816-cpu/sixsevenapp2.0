@@ -1,0 +1,327 @@
+{
+  "schema_version": "1.0.0",
+  "store_version": "1.0",
+  "title": "Recursos SixSeven",
+  "description": "Catálogo descargable de personalización, privacidad y herramientas de mensajería. Este índice describe funciones; no activa funciones por sí solo.",
+  "delivery": {
+    "mode": "remote-json",
+    "bundled_assets": false,
+    "assets_location": "Backblaze B2",
+    "secrets_location": "GitHub Actions / Cloudflare Worker",
+    "keep_tienda_temas_index_unchanged": true
+  },
+  "sections": [
+    {
+      "id": "themes",
+      "title": "Tienda de temas avanzada",
+      "items": [
+        {
+          "id": "theme-from-image",
+          "title": "Crear tema desde imagen",
+          "description": "Extraer colores dominantes de una imagen elegida por el usuario y generar una paleta accesible.",
+          "type": "theme-tool",
+          "status": "planned",
+          "requires": [
+            "image-picker",
+            "color-palette-generator"
+          ]
+        },
+        {
+          "id": "theme-transparent",
+          "title": "Transparent",
+          "description": "Fondo translúcido que deja ver el fondo de pantalla cuando el sistema y el dispositivo lo permiten.",
+          "type": "theme-mode",
+          "status": "planned"
+        },
+        {
+          "id": "theme-light",
+          "title": "Light",
+          "description": "Tema claro con contraste de texto automático.",
+          "type": "theme-mode",
+          "status": "planned"
+        },
+        {
+          "id": "theme-dark",
+          "title": "Dark",
+          "description": "Tema oscuro negro con texto blanco y acentos rojo neón.",
+          "type": "theme-mode",
+          "status": "planned"
+        },
+        {
+          "id": "theme-custom",
+          "title": "Custom",
+          "description": "Colores y superficies personalizables.",
+          "type": "theme-mode",
+          "status": "planned"
+        },
+        {
+          "id": "theme-save-load-restore",
+          "title": "Guardar, cargar y restaurar temas",
+          "description": "Guardar presets locales o en la cuenta y volver al tema predeterminado.",
+          "type": "theme-management",
+          "status": "planned"
+        },
+        {
+          "id": "theme-patterns",
+          "title": "Fondos con patrones",
+          "description": "Patrones geométricos originales configurables, inspirados en fondos de mensajería.",
+          "type": "wallpaper",
+          "status": "planned"
+        },
+        {
+          "id": "theme-blur-chat",
+          "title": "Blur Chat UI",
+          "description": "Desenfoque configurable de barra superior y compositor, sujeto a soporte del dispositivo.",
+          "type": "visual-effect",
+          "status": "planned"
+        },
+        {
+          "id": "theme-glass-home",
+          "title": "Glass Home UI",
+          "description": "Superficies translúcidas en inicio con legibilidad y contraste adaptativos.",
+          "type": "visual-effect",
+          "status": "planned"
+        },
+        {
+          "id": "launcher-icons",
+          "title": "Íconos del launcher",
+          "description": "Selector de 10 o más variantes livianas, incluida la S mayúscula negra con borde rojo neón. Android puede aplicar el cambio con demora o requerir confirmación del sistema.",
+          "type": "launcher-icons",
+          "status": "planned",
+          "target_count": 10
+        },
+        {
+          "id": "bubble-shapes",
+          "title": "Formas de burbujas",
+          "description": "Ocho formas configurables de burbuja.",
+          "type": "chat-style",
+          "status": "planned",
+          "options": 8
+        },
+        {
+          "id": "read-receipts-style",
+          "title": "Estilo de tildes",
+          "description": "Estilos visuales azul, gris y personalizado; el comportamiento real depende del protocolo de mensajería.",
+          "type": "chat-style",
+          "status": "planned"
+        },
+        {
+          "id": "font-library",
+          "title": "Fuentes",
+          "description": "Catálogo remoto de 20 opciones tipográficas livianas; cargar solo la fuente seleccionada.",
+          "type": "typography",
+          "status": "planned",
+          "options": 20
+        },
+        {
+          "id": "font-size",
+          "title": "Tamaño de letra",
+          "description": "Control de tamaño de texto por chat y global.",
+          "type": "typography",
+          "status": "planned"
+        },
+        {
+          "id": "header-style",
+          "title": "Encabezados",
+          "description": "Estilos de encabezado configurables.",
+          "type": "navigation-style",
+          "status": "planned"
+        },
+        {
+          "id": "fab-capsule",
+          "title": "FAB / pestañas Capsule",
+          "description": "Botones flotantes y pestañas con forma cápsula.",
+          "type": "navigation-style",
+          "status": "planned"
+        },
+        {
+          "id": "navigation-bar-style",
+          "title": "Barra de navegación",
+          "description": "Estilo básico o centro flotante.",
+          "type": "navigation-style",
+          "status": "planned",
+          "options": [
+            "basic",
+            "center-floating"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "privacy",
+      "title": "Privacidad y seguridad",
+      "items": [
+        {
+          "id": "ghost-mode",
+          "title": "Modo fantasma",
+          "description": "Controles de privacidad para presencia, confirmaciones de lectura y estados de escritura cuando el servidor de SixSeven lo admita; no altera indicadores de plataformas externas.",
+          "type": "privacy",
+          "status": "planned",
+          "options": [
+            "hide-last-seen",
+            "hide-read-receipts",
+            "hide-typing-indicator",
+            "hide-recording-indicator"
+          ]
+        },
+        {
+          "id": "freeze-last-seen",
+          "title": "Congelar última conexión",
+          "description": "Mostrar una preferencia de presencia propia sin falsificar datos de terceros; requiere soporte de backend.",
+          "type": "presence",
+          "status": "planned"
+        },
+        {
+          "id": "dnd",
+          "title": "No molestar (DND)",
+          "description": "Silenciar notificaciones según horario y excepciones.",
+          "type": "notifications",
+          "status": "planned"
+        },
+        {
+          "id": "chat-lock",
+          "title": "Bloqueo de chats",
+          "description": "Bloqueo local mediante PIN o biometría del dispositivo; no guardar PIN en texto plano.",
+          "type": "security",
+          "status": "planned",
+          "options": [
+            "pin",
+            "biometrics"
+          ]
+        },
+        {
+          "id": "lockscreen",
+          "title": "Lockscreen de privacidad",
+          "description": "Pantalla de bloqueo animada y captura local opcional de intentos fallidos, solo con consentimiento explícito y sujeto a permisos del sistema.",
+          "type": "security",
+          "status": "planned",
+          "failed_attempts_before_optional_capture": 3,
+          "requires_explicit_opt_in": true
+        }
+      ]
+    },
+    {
+      "id": "messaging",
+      "title": "Herramientas de mensajería",
+      "items": [
+        {
+          "id": "deleted-message-history",
+          "title": "Historial local de mensajes recibidos",
+          "description": "Solo conservar contenido que la app haya recibido legítimamente y que el usuario haya habilitado guardar; no recuperar contenido eliminado antes de llegar al dispositivo.",
+          "type": "message-history",
+          "status": "planned"
+        },
+        {
+          "id": "status-saver",
+          "title": "Guardar estados",
+          "description": "Guardar medios visibles con permiso y respetando controles de privacidad y derechos de sus autores.",
+          "type": "media-tool",
+          "status": "planned"
+        },
+        {
+          "id": "scheduled-messages",
+          "title": "Mensajes programados",
+          "description": "Programar envíos para una fecha y hora; requiere que la app o el servidor tenga conectividad y autorización.",
+          "type": "messaging",
+          "status": "planned"
+        },
+        {
+          "id": "edit-sent-message",
+          "title": "Editar mensaje enviado",
+          "description": "Edición sincronizada con historial de cambios y ventana de edición definida por SixSeven.",
+          "type": "messaging",
+          "status": "planned"
+        },
+        {
+          "id": "bulk-messages",
+          "title": "Envío múltiple responsable",
+          "description": "Envío a grupos o listas autorizadas, con límites antiabuso y confirmación del usuario.",
+          "type": "messaging",
+          "status": "planned"
+        },
+        {
+          "id": "auto-reply",
+          "title": "Respuesta automática",
+          "description": "Reglas de respuesta configurables con activación, horarios y excepciones.",
+          "type": "automation",
+          "status": "planned"
+        },
+        {
+          "id": "forward-label",
+          "title": "Indicador de reenviado",
+          "description": "Configuración visual únicamente dentro de SixSeven; no falsificar metadatos de origen en otras plataformas.",
+          "type": "messaging",
+          "status": "planned"
+        },
+        {
+          "id": "media-limits",
+          "title": "Límites de archivos SixSeven",
+          "description": "Objetivos de límites del backend propios de SixSeven, sujetos a cuotas, almacenamiento, red y validación de servidor.",
+          "type": "media-limits",
+          "status": "planned",
+          "limits_mb": {
+            "video": 50,
+            "audio": 100,
+            "document": 100
+          },
+          "status_video_minutes": 7,
+          "status_video_hd": true
+        },
+        {
+          "id": "always-online",
+          "title": "Preferencia de presencia",
+          "description": "Mantener estado activo solo mientras la sesión y la conexión sean reales; no simular presencia permanente.",
+          "type": "presence",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "platform",
+      "title": "Integración y arquitectura",
+      "items": [
+        {
+          "id": "auth-firebase",
+          "title": "Autenticación",
+          "description": "Firebase Authentication solo para inicio de sesión por teléfono y Google.",
+          "type": "architecture",
+          "status": "existing"
+        },
+        {
+          "id": "profiles-firestore",
+          "title": "Perfiles y chats",
+          "description": "Firestore para perfiles, contactos y metadatos de conversación, con reglas de seguridad.",
+          "type": "architecture",
+          "status": "existing"
+        },
+        {
+          "id": "media-b2",
+          "title": "Medios externos",
+          "description": "Subidas y descargas de medios por Cloudflare Worker y Backblaze B2; no incluir bibliotecas multimedia pesadas en el APK.",
+          "type": "architecture",
+          "status": "existing"
+        },
+        {
+          "id": "gemini-worker",
+          "title": "SixSeven IA",
+          "description": "Gemini llamado desde Cloudflare Worker con GEMINI_API_KEY en secretos; nunca incluir claves privadas en el cliente.",
+          "type": "architecture",
+          "status": "existing"
+        },
+        {
+          "id": "dynamic-ai-name",
+          "title": "Nombre dinámico de SixSeven IA",
+          "description": "Usar el nombre de la sesión/perfil actual y evitar nombres personales codificados en el código.",
+          "type": "ai-personalization",
+          "status": "existing"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Este archivo es un catálogo remoto y no implementa automáticamente los elementos marcados planned.",
+    "No modificar tienda_temas_index.json: mantener store_version 2.0, all_free true y los 19 temas gratuitos existentes.",
+    "Los límites de medios deben validarse también en backend y almacenamiento; el cliente no puede aumentarlos por sí solo.",
+    "Los recursos se descargan bajo demanda para conservar el tamaño objetivo del APK cercano a 15 MB."
+  ]
+}
