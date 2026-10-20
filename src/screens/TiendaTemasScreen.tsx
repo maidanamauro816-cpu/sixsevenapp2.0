@@ -1,107 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Download, LoaderCircle, Palette, RefreshCw } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, Check, Download, FileUp, FolderOpen, LoaderCircle, Palette, RefreshCw, Sparkles } from 'lucide-react';
 import { ThemeService, type SixSevenTheme } from '../services/themeService';
 import { useThemeSettings } from '../contexts/ThemeContext';
 
 type Props = { onBack?: () => void };
-
-function readableText(hex: string): string {
-  const value = Number.parseInt(hex.replace('#', ''), 16);
-  const r = (value >> 16) & 255, g = (value >> 8) & 255, b = value & 255;
-  return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 145 ? '#171717' : '#ffffff';
+function readableText(hex: string) {
+  const value = Number.parseInt(hex.replace('#', ''), 16), r=(value>>16)&255, g=(value>>8)&255, b=value&255;
+  return (0.2126*r+0.7152*g+0.0722*b)>145?'#171717':'#ffffff';
 }
-
-export const TiendaTemasScreen: React.FC<Props> = ({ onBack }) => {
-  const { applyTheme } = useThemeSettings();
-  const [themes, setThemes] = useState<SixSevenTheme[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState('');
-  const [message, setMessage] = useState('');
-
-  const load = async () => {
-    setLoading(true);
-    setMessage('');
-    try {
-      const index = await ThemeService.fetchStoreIndex();
-      setThemes(index.themes.filter((theme) => theme.is_premium !== true && Number(theme.price ?? 0) === 0));
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'No se pudo cargar la tienda.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { void load(); }, []);
-
-  const install = async (theme: SixSevenTheme) => {
-    setBusy(theme.id);
-    setMessage('');
-    try {
-      const installed = await ThemeService.downloadTheme(theme.id);
-      const c = installed.colors ?? {};
-      const s = installed.shapes ?? {};
-      applyTheme(installed.id, {
-        id: installed.id,
-        name: installed.name,
-        primary: c.primary || '#ff1a1a',
-        primaryDark: c.primary_dark || c.primary || '#b3101a',
-        background: c.scaffold_bg || '#050505',
-        cardBg: c.card_bg || c.scaffold_bg || '#171717',
-        bubbleSent: c.bubble_me || c.primary || '#321014',
-        bubbleReceived: c.bubble_other || c.card_bg || '#171717',
-        text: c.text_primary || readableText(c.scaffold_bg || '#050505'),
-        tickColor: c.primary || '#ff1a1a',
-        fontFamily: 'system-ui',
-        bottomNavBg: c.bottom_nav_bg || c.scaffold_bg || '#050505',
-        bubbleRadius: Number(s.bubble_radius ?? 20),
-        estadoShape: String(s.estado_shape ?? 'rounded_rectangle'),
-        isRectangularEstados: s.is_rectangular_estados === true,
-        estadoRectWidth: Number(s.estado_rect_width ?? 72),
-        estadoRectHeight: Number(s.estado_rect_height ?? 92),
-        estadoBorderRadius: Number(s.estado_border_radius ?? 16),
-      });
-      setMessage('Tema instalado, reiniciando…');
-      window.setTimeout(() => window.location.reload(), 700);
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'No se pudo instalar el tema.');
-    } finally {
-      setBusy('');
-    }
-  };
-
-  return (
-    <main className="fixed inset-0 z-[80] overflow-y-auto bg-[var(--scaffold-bg,#050505)] px-4 pb-8 pt-4 text-[var(--text-primary,#fff)]">
-      <header className="mb-5 flex items-center gap-3">
-        {onBack && <button type="button" onClick={onBack} aria-label="Volver" className="rounded-full border border-neutral-800 p-2"><ArrowLeft size={18} /></button>}
-        <div><h1 className="text-xl font-bold">Tienda de temas</h1><p className="text-sm text-neutral-400">19 estilos · todos gratuitos</p></div>
-      </header>
-      <div className="mb-4 flex items-center gap-2 rounded-2xl border border-red-900/60 bg-neutral-950 p-3"><Palette className="text-red-400" size={22}/><div><b>Todos los temas son GRATIS</b><p className="text-xs text-neutral-400">Premium queda reservado para privacidad.</p></div></div>
-      {message && <div role="status" className="mb-4 rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-sm">{message}</div>}
-      {loading ? <div className="py-10 text-center text-neutral-400"><LoaderCircle className="mr-2 inline animate-spin" size={18}/>Cargando temas…</div> : (
-        <div className="grid grid-cols-2 gap-3">
-          {themes.map((theme) => {
-            const c = theme.colors ?? {}, s = theme.shapes ?? {};
-            const bg = c.scaffold_bg || '#080808', primary = c.primary || '#ff1a1a';
-            const sent = c.bubble_me || primary, other = c.bubble_other || '#eeeeee';
-            const rect = s.is_rectangular_estados === true;
-            const radius = Number(s.estado_border_radius ?? 16);
-            return <article key={theme.id} className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
-              <div className="p-3" style={{ background: bg, color: c.text_primary || readableText(bg) }}>
-                <div className="mb-3 flex gap-1"><span className="h-2 flex-1 rounded" style={{ background: primary }}/><span className="h-2 flex-1 rounded" style={{ background: sent }}/><span className="h-2 flex-1 rounded" style={{ background: other }}/></div>
-                <div className="flex h-[88px] items-end gap-2">
-                  <div className="flex h-[72px] w-[48px] items-center justify-center border text-[9px] font-bold" style={{ borderColor: primary, borderRadius: rect ? radius : 999, background: primary + '22' }}>SX 67</div>
-                  <div className="flex min-w-0 flex-1 flex-col gap-2"><span className="self-end rounded-xl px-2 py-1 text-[9px]" style={{ background: sent, color: readableText(sent) }}>Hola 👋</span><span className="self-start rounded-xl px-2 py-1 text-[9px]" style={{ background: other, color: readableText(other) }}>¡Buenas!</span></div>
-                </div>
-                {rect && <div className="mt-2 flex items-center gap-2"><span className="h-[46px] w-[36px] border-2" style={{ borderColor: primary, borderRadius: radius, background: primary + '33' }}/><span className="text-[9px] opacity-75">Estado rectangular<br/>72 × 92</span></div>}
-              </div>
-              <div className="p-3"><h2 className="min-h-10 text-sm font-bold leading-5">{theme.name}</h2><p className="mt-1 min-h-8 text-[10px] text-neutral-400">{theme.description || 'Tema de SixSeven'}</p><div className="mt-2 flex items-center justify-between"><span className="rounded-full bg-emerald-950 px-2 py-1 text-[10px] font-bold text-emerald-300">GRATIS</span><span className="text-[10px] text-neutral-500">v{theme.version || '1.0'}</span></div><button type="button" onClick={() => void install(theme)} disabled={Boolean(busy)} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 px-3 py-2.5 text-xs font-bold disabled:opacity-60">{busy === theme.id ? <LoaderCircle size={14} className="animate-spin"/> : <Download size={14}/>}Instalar</button></div>
-            </article>;
-          })}
-        </div>
-      )}
-      {!loading && themes.length === 0 && <button type="button" onClick={() => void load()} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-700 p-3 text-sm"><RefreshCw size={16}/>Reintentar</button>}
-    </main>
-  );
+function mapTheme(theme: SixSevenTheme) {
+  const c=theme.colors, s=theme.shapes, bg=c.scaffold_bg||'#050505';
+  return { id:theme.id, name:theme.name, primary:c.primary||'#ff1a1a', primaryDark:c.primary_dark||c.primary||'#ff1a1a', background:bg, cardBg:c.card_bg||bg, bubbleSent:c.bubble_me||c.primary||'#321014', bubbleReceived:c.bubble_other||c.card_bg||'#171717', text:c.text_primary||readableText(bg), tickColor:c.primary||'#ff1a1a', fontFamily:'system-ui', bottomNavBg:c.bottom_nav_bg||bg, bubbleRadius:Number(s.bubble_radius||20), estadoShape:s.estado_shape||'rounded_rectangle', isRectangularEstados:s.is_rectangular_estados===true, estadoRectWidth:Number(s.estado_rect_width||72), estadoRectHeight:Number(s.estado_rect_height||92), estadoBorderRadius:Number(s.estado_border_radius||16) };
+}
+export const TiendaTemasScreen: React.FC<Props> = ({onBack}) => {
+  const {applyTheme, themeId: activeThemeId}=useThemeSettings();
+  const [themes,setThemes]=useState<SixSevenTheme[]>([]), [loading,setLoading]=useState(true), [busy,setBusy]=useState(''), [message,setMessage]=useState(''), [saved,setSaved]=useState<string[]>(ThemeService.getDownloadedThemeIds());
+  const fileRef=useRef<HTMLInputElement>(null);
+  const load=async()=>{setLoading(true);try{const index=await ThemeService.fetchStoreIndex();setThemes(index.themes.filter(t=>t.is_premium!==true&&Number(t.price??0)===0));}catch(e){setMessage(e instanceof Error?e.message:'No se pudo cargar la tienda.');}finally{setLoading(false);}};
+  useEffect(()=>{void load();},[]);
+  const apply=async(theme:SixSevenTheme)=>{setBusy(theme.id);setMessage('');try{let installed=theme;if(!saved.includes(theme.id))installed=await ThemeService.downloadTheme(theme.id);ThemeService.selectTheme(installed.id);applyTheme(installed.id,mapTheme(installed));setSaved(ThemeService.getDownloadedThemeIds());setMessage(`“${installed.name}” aplicado. La apariencia y los colores se guardaron en este dispositivo.`);}catch(e){setMessage(e instanceof Error?e.message:'No se pudo aplicar el tema.');}finally{setBusy('');}};
+  const download=async(theme:SixSevenTheme)=>{setBusy(theme.id);setMessage('');try{await ThemeService.downloadTheme(theme.id);setSaved(ThemeService.getDownloadedThemeIds());setMessage(`“${theme.name}” descargado en Documentos/SS Six Seven. Ahora podés aplicarlo cuando quieras.`);}catch(e){setMessage(e instanceof Error?e.message:'No se pudo descargar el tema.');}finally{setBusy('');}};
+  const importFile=async(file?:File)=>{if(!file)return;setBusy('import');setMessage('');try{const theme=await ThemeService.importThemeFile(file);setSaved(ThemeService.getDownloadedThemeIds());setMessage(`Tema “${theme.name}” importado. Tocá Aplicar para activarlo.`);}catch(e){setMessage(e instanceof Error?e.message:'No se pudo importar el tema.');}finally{setBusy('');if(fileRef.current)fileRef.current.value='';}};
+  const importFolder=async()=>{setBusy('folder');setMessage('');try{const imported=await ThemeService.importThemeFromDocuments();setSaved(ThemeService.getDownloadedThemeIds());setMessage(imported.length? `Se importaron ${imported.length} tema(s) desde Documentos/SS Six Seven.`:'No se encontraron archivos .json válidos en Documentos/SS Six Seven. También podés elegir un archivo con “Importar tema”.');}catch(e){setMessage(e instanceof Error?e.message:'No se pudo leer la carpeta de temas.');}finally{setBusy('');}};
+  return <main className="fixed inset-0 z-[80] overflow-y-auto bg-[var(--scaffold-bg,#050505)] px-4 pb-8 pt-4 text-[var(--text-primary,#fff)]">
+    <header className="mb-5 flex items-center gap-3">{onBack&&<button type="button" onClick={onBack} aria-label="Volver" className="rounded-full border border-neutral-800 p-2"><ArrowLeft size={18}/></button>}<div className="min-w-0 flex-1"><h1 className="text-xl font-black">Tienda de temas</h1><p className="text-xs text-neutral-400">Descargá, aplicá e importá estilos completos</p></div><span className="rounded-full bg-emerald-950 px-2 py-1 text-[10px] font-bold text-emerald-300">{themes.length} temas</span></header>
+    <section className="mb-4 rounded-2xl border border-neutral-800 bg-neutral-950 p-3"><div className="mb-3 flex items-center gap-2"><Palette className="text-red-400" size={22}/><div><b>Tu colección de temas</b><p className="text-xs text-neutral-400">Los temas descargados quedan en este dispositivo.</p></div></div><div className="grid grid-cols-2 gap-2"><button type="button" onClick={()=>fileRef.current?.click()} disabled={Boolean(busy)} className="flex items-center justify-center gap-2 rounded-xl border border-neutral-700 bg-neutral-900 px-2 py-3 text-xs font-bold"><FileUp size={16}/>Importar tema</button><button type="button" onClick={()=>void importFolder()} disabled={Boolean(busy)} className="flex items-center justify-center gap-2 rounded-xl border border-neutral-700 bg-neutral-900 px-2 py-3 text-xs font-bold"><FolderOpen size={16}/>Importar carpeta</button></div><input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={e=>void importFile(e.target.files?.[0])}/><p className="mt-2 text-[10px] text-neutral-500">Buscá un archivo .json exportado por SixSeven. En Android podés importar directamente desde Documentos/SS Six Seven.</p></section>
+    {message&&<div role="status" className="mb-4 rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-sm">{message}</div>}
+    {loading?<div className="py-10 text-center text-neutral-400"><LoaderCircle className="mr-2 inline animate-spin" size={18}/>Cargando temas…</div>:<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{themes.map(theme=>{const c=theme.colors||{},s=theme.shapes||{},bg=c.scaffold_bg||'#080808',primary=c.primary||'#ff1a1a',sent=c.bubble_me||primary,other=c.bubble_other||'#eee',rect=s.is_rectangular_estados===true,active=activeThemeId===theme.id||ThemeService.getSavedThemeId()===theme.id,isSaved=saved.includes(theme.id);const art=theme.preview_image||theme.wallpaper_url;return <article key={theme.id} className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950"><div className="relative h-40 overflow-hidden p-3" style={{background:art? `linear-gradient(135deg, ${bg}dd, ${primary}66), url("${art}") center/cover`:`radial-gradient(circle at 18% 18%, ${primary}88 0, transparent 32%), radial-gradient(circle at 82% 80%, ${sent} 0, transparent 38%), linear-gradient(135deg,${bg},${c.card_bg||bg})`,color:c.text_primary||readableText(bg)}}><div className="absolute inset-0 opacity-25" style={{backgroundImage:'radial-gradient(circle at 20% 20%, white 1px, transparent 1.5px)',backgroundSize:'18px 18px'}}/><div className="relative flex h-full flex-col justify-between"><div className="flex items-start justify-between gap-2"><span className="rounded-full bg-black/70 px-2 py-1 text-[10px] font-bold text-white">{isSaved?'DESCARGADO':'GRATUITO'}</span>{active&&<span className="flex items-center gap-1 rounded-full bg-emerald-400 px-2 py-1 text-[10px] font-black text-black"><Check size={12}/>APLICADO</span>}</div><div className="flex items-end justify-between gap-2"><div className="max-w-[72%] rounded-2xl p-2 text-xs shadow-lg" style={{background:other,color:readableText(other),borderRadius:`${Math.min(Number(s.bubble_radius||20),28)}px`}}>¡Hola! 👋<br/><span className="text-[9px] opacity-70">¿Cómo estás?</span></div><div className="max-w-[72%] rounded-2xl p-2 text-xs shadow-lg" style={{background:sent,color:readableText(sent),borderRadius:`${Math.min(Number(s.bubble_radius||20),28)}px`}}>¡Todo bien! ✨<br/><span className="text-[9px] opacity-70">✓✓ 6:07</span></div></div>{rect&&<span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-lg border px-2 py-1 text-[9px]" style={{borderColor:primary}}>Estados cuadrados ▣</span>}</div></div><div className="space-y-3 p-3"><div><h2 className="font-bold leading-tight">{theme.name}</h2><p className="mt-1 min-h-8 text-xs text-neutral-400">{theme.description||'Estilo visual completo para SixSeven.'}</p></div><div className="flex items-center gap-1.5">{[primary,bg,c.card_bg,sent,other].map((color,i)=><span key={i} className="h-5 w-5 rounded-full border border-white/15" style={{backgroundColor:color}}/>)}</div><div className="grid grid-cols-2 gap-2"><button type="button" disabled={Boolean(busy)} onClick={()=>void download(theme)} className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900 px-2 py-2.5 text-xs font-bold disabled:opacity-50">{busy===theme.id?<LoaderCircle size={15} className="animate-spin"/>:<Download size={15}/>} {isSaved?'Descargado':'Descargar'}</button><button type="button" disabled={Boolean(busy)} onClick={()=>void apply(theme)} className="flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-2 py-2.5 text-xs font-bold text-white disabled:opacity-50">{busy===theme.id?<LoaderCircle size={15} className="animate-spin"/>:<Sparkles size={15}/>} {active?'Aplicado':'Aplicar'}</button></div></div></article>})}</div>}
+    {!loading&&themes.length===0&&<button type="button" onClick={()=>void load()} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-700 p-3 text-sm"><RefreshCw size={16}/>Reintentar</button>}
+    <p className="mt-4 text-[10px] text-neutral-500">La tienda toma como referencia funciones de personalización conocidas —fondos, burbujas, estilos de estados y vistas previas—, pero usa temas originales de SixSeven.</p>
+  </main>;
 };
-
 export default TiendaTemasScreen;
