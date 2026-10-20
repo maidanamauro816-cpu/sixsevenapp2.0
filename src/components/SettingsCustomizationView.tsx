@@ -62,12 +62,10 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     // SixSeven's brand accent is fixed: neon red. Only safe dark surfaces are customizable.
     document.documentElement.style.setProperty('--sx-chat-bg', chatBackground);
     document.documentElement.style.setProperty('--sx-header-bg', headerBackground);
-    document.documentElement.style.setProperty('--sx-theme-accent', '#ff1a1a');
     document.documentElement.style.setProperty('--sx-font', fonts.find(f=>f.id===font)?.css || fonts[0].css);
-    document.documentElement.dataset.sxTheme = 'neon';
     document.documentElement.dataset.sxBubble = bubble;
     document.body.style.fontFamily = fonts.find(f=>f.id===font)?.css || fonts[0].css;
-    save('theme','neon'); save('chatBackground',chatBackground); save('headerBackground',headerBackground);
+    save('chatBackground',chatBackground); save('headerBackground',headerBackground);
     save('bubble',bubble); save('font',font); save('messageSound',messageSound); save('callSound',callSound); save('homeLayout',layout);
     window.dispatchEvent(new Event('sixseven:appearanceChanged'));
   },[chatBackground,headerBackground,bubble,font,messageSound,callSound,layout]);
