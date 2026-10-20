@@ -22,6 +22,9 @@ export type SixSevenTheme = {
   estadoBorderRadius?: number;
   layoutStyle?: string;
   wallpaperUrl?: string;
+  deltaBubbleStyle?: 'ios11' | 'deltalike' | 'wamod' | 'stock';
+  deltaTickStyle?: 'rcios11' | 'stock' | 'circle';
+  convoStyle?: string;
 };
 
 export const themes: SixSevenTheme[] = [
@@ -95,6 +98,9 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
     estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
     layoutStyle: String(shapes.layout_style ?? (shapes.is_rectangular_estados === true ? 'square-status' : 'classic')),
     wallpaperUrl: typeof json.wallpaper_url === 'string' ? json.wallpaper_url : (typeof json.preview_image === 'string' && /^https?:\/\//i.test(json.preview_image) ? json.preview_image : undefined),
+    deltaBubbleStyle: (json as ThemeJson & {delta?: {bubbleStyle?: SixSevenTheme['deltaBubbleStyle']}}).delta?.bubbleStyle,
+    deltaTickStyle: (json as ThemeJson & {delta?: {tickStyle?: SixSevenTheme['deltaTickStyle']}}).delta?.tickStyle,
+    convoStyle: (json as ThemeJson & {delta?: {convoStyle?: string}}).delta?.convoStyle,
   };
 }
 
@@ -118,7 +124,12 @@ function applyCss(t: SixSevenTheme) {
   root.style.setProperty('--sx-bubble-received', t.bubbleReceived);
   root.style.setProperty('--sx-text', t.text);
   root.style.setProperty('--sx-tick-color', t.tickColor);
-  root.style.setProperty('--sx-font', t.fontFamily);\n  root.style.setProperty('--sx-bubble-style', t.deltaBubbleStyle ?? 'stock');\n  root.style.setProperty('--sx-tick-style', t.deltaTickStyle ?? 'stock');\n  root.dataset.sxBubbleStyle = t.deltaBubbleStyle ?? 'stock';\n  root.dataset.sxTickStyle = t.deltaTickStyle ?? 'stock';\n  root.dataset.sxConvoStyle = t.convoStyle ?? 'stock';
+  root.style.setProperty('--sx-font', t.fontFamily);
+  root.style.setProperty('--sx-bubble-style', t.deltaBubbleStyle ?? 'stock');
+  root.style.setProperty('--sx-tick-style', t.deltaTickStyle ?? 'stock');
+  root.dataset.sxBubbleStyle = t.deltaBubbleStyle ?? 'stock';
+  root.dataset.sxTickStyle = t.deltaTickStyle ?? 'stock';
+  root.dataset.sxConvoStyle = t.convoStyle ?? 'stock';\n  root.style.setProperty('--sx-bubble-style', t.deltaBubbleStyle ?? 'stock');\n  root.style.setProperty('--sx-tick-style', t.deltaTickStyle ?? 'stock');\n  root.dataset.sxBubbleStyle = t.deltaBubbleStyle ?? 'stock';\n  root.dataset.sxTickStyle = t.deltaTickStyle ?? 'stock';\n  root.dataset.sxConvoStyle = t.convoStyle ?? 'stock';
   root.dataset.sxTheme = t.id;
   root.dataset.rectangularEstados = t.isRectangularEstados ? 'true' : 'false';
   root.dataset.sxLayout = t.layoutStyle ?? 'classic';
