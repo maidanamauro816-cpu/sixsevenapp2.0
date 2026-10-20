@@ -41,6 +41,17 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
       if (mediaFile && profile) {
         mediaUrl = await uploadToBackblaze(mediaFile, mediaType === 'video' ? 'video' : 'image');
       }
+      let audience: 'contacts' | 'except' | 'only' = 'contacts';
+      let audienceList: string[] = [];
+      try {
+        const storedAudience = localStorage.getItem('sixseven:setting:statusAudience');
+        if (storedAudience) {
+          const parsed = JSON.parse(storedAudience);
+          if (parsed === 'except' || parsed === 'only' || parsed === 'contacts') audience = parsed;
+        }
+        const storedList = localStorage.getItem('sixseven:setting:statusAudienceList');
+        if (storedList) audienceList = String(JSON.parse(storedList)).split(',').map((value) => value.trim().replace(/^@/, '').toLowerCase()).filter(Boolean);
+      } catch { /* Usar audiencia predeterminada si las preferencias no se pueden leer. */ }
       await addDoc(collection(db, 'stories'), {
         uid: profile.uid,
         name: profile.displayName || user.displayName || 'Usuario',
