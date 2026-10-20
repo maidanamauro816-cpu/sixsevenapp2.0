@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
 import { SixSevenOrb } from './SixSevenOrb';
-import { httpsCallable } from 'firebase/functions';
-import { functions } from '../firebase';
+import { auth } from '../firebase';
 import type { WhatsAppTab } from './WhatsAppBottomNav';
 
 type ChatMessage = { role: 'user' | 'assistant'; text: string };
+const AI_WORKER_URL = (import.meta.env.VITE_BACKBLAZE_WORKER_URL || 'https://sixseven-backblaze-signer.sixsevenapp816.workers.dev').replace(/\/$/, '');
 type RecognitionResult = { 0: { transcript: string }; isFinal: boolean };
 type RecognitionEvent = { resultIndex: number; results: ArrayLike<RecognitionResult> };
 type RecognitionLike = {
@@ -87,9 +87,22 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
 
     setLoading(true);
     try {
-      const ask = httpsCallable<{ message: string }, { answer: string }>(functions, 'askSixSevenIA');
-      const result = await ask({ message: prompt });
-      const answer = result.data?.answer?.trim() || 'No recibí una respuesta. Probá de nuevo.';
+      const user = auth.currentUser;
+      if (!user) throw Object.assign(new Error('Iniciá sesión para usar SixSeven IA.'), { code: 'unauthenticated' });
+      const idToken = await user.getIdToken();
+      const response = await fetch(`${AI_WORKER_URL}/api/ask-gemini`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: prompt }),
+      });
+      const data = await response.json().catch(() => ({})) as { answer?: string; error?: string; code?: string };
+      if (!response.ok) {
+        throw Object.assign(new Error(data.error || `Gemini no pudo responder (HTTP ${response.status}).`), { code: data.code || '' });
+      }
+      const answer = data.answer?.trim() || 'No recibí una respuesta. Probá de nuevo.';
       setMessages((old) => [...old, { role: 'assistant', text: answer }]);
       speak(answer);
     } catch (err) {
@@ -97,13 +110,15 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
       const code = (err as { code?: string })?.code || '';
       const detail = code.includes('unauthenticated')
         ? 'Iniciá sesión para usar SixSeven IA.'
-        : code.includes('failed-precondition')
-          ? 'Falta configurar GEMINI_API_KEY en los secretos de Firebase. La clave debe ser de Google AI Studio y no se debe pegar en el código de la app.'
-          : code.includes('resource-exhausted')
+        : code.includes('ai_not_configured')
+          ? 'La IA todavía no está activada: falta guardar GEMINI_API_KEY como secreto en el Worker de Cloudflare.'
+          : code.includes('quota_exceeded') || code.includes('resource-exhausted')
             ? 'Se alcanzó el límite gratuito de Gemini por ahora. Esperá a que se renueve la cuota y volvé a intentar.'
-            : code.includes('permission-denied')
-              ? 'Firebase rechazó la solicitud de IA. Revisá los permisos y la configuración de Firebase.'
-              : 'No pude conectarme a Gemini. Confirmá que la función askSixSevenIA esté desplegada y que GEMINI_API_KEY esté configurada.';
+            : code.includes('gemini_key_or_model_error')
+              ? 'Google Gemini rechazó la clave o el modelo. Revisá la clave de Google AI Studio y que tenga acceso al nivel gratuito.'
+              : code.includes('permission-denied')
+                ? 'El servicio rechazó la solicitud. Volvé a iniciar sesión y probá otra vez.'
+                : (err instanceof Error && err.message) || 'No pude conectarme a Gemini. Revisá tu conexión e intentá de nuevo.';
       setError(detail);
       setMessages((old) => [...old, { role: 'assistant', text: detail }]);
     } finally {
@@ -175,7 +190,7 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
         <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void sendMessage(); }} placeholder="Escribí o hablá..." className="flex-1 min-w-0 bg-transparent px-2 py-2 text-sm text-white placeholder-neutral-500 outline-none"/>
         <button onClick={() => void sendMessage()} disabled={!message.trim() || loading} aria-label="Enviar mensaje" className="w-10 h-10 shrink-0 rounded-xl bg-[#ff1a1a] text-white flex items-center justify-center disabled:opacity-40"><Send size={18}/></button>
       </div>
-      <p className="text-[10px] text-neutral-600 text-center mt-2">{listening ? 'Te estoy escuchando…' : 'Gemini gratuito con límites de uso · voz opcional'}</p>
+      <p className="text-[10px] text-neutral-600 text-center mt-2">{listening ? 'Te estoy escuchando…' : 'Gemini gratis con límites de uso · voz opcional'}</p>
     </div>
   </div>;
 };
