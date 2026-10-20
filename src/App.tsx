@@ -36,9 +36,11 @@ import { SixSevenEasterEgg } from './components/SixSevenEasterEgg';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { X, Heart, Plus } from 'lucide-react';
 import { playLikePop } from './utils/audio';
+import { ensureSixSevenFolders } from './services/mediaFolders';
 
 function MainApp() {
   const { user, loading } = useAuth();
+  React.useEffect(() => { void ensureSixSevenFolders().catch((error) => console.warn('No se pudieron preparar las carpetas SixSeven:', error)); }, []);
   const [minSplash, setMinSplash] = useState(true);
   React.useEffect(() => { const t = setTimeout(() => setMinSplash(false), 1500); return () => clearTimeout(t); }, []);
   const { toast, show } = useToast();
