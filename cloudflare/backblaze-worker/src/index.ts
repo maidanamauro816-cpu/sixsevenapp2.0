@@ -4,10 +4,14 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 
 interface Env {
   B2_KEY_ID: string;
-  B2_APPLICATION_KEY: string;
+  B2_APPLICATION_KEY?: string;
+  B2_APP_KEY?: string;
+  B2_BUCKET_NAME?: string;
+  B2_ENDPOINT?: string;
 }
+
 const PROJECT_ID = "sixseven-c86ac";
-const ENDPOINT = "https://s3.us-east-005.backblazeb2.com";
+const DEFAULT_ENDPOINT = "https://s3.us-east-005.backblazeb2.com";
 const REGION = "us-east-005";
 const jwks = createRemoteJWKSet(new URL("https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com"));
 const buckets: Record<string, string> = {
@@ -18,7 +22,7 @@ const buckets: Record<string, string> = {
   video: "sixseven-images",
 };
 const maxBytes: Record<string, number> = {
-  profile: 20 * 1024 * 1024, cover: 20 * 1024 * 1024, image: 20 * 1024 * 1024,
+  profile: 10 * 1024 * 1024, cover: 10 * 1024 * 1024, image: 20 * 1024 * 1024,
   audio: 100 * 1024 * 1024, video: 100 * 1024 * 1024,
 };
 const allowedMime: Record<string, RegExp> = {
@@ -29,78 +33,154 @@ const allowedMime: Record<string, RegExp> = {
   video: /^(video\/[a-z0-9.+-]+|application\/octet-stream)$/,
 };
 
-/** CORS headers are attached to every response, including errors. */
 function corsHeaders(): Headers {
   return new Headers({
-    "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400",
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
   });
 }
+
 function response(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: corsHeaders() });
 }
+
+function b2Credentials(env: Env) {
+  const secret = env.B2_APP_KEY || env.B2_APPLICATION_KEY;
+  if (!env.B2_KEY_ID || !secret) throw new Error("Faltan las credenciales de Backblaze B2 en el Worker.");
+  return { accessKeyId: env.B2_KEY_ID, secretAccessKey: secret };
+}
+
+function b2Endpoint(env: Env): string {
+  let endpoint = (env.B2_ENDPOINT || DEFAULT_ENDPOINT).trim().replace(/\/$/, "");
+  if (!endpoint.startsWith("https://")) endpoint = `https://${endpoint}`;
+  return endpoint;
+}
+
+function s3Client(env: Env): S3Client {
+  return new S3Client({
+    region: REGION,
+    endpoint: b2Endpoint(env),
+    forcePathStyle: true,
+    credentials: b2Credentials(env),
+  });
+}
+
+function publicFileUrl(bucket: string, key: string, endpoint: string): string {
+  const host = new URL(endpoint).hostname;
+  const match = host.match(/^s3\.([a-z0-9-]+)\.backblazeb2\.com$/i);
+  if (match) {
+    const regionNumber = match[1].match(/(?:^|-)\d+$/)?.[0]?.replace("-", "") || "005";
+    const fHost = `f${regionNumber.padStart(3, "0")}.backblazeb2.com`;
+    return `https://${fHost}/file/${encodeURIComponent(bucket)}/${key.split("/").map(encodeURIComponent).join("/")}`;
+  }
+  return `${endpoint}/${encodeURIComponent(bucket)}/${key.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+async function verifyUser(request: Request): Promise<string | null> {
+  const authorization = request.headers.get("Authorization") || "";
+  const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+  if (!token) return null;
+  try {
+    const verified = await jwtVerify(token, jwks, {
+      issuer: `https://securetoken.google.com/${PROJECT_ID}`,
+      audience: PROJECT_ID,
+    });
+    if (verified.payload.firebase === undefined || typeof verified.payload.sub !== "string") return null;
+    return verified.payload.sub;
+  } catch {
+    return null;
+  }
+}
+
+async function uploadMultipart(request: Request, env: Env, uid: string, kind: "profile" | "cover"): Promise<Response> {
+  let form: FormData;
+  try {
+    form = await request.formData();
+  } catch {
+    return response({ error: "El formulario de subida no es válido." }, 400);
+  }
+  const candidate = form.get("file") || form.get("photo") || form.get("avatar") || form.get("cover");
+  if (!(candidate instanceof File) || candidate.size <= 0) {
+    return response({ error: "Falta el archivo de imagen en el campo file." }, 400);
+  }
+  if (candidate.size > maxBytes[kind]) return response({ error: "La imagen supera el límite de 10 MB." }, 413);
+  const contentType = (candidate.type || "").toLowerCase().split(";")[0].trim();
+  if (!allowedMime[kind].test(contentType)) return response({ error: "Formato no permitido. Usá JPG, PNG, WebP o GIF." }, 415);
+
+  const bucket = env.B2_BUCKET_NAME?.trim() || buckets[kind];
+  const folder = kind === "profile" ? "avatars" : "covers";
+  const extByMime: Record<string, string> = {
+    "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif",
+  };
+  const key = `${folder}/${uid}/${crypto.randomUUID()}.${extByMime[contentType] || "img"}`;
+  const endpoint = b2Endpoint(env);
+  try {
+    await s3Client(env).send(new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: new Uint8Array(await candidate.arrayBuffer()),
+      ContentType: contentType,
+    }));
+    return response({ url: publicFileUrl(bucket, key, endpoint), key, bucket }, 200);
+  } catch (error) {
+    console.error("Backblaze upload failed", error instanceof Error ? error.message : "unknown error");
+    return response({ error: "No se pudo guardar la imagen en Backblaze. Revisá las credenciales, el bucket y sus permisos." }, 502);
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === "OPTIONS") {
-      return new Response(null, { status: 200, headers: corsHeaders() });
-    }
+    if (request.method === "OPTIONS") return new Response(null, { status: 200, headers: corsHeaders() });
 
     const url = new URL(request.url);
-    if ((url.pathname === "/health" || url.pathname === "/api/health") && request.method === "GET") {
+    if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/health" || url.pathname === "/api/health")) {
       return response({ ok: true, service: "SixSeven Backblaze signer", status: "ok" });
     }
-    if (!["/upload-url", "/api/upload-url"].includes(url.pathname) || request.method !== "POST") {
-      return response({ error: "Ruta no encontrada." }, 404);
+
+    if (request.method === "POST" && (url.pathname === "/api/upload-avatar" || url.pathname === "/api/upload-cover")) {
+      const uid = await verifyUser(request);
+      if (!uid) return response({ error: "La sesión no es válida. Volvé a iniciar sesión en SixSeven." }, 401);
+      const kind = url.pathname.endsWith("upload-avatar") ? "profile" : "cover";
+      return uploadMultipart(request, env, uid, kind);
     }
-    const authorization = request.headers.get("Authorization") || "";
-    const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
-    if (!token) return response({ error: "Iniciá sesión en SixSeven para subir archivos." }, 401);
-    let uid: string;
-    try {
-      const verified = await jwtVerify(token, jwks, {
-        issuer: `https://securetoken.google.com/${PROJECT_ID}`,
-        audience: PROJECT_ID,
-      });
-      if (verified.payload.firebase === undefined || typeof verified.payload.sub !== "string") throw new Error("Invalid Firebase token");
-      uid = verified.payload.sub;
-    } catch {
-      return response({ error: "La sesión no es válida o venció. Volvé a iniciar sesión." }, 401);
+
+    if (request.method === "POST" && url.pathname === "/upload-url") {
+      const uid = await verifyUser(request);
+      if (!uid) return response({ error: "La sesión no es válida. Volvé a iniciar sesión en SixSeven." }, 401);
+      let body: { kind?: unknown; contentType?: unknown; fileName?: unknown; fileSize?: unknown };
+      try { body = await request.json(); } catch { return response({ error: "Solicitud inválida." }, 400); }
+      const kind = typeof body.kind === "string" ? body.kind : "";
+      const contentType = typeof body.contentType === "string" ? body.contentType.toLowerCase().split(";")[0].trim() : "";
+      const fileSize = Number(body.fileSize);
+      if (!(kind in buckets)) return response({ error: "Tipo de archivo no permitido." }, 400);
+      if (!Number.isFinite(fileSize) || fileSize <= 0 || fileSize > maxBytes[kind]) {
+        return response({ error: `El archivo supera el límite permitido para ${kind}.` }, 413);
+      }
+      if (!allowedMime[kind].test(contentType)) return response({ error: "El formato de archivo no está permitido." }, 415);
+      const extByMime: Record<string, string> = {
+        "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif",
+        "audio/mpeg": "mp3", "audio/mp4": "m4a", "audio/ogg": "ogg", "audio/wav": "wav",
+        "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov",
+      };
+      const ext = extByMime[contentType] || "bin";
+      const objectKey = `${uid}/${kind}/${crypto.randomUUID()}.${ext}`;
+      const bucket = buckets[kind];
+      try {
+        const client = s3Client(env);
+        const command = new PutObjectCommand({ Bucket: bucket, Key: objectKey, ContentType: contentType });
+        const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 });
+        const publicUrl = publicFileUrl(bucket, objectKey, b2Endpoint(env));
+        return response({ uploadUrl, publicUrl, objectKey, bucket, method: "PUT", headers: { "Content-Type": contentType }, expiresInSeconds: 300 });
+      } catch (error) {
+        console.error("Signing upload URL failed", error instanceof Error ? error.message : "unknown error");
+        return response({ error: "No se pudo preparar la subida. Revisá la configuración del servicio." }, 500);
+      }
     }
-    let body: { kind?: unknown; contentType?: unknown; fileName?: unknown; fileSize?: unknown };
-    try { body = await request.json(); } catch { return response({ error: "Solicitud inválida." }, 400); }
-    const kind = typeof body.kind === "string" ? body.kind : "";
-    const contentType = typeof body.contentType === "string" ? body.contentType.toLowerCase().split(";")[0].trim() : "";
-    const fileSize = Number(body.fileSize);
-    if (!(kind in buckets)) return response({ error: "Tipo de archivo no permitido." }, 400);
-    if (!Number.isFinite(fileSize) || fileSize <= 0 || fileSize > maxBytes[kind]) {
-      return response({ error: `El archivo supera el límite permitido para ${kind}.` }, 413);
-    }
-    if (!allowedMime[kind].test(contentType)) return response({ error: "El formato de archivo no está permitido." }, 415);
-    const extByMime: Record<string, string> = {
-      "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif",
-      "audio/mpeg": "mp3", "audio/mp4": "m4a", "audio/ogg": "ogg", "audio/wav": "wav",
-      "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov",
-    };
-    const ext = extByMime[contentType] || "bin";
-    const objectKey = `${uid}/${kind}/${crypto.randomUUID()}.${ext}`;
-    try {
-      const client = new S3Client({
-        region: REGION,
-        endpoint: ENDPOINT,
-        forcePathStyle: true,
-        credentials: { accessKeyId: env.B2_KEY_ID, secretAccessKey: env.B2_APPLICATION_KEY },
-      });
-      const command = new PutObjectCommand({ Bucket: buckets[kind], Key: objectKey, ContentType: contentType });
-      const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 });
-      const publicUrl = `https://${buckets[kind]}.${ENDPOINT.replace("https://", "")}/${objectKey.split("/").map(encodeURIComponent).join("/")}`;
-      return response({ uploadUrl, publicUrl, objectKey, bucket: buckets[kind], method: "PUT", headers: { "Content-Type": contentType }, expiresInSeconds: 300 });
-    } catch (error) {
-      console.error("Signing upload URL failed", error instanceof Error ? error.message : "unknown error");
-      return response({ error: "No se pudo preparar la subida. Revisá la configuración del servicio." }, 500);
-    }
+
+    return response({ error: "Ruta no encontrada." }, 404);
   },
 };

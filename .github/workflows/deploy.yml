@@ -3,8 +3,7 @@ name: Deploy SixSeven Backblaze Worker
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "cloudflare/backblaze-worker/**"
       - ".github/workflows/deploy.yml"
@@ -17,123 +16,70 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-
       - name: Install Worker dependencies
         working-directory: cloudflare/backblaze-worker
         run: npm install --no-audit --no-fund
 
-      - name: Validate required secrets
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-        run: |
-          test -n "$CLOUDFLARE_API_TOKEN" || (echo "::error::Missing CLOUDFLARE_API_TOKEN" && exit 1)
-          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Missing CLOUDFLARE_ACCOUNT_ID" && exit 1)
-          test -n "$B2_KEY_ID" || (echo "::error::Missing B2_KEY_ID" && exit 1)
-          test -n "$B2_APPLICATION_KEY" || (echo "::error::Missing B2_APPLICATION_KEY" && exit 1)
-
-      - name: Ensure workers.dev subdomain exists
-        id: subdomain
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          API="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
-          HTTP_CODE="$(curl -sS -o /tmp/cf-subdomain.json -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API")"
-          SUBDOMAIN=""
-          if [ "$HTTP_CODE" = "200" ] && jq -e '.success == true' /tmp/cf-subdomain.json >/dev/null; then
-            SUBDOMAIN="$(jq -r '.result.subdomain' /tmp/cf-subdomain.json)"
-          else
-            for candidate in sixsevenapp816 sixseven-mauro816 sixsevenapp-mauro816; do
-              CODE="$(curl -sS -o /tmp/cf-subdomain-create.json -w '%{http_code}' -X PUT "$API" -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" --data "{\"subdomain\":\"$candidate\"}")"
-              if [ "$CODE" = "200" ] && jq -e '.success == true' /tmp/cf-subdomain-create.json >/dev/null; then
-                SUBDOMAIN="$(jq -r '.result.subdomain' /tmp/cf-subdomain-create.json)"
-                break
-              fi
-            done
-          fi
-          if [ -z "$SUBDOMAIN" ]; then
-            echo "::error::Cloudflare could not register or read a workers.dev subdomain. Check that the API token has Workers Scripts Write permission."
-            exit 1
-          fi
-          echo "workers_subdomain=$SUBDOMAIN" >> "$GITHUB_OUTPUT"
-          echo "workers.dev subdomain is ready."
-
-      # A first deploy creates the Worker resource; secrets can only be attached after it exists.
-      - name: Bootstrap Worker resource
-        working-directory: cloudflare/backblaze-worker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx wrangler deploy
-
-      - name: Configure Backblaze secrets in Worker
+      - name: Validate secrets and deploy Worker
         working-directory: cloudflare/backblaze-worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-        run: |
-          printf '%s' "$B2_KEY_ID" | npx wrangler secret put B2_KEY_ID --name sixseven-backblaze-signer
-          printf '%s' "$B2_APPLICATION_KEY" | npx wrangler secret put B2_APPLICATION_KEY --name sixseven-backblaze-signer
-
-      - name: Deploy Worker and capture URL
-        id: deploy
-        working-directory: cloudflare/backblaze-worker
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
         shell: bash
         run: |
           set -euo pipefail
-          DEPLOY_OUTPUT="$(npx wrangler deploy 2>&1)" || { printf '%s\n' "$DEPLOY_OUTPUT"; exit 1; }
-          printf '%s\n' "$DEPLOY_OUTPUT"
-          WORKER_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^[:space:]]+\.workers\.dev' | tail -n 1 || true)"
-          if [ -z "$WORKER_URL" ]; then
-            echo "::error::Could not extract the workers.dev URL from Wrangler output."
-            exit 1
-          fi
-          echo "worker_url=$WORKER_URL" >> "$GITHUB_OUTPUT"
-          echo "Deployed Worker URL: $WORKER_URL"
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Falta CLOUDFLARE_API_TOKEN"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Falta CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+          test -n "$B2_KEY_ID" || { echo "::error::Falta B2_KEY_ID"; exit 1; }
+          B2_SECRET="${B2_APP_KEY:-$B2_APPLICATION_KEY}"
+          test -n "$B2_SECRET" || { echo "::error::Falta B2_APP_KEY o B2_APPLICATION_KEY"; exit 1; }
 
-      - name: Verify live health endpoint
+          printf '%s' "$B2_KEY_ID" | npx wrangler secret put B2_KEY_ID --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          printf '%s' "$B2_SECRET" | npx wrangler secret put B2_APP_KEY --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          printf '%s' "$B2_SECRET" | npx wrangler secret put B2_APPLICATION_KEY --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+
+          if [ -n "$B2_BUCKET_NAME" ]; then
+            printf '%s' "$B2_BUCKET_NAME" | npx wrangler secret put B2_BUCKET_NAME --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          fi
+          if [ -n "$B2_ENDPOINT" ]; then
+            printf '%s' "$B2_ENDPOINT" | npx wrangler secret put B2_ENDPOINT --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          fi
+
+          npx wrangler deploy --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+
+      - name: Verify live Worker endpoints
         env:
-          WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
+          WORKER_URL: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev
+        shell: bash
         run: |
-          set -e
-          for attempt in $(seq 1 20); do
-            if curl --connect-timeout 10 --max-time 15 --fail --silent --show-error "$WORKER_URL/api/health"; then
-              echo
-              exit 0
-            fi
-            echo "Health check attempt $attempt/20; waiting for Cloudflare edge/TLS provisioning..."
-            sleep 5
+          set -euo pipefail
+          for path in / /api/health; do
+            code="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 20 "$WORKER_URL$path")"
+            cat /tmp/health.json
+            echo
+            test "$code" = "200" || { echo "::error::Health check failed at $path with HTTP $code"; exit 1; }
+            grep -q '"ok":true' /tmp/health.json || { echo "::error::Unexpected health response at $path"; exit 1; }
           done
-          echo "::error::Worker deployed but /api/health did not return HTTP 200."
-          exit 1
+          OPTIONS_CODE="$(curl -sS -o /dev/null -w '%{http_code}' -X OPTIONS "$WORKER_URL/api/upload-avatar" -H 'Origin: https://example.com' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: authorization,content-type')"
+          test "$OPTIONS_CODE" = "200" || { echo "::error::CORS preflight failed with HTTP $OPTIONS_CODE"; exit 1; }
 
-      - name: Publish backend URL to workflow summary
-        env:
-          WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
+      - name: Publish deployment summary
         run: |
           {
             echo "## SixSeven Backblaze Worker"
             echo
-            echo "- Backend URL: $WORKER_URL"
-            echo "- Health check: $WORKER_URL/api/health"
-            echo "- Upload signing endpoint: $WORKER_URL/upload-url"
-            echo
-            echo "Add the backend URL as the GitHub Actions repository secret VITE_BACKBLAZE_WORKER_URL before rebuilding the APK."
+            echo "- URL: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev"
+            echo "- Health: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev/api/health"
+            echo "- Avatar upload: POST /api/upload-avatar"
+            echo "- Cover upload: POST /api/upload-cover"
+            echo "- Legacy signed upload: POST /upload-url"
           } >> "$GITHUB_STEP_SUMMARY"
