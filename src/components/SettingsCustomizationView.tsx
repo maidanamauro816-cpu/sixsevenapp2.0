@@ -22,6 +22,14 @@ const sections: { id: Exclude<Section,'menu'>; title: string; subtitle: string; 
 const sounds = [{id:'classic',name:'SixSeven clásico'},{id:'soft',name:'Suave'},{id:'digital',name:'Digital'},{id:'off',name:'Silencio'}];
 const fonts = [{id:'system',name:'Predeterminada',css:'Inter, system-ui, sans-serif'},{id:'rounded',name:'Redondeada',css:'Trebuchet MS, sans-serif'},{id:'serif',name:'Elegante',css:'Georgia, serif'},{id:'mono',name:'Tecnológica',css:'ui-monospace, monospace'}];
 const bubbles = [{id:'classic',name:'Clásica'},{id:'round',name:'Redonda'},{id:'square',name:'Cuadrada'},{id:'neon',name:'Neón suave'},{id:'soft',name:'Suave'}];
+const themePresets = [
+  {id:'neon',name:'Negro + rojo neón',chat:'#000000',header:'#000000',description:'Tema oficial SixSeven'},
+  {id:'graphite',name:'Grafito',chat:'#101114',header:'#08090b',description:'Oscuro suave y legible'},
+  {id:'glass',name:'Cristal oscuro',chat:'#090b10',header:'#11151d',description:'Estilo vidrio oscuro'},
+  {id:'light',name:'Claro',chat:'#f4f4f5',header:'#ffffff',description:'Fondo claro'},
+  {id:'ocean',name:'Océano',chat:'#071a2b',header:'#09253a',description:'Azul profundo'},
+  {id:'violet',name:'Violeta',chat:'#160d24',header:'#211236',description:'Violeta oscuro'},
+];
 
 async function imageToSmallDataUrl(file: File, maxSize: number) {
   return new Promise<string>((resolve, reject) => {
@@ -52,6 +60,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
   const [font, setFont] = useState(read('font','system'));
   const [layout, setLayout] = useState(read('homeLayout','classic'));
   const [chatBackground, setChatBackground] = useState(read('chatBackground','#000000'));
+  const [activePreset, setActivePreset] = useState(read('activePreset','neon'));
   const [headerBackground, setHeaderBackground] = useState(read('headerBackground','#000000'));
   const [cover, setCover] = useState(read('coverPhoto',''));
   const [avatar, setAvatar] = useState(read('profilePhoto',''));
@@ -67,10 +76,15 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
     document.documentElement.dataset.sxTheme = 'neon';
     document.documentElement.dataset.sxBubble = bubble;
     document.body.style.fontFamily = fonts.find(f=>f.id===font)?.css || fonts[0].css;
-    save('theme','neon'); save('chatBackground',chatBackground); save('headerBackground',headerBackground);
+    save('theme',activePreset); save('activePreset',activePreset); save('chatBackground',chatBackground); save('headerBackground',headerBackground);
     save('bubble',bubble); save('font',font); save('messageSound',messageSound); save('callSound',callSound); save('homeLayout',layout);
     window.dispatchEvent(new Event('sixseven:appearanceChanged'));
-  },[chatBackground,headerBackground,bubble,font,messageSound,callSound,layout]);
+  },[chatBackground,headerBackground,bubble,font,messageSound,callSound,layout,activePreset]);
+
+  const applyPreset = (preset: typeof themePresets[number]) => {
+    setActivePreset(preset.id); setChatBackground(preset.chat); setHeaderBackground(preset.header);
+    setNotice('Tema “'+preset.name+'” aplicado.');
+  };
 
   const testSound = (value:string) => {
     if(value==='off') return;
@@ -152,7 +166,9 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
   const row='flex w-full items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-left';
   const back = () => section==='menu' ? onBack() : setSection('menu');
 
-  if (section === 'recursos') return <ResourcesDeltaView onBack={() => setSection('menu')} />;\n\n  return <div className="fixed inset-0 z-[70] overflow-y-auto bg-black text-white px-4 pb-10 safe-top">
+  if (section === 'recursos') return <ResourcesDeltaView onBack={() => setSection('menu')} />;
+
+  return <div className="fixed inset-0 z-[70] overflow-y-auto bg-black text-white px-4 pb-10 safe-top">
     <header className="sticky top-0 z-10 -mx-4 flex items-center gap-3 border-b border-neutral-900 bg-black/95 px-4 py-3 backdrop-blur">
       <button onClick={back} className="rounded-full p-2 text-red-400" aria-label="Volver"><ArrowLeft size={22}/></button>
       <div className="flex-1"><h1 className="font-black text-lg">{section==='menu'?'Configuración':sections.find(s=>s.id===section)?.title}</h1><p className="text-xs text-neutral-500">SixSeven · Negro + rojo neón</p></div>
@@ -200,6 +216,8 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
 
       {section==='temas' && <section className={card}>
         <h2 className="font-bold flex items-center gap-2"><Palette size={18} className="text-red-400"/> Temas de SixSeven</h2>
+        <p className="text-xs text-neutral-400">Elegí un tema para aplicarlo al instante. El rojo neón se conserva como acento de marca.</p>
+        <div className="grid grid-cols-2 gap-2">{themePresets.map(p=><button key={p.id} onClick={()=>applyPreset(p)} className={'rounded-xl border p-3 text-left '+(activePreset===p.id?'border-red-500 ring-1 ring-red-500':'border-neutral-800')}><span className="mb-2 flex h-10 overflow-hidden rounded-lg border border-white/10"><span className="flex-1" style={{background:p.chat}}/><span className="w-1/3 border-l border-white/10" style={{background:p.header}}/></span><b className="block text-xs">{p.name}</b><small className="text-neutral-400">{p.description}</small></button>)}</div>
         <p className="text-xs text-neutral-400">Guardá tu combinación de colores, burbujas, tipografía, diseño y tonos en un archivo. Podés compartirlo o recuperarlo después de reinstalar.</p>
         <button onClick={exportTheme} className="flex w-full items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-left">
           <Download size={20} className="text-red-400"/><span className="flex-1"><b className="block text-sm">Exportar mi tema</b><small className="text-neutral-400">Crear un archivo JSON de SixSeven</small></span>
