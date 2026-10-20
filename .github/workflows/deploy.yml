@@ -113,12 +113,13 @@ jobs:
           WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
         run: |
           set -e
-          for attempt in 1 2 3 4 5; do
-            if curl --fail --silent --show-error "$WORKER_URL/health"; then
+          for attempt in $(seq 1 20); do
+            if curl --connect-timeout 10 --max-time 15 --fail --silent --show-error "$WORKER_URL/health"; then
               echo
               exit 0
             fi
-            sleep 3
+            echo "Health check attempt $attempt/20; waiting for Cloudflare edge/TLS provisioning..."
+            sleep 5
           done
           echo "::error::Worker deployed but /health did not return HTTP 200."
           exit 1
