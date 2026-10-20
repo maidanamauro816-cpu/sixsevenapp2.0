@@ -43,7 +43,7 @@ exports.askSixSevenIA = onCall(
       const ai = new GoogleGenAI({ apiKey: key });
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3.8-flash',
         contents: [
           {
             role: 'user',
@@ -83,7 +83,7 @@ exports.askSixSevenIA = onCall(
           'GEMINI_API_KEY invalida. Revisa Firebase Secrets.'
         );
       }
-      if (msg.toLowerCase().includes('quota') || msg.includes('429')) {
+      if (msg.toLowerCase().includes('quota') || msg.includes('429') || error?.status === 429 || error?.status === 429) {
         throw new HttpsError(
           'resource-exhausted',
           'La IA esta con mucho trafico, proba en 1 minuto.'
