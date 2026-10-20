@@ -216,11 +216,21 @@ class MemeBeatLoop {
 export const memeBeat = new MemeBeatLoop();
 
 
-/** Reproduce el tono elegido en Personalización. */
+/** Reproduce el tono configurado para mensajes, llamadas o inicio de sesión. */
 export function playConfiguredSound(kind: 'message' | 'call' | 'login') {
   try {
     const selected = localStorage.getItem('sixseven:' + (kind === 'message' ? 'messageSound' : kind === 'call' ? 'callSound' : 'loginSound')) || (kind === 'call' ? 'digital' : 'classic');
     if (selected === 'off') return;
+
+    // Los tonos Premium elegidos se usan también en los eventos reales de mensajes y llamadas.
+    const premium = kind === 'login' ? null : localStorage.getItem('sixseven:premiumSound');
+    if (premium) {
+      if (premium === 'chime') { playSuccessChime(); return; }
+      if (premium === 'bass') { playBassDrop(); return; }
+      if (premium === 'pop') { playLikePop(); return; }
+      if (premium === 'sixseven') { playSixSevenSound(); return; }
+    }
+
     if (selected === 'soft') { playSuccessChime(); return; }
     if (selected === 'digital') { playLikePop(); return; }
     playSixSevenSound();
