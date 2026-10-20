@@ -5,8 +5,11 @@ import { WhatsAppChat } from './WhatsAppChatList';
 import { MediaPicker, PickerTab } from './MediaPicker';
 import type { GifItem } from '../services/giphy';
 import { useAuth } from '../context/AuthContext';
-import { MessageDoc, markRead, messagesQuery, sendMessage, sendMediaMessage, sendRemoteGifMessage, sendStickerMessage } from '../services/chats';
+import { MessageDoc, markRead, messagesQuery, sendMessage, sendMediaMessage, sendRemoteGifMessage, sendStickerMessage, sendCatalogStickerMessage, sendMusicClipMessage } from '../services/chats';
 import { playConfiguredSound } from '../utils/audio';
+import { EmojiPicker } from './EmojiPicker';
+import { StickerPicker, SixSevenSticker } from './StickerPicker';
+import { MusicShareButton, MusicClip } from './MusicShareButton';
 
 interface WhatsAppChatRoomProps {
   chat: WhatsAppChat;
@@ -23,6 +26,8 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
   const [inputText, setInputText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [stickerCatalogOpen, setStickerCatalogOpen] = useState(false);
+  const [musicShareOpen, setMusicShareOpen] = useState(false);
   const [attachOpen, setAttachOpen] = useState(false);
   const [gifOpen, setGifOpen] = useState(false);
   const [pickerTab, setPickerTab] = useState<PickerTab>('emoji');
@@ -143,6 +148,20 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
     try { await sendRemoteGifMessage(chat.id, myUid, chat.otherUid, gif.url); playConfiguredSound('message'); }
     catch (err) { console.error('Error enviando GIF:', err); setError('No se pudo enviar el GIF. Revisá tu conexión.'); }
   };
+
+  const sendCatalogSticker = async (sticker: SixSevenSticker) => {
+    if (!myUid) return;
+    setStickerCatalogOpen(false); setError(null);
+    try { await sendCatalogStickerMessage(chat.id, myUid, chat.otherUid, sticker.id, sticker.text, sticker.emoji); playConfiguredSound('message'); }
+    catch (err) { console.error('Error enviando sticker de catálogo:', err); setError('No se pudo enviar el sticker. Revisá las reglas de Firestore.'); }
+  };
+  const shareMusicClip = async (clip: MusicClip) => {
+    if (!myUid) return;
+    setMusicShareOpen(false); setError(null);
+    try { await sendMusicClipMessage(chat.id, myUid, chat.otherUid, clip.id, clip.name, clip.duration); playConfiguredSound('message'); }
+    catch (err) { console.error('Error compartiendo música:', err); setError('No se pudo compartir la música.'); }
+  };
+
   const sendSticker = async (data: string) => {
     if (!myUid) return;
     setError(null);
@@ -198,6 +217,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
                   {m.mediaUrl && m.mediaType === 'video' && <div className="space-y-1"><video src={m.mediaUrl} controls playsInline preload="metadata" className="max-w-full max-h-64 rounded-lg"/><a href={m.mediaUrl} download={m.mediaName || 'sixseven-video'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[10px] text-red-200"><Download size={12}/> Descargar video</a></div>}
                   {m.mediaUrl && m.mediaType === 'audio' && <div className="flex items-center gap-2 min-w-48 py-1"><button type="button" onClick={() => void playAudio(m)} className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shrink-0" aria-label="Reproducir o pausar audio">{playingAudioId === m.id ? <Pause size={14}/> : <Play size={14}/>}</button><div className="min-w-0 flex-1"><div className="text-xs font-semibold truncate">{m.mediaName || 'Nota de voz'}</div><audio src={m.mediaUrl} controls preload="metadata" className="w-44 h-8" onPlay={() => setPlayingAudioId(m.id)} onEnded={() => setPlayingAudioId(null)}/></div><a href={m.mediaUrl} download={m.mediaName || 'sixseven-audio'} aria-label="Descargar audio" className="text-neutral-300"><Download size={14}/></a></div>}
                   {m.mediaType === 'sticker' && m.stickerData && <img src={m.stickerData} alt="Sticker" className="w-36 h-36 object-contain" />}
+                  {m.messageType === 'sticker' && m.stickerId && <div className="flex min-w-36 flex-col items-center justify-center rounded-2xl bg-neutral-950/80 p-3 text-center ring-1 ring-red-500/30"><span className="text-5xl">{m.text.split(' ')[0]}</span><span className="mt-1 text-xs font-semibold">{m.text.replace(/^\S+\s*/, '')}</span></div>}
                   {m.text && <span className="whitespace-pre-wrap break-words min-w-0">{m.text}</span>}
                   <span className="flex items-center gap-0.5 text-[10px] text-white/60 justify-end mt-1">
                     {fmt(m.createdAt?.toMillis?.())}
@@ -215,8 +235,12 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
       {error && <p role="status" className="text-center text-xs text-red-400 pb-1">{error}</p>}
       {uploading && <p className="text-center text-xs text-neutral-300 pb-1 flex justify-center items-center gap-2"><LoaderCircle size={13} className="animate-spin"/>Subiendo archivo…</p>}
       {recording && <div className="bg-red-950 text-red-200 text-center text-[11px] py-1 flex items-center justify-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"/>Grabando nota de voz · {Math.floor(recordSeconds / 60)}:{String(recordSeconds % 60).padStart(2,'0')}</div>}
+      {stickerCatalogOpen && <StickerPicker onSelect={(sticker) => void sendCatalogSticker(sticker)} onClose={() => setStickerCatalogOpen(false)} />}
+      {musicShareOpen && <MusicShareButton onShare={(clip) => void shareMusicClip(clip)} onClose={() => setMusicShareOpen(false)} />}
       <form onSubmit={handleSend} className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-1.5">
         <button type="button" aria-label="Abrir emojis" aria-expanded={emojiOpen} onClick={() => { (document.activeElement as HTMLElement | null)?.blur(); setPickerTab('emoji'); setEmojiOpen((open) => !open); setAttachOpen(false); setGifOpen(false); }} className="text-[#ff2a2a] p-1"><Smile size={21}/></button>
+        <button type="button" aria-label="Abrir stickers" onClick={() => { setStickerCatalogOpen(v => !v); setMusicShareOpen(false); setEmojiOpen(false); setAttachOpen(false); }} className="p-1 text-[#ff2a2a] text-lg" title="Stickers">▧</button>
+        <button type="button" aria-label="Compartir música" onClick={() => { setMusicShareOpen(v => !v); setStickerCatalogOpen(false); setEmojiOpen(false); setAttachOpen(false); }} className="p-1 text-[#ff2a2a] text-lg" title="Música">🎵</button>
         <button type="button" aria-label="Adjuntar archivo" onClick={() => { setAttachOpen((open) => !open); setEmojiOpen(false); setGifOpen(false); }} className="text-neutral-300 p-1"><Paperclip size={20}/></button>
         <input ref={fileInputRef} type="file" accept="image/*,.gif" className="hidden" onChange={(e) => void handleFile(e,'image')}/>
         <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => void handleFile(e,'video')}/>
@@ -224,7 +248,8 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
         <div className="flex-1 min-w-0 flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-full px-3 py-2 focus-within:border-red-600"><input type="text" value={inputText} onFocus={() => setEmojiOpen(false)} onChange={(e) => setInputText(e.target.value)} placeholder="Escribe un mensaje..." maxLength={2000} className="w-full min-w-0 bg-transparent text-sm text-white placeholder-neutral-500 focus:outline-none"/></div>
         {inputText.trim() ? <button type="submit" disabled={uploading} className="w-11 h-11 rounded-full bg-[#ff1a1a] text-white flex items-center justify-center shadow-[0_0_14px_rgba(255,0,0,0.6)] active:scale-90 transition disabled:opacity-60" aria-label="Enviar mensaje"><Send size={18}/></button> : <button type="button" disabled={uploading} onClick={recording ? stopRecording : () => void startRecording()} className={`w-11 h-11 rounded-full ${recording ? 'bg-white text-red-600 animate-pulse' : 'bg-[#ff1a1a] text-white'} flex items-center justify-center shadow-[0_0_14px_rgba(255,0,0,0.5)] disabled:opacity-50`} aria-label={recording ? 'Detener grabación' : 'Grabar nota de voz'} title={recording ? 'Detener grabación' : 'Grabar nota de voz'}>{recording ? <Square size={16} fill="currentColor"/> : <Mic size={18}/>}</button>}
       </form>
-      {emojiOpen && (
+      {emojiOpen && pickerTab === 'emoji' && <EmojiPicker onSelect={insertEmoji} onClose={() => setEmojiOpen(false)} />}
+      {emojiOpen && pickerTab !== 'emoji' && (
         <MediaPicker
           tab={pickerTab}
           onTab={setPickerTab}
