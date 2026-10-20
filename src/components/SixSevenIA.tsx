@@ -3,7 +3,6 @@ import { Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'luc
 import { SixSevenOrb } from './SixSevenOrb';
 import { auth } from '../firebase'; // Firebase se usa aquí únicamente para obtener el token de Authentication.
 import { useAuth } from '../context/AuthContext';
-import { useAuth } from '../context/AuthContext';
 import type { WhatsAppTab } from './WhatsAppBottomNav';
 
 type ChatMessage = { role: 'user' | 'assistant'; text: string };
@@ -25,8 +24,6 @@ type RecognitionConstructor = new () => RecognitionLike;
 interface Props { onNavigate: (tab: WhatsAppTab) => void }
 
 export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
-  const { user: sessionUser, profile } = useAuth();
-  const username = (sessionUser?.displayName || sessionUser?.phoneNumber || profile?.displayName || profile?.username || 'usuario').trim() || 'usuario';
   const { user: sessionUser, profile } = useAuth();
   const username = (sessionUser?.displayName || sessionUser?.phoneNumber || profile?.displayName || profile?.username || 'usuario').trim() || 'usuario';
   const [message, setMessage] = useState('');
