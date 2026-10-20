@@ -1,0 +1,5 @@
+import React,{createContext,useCallback,useContext,useMemo,useState} from 'react';
+type State={enabled:boolean;setEnabled:(v:boolean)=>void;assertOnline:()=>void};const C=createContext<State|null>(null);
+export const DndProvider:React.FC<React.PropsWithChildren>=({children})=>{const [enabled,setState]=useState(()=>{try{return localStorage.getItem('sixseven:dnd')==='true'}catch{return false}});const setEnabled=useCallback((v:boolean)=>{setState(v);try{localStorage.setItem('sixseven:dnd',String(v));window.dispatchEvent(new CustomEvent('sixseven:dnd-change',{detail:{enabled:v}}))}catch{}},[]);const assertOnline=useCallback(()=>{if(enabled)throw Error('SixSeven Offline — Modo Avión está activado')},[enabled]);const value=useMemo(()=>({enabled,setEnabled,assertOnline}),[enabled,setEnabled,assertOnline]);return <C.Provider value={value}>{children}</C.Provider>};
+export const useDnd=()=>{const c=useContext(C);if(!c)throw Error('useDnd requiere DndProvider');return c};
+export const isDndEnabled=()=>{try{return localStorage.getItem('sixseven:dnd')==='true'}catch{return false}};
