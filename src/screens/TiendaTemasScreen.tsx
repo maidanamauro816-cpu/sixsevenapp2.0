@@ -70,7 +70,7 @@ export const TiendaTemasScreen: React.FC<Props> = ({ onBack }) => {
   };
 
   return (
-    <main className="min-h-full bg-[var(--scaffold-bg,#050505)] px-4 pb-28 pt-4 text-[var(--text-primary,#fff)]">
+    <main className="fixed inset-0 z-[80] overflow-y-auto bg-[var(--scaffold-bg,#050505)] px-4 pb-8 pt-4 text-[var(--text-primary,#fff)]">
       <header className="mb-5 flex items-center gap-3">
         {onBack && <button type="button" onClick={onBack} aria-label="Volver" className="rounded-full border border-neutral-800 p-2"><ArrowLeft size={18} /></button>}
         <div><h1 className="text-xl font-bold">Tienda de temas</h1><p className="text-sm text-neutral-400">19 estilos · todos gratuitos</p></div>
