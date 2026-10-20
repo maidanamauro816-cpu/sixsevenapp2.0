@@ -68,7 +68,9 @@ jobs:
           if [ -n "$B2_BUCKET_NAME" ]; then put_secret "B2_BUCKET_NAME" "$B2_BUCKET_NAME"; fi
           if [ -n "$B2_ENDPOINT" ]; then put_secret "B2_ENDPOINT" "$B2_ENDPOINT"; fi
 
-          npx wrangler deploy --name sixseven-backblaze-signer --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          # Wrangler v4 takes the account from wrangler.toml; inject the account id for this CI run only.
+          sed -i '/^name =/a account_id = "'"$CLOUDFLARE_ACCOUNT_ID"'"' wrangler.toml
+          npx wrangler deploy --name sixseven-backblaze-signer
 
       - name: Verify live Worker endpoints
         env:
