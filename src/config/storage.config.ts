@@ -1,3 +1,3 @@
-/** Storage remoto desactivado por defecto para la beta gratuita. */
-export const STORAGE_ENABLED = false;
-export const STORAGE_PROVIDER: 'firebase' | 'supabase' | 'cloudinary' = 'firebase';
+/** Backblaze B2 remoto a través de Firebase Functions; nunca exponer claves B2 en el cliente. */
+export const STORAGE_ENABLED = true;
+export const STORAGE_PROVIDER: 'backblaze' = 'backblaze';
