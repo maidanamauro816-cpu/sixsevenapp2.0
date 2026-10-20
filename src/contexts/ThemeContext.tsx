@@ -26,6 +26,8 @@ export type SixSevenTheme = {
 
 export const themes: SixSevenTheme[] = [
   { id: 'default', name: 'Default', primary: '#ff1a1a', background: '#050505', bubbleSent: '#321014', bubbleReceived: '#171717', text: '#ffffff', tickColor: '#35b8ff', fontFamily: 'system-ui' },
+  { id: 'corona-gold', name: 'Corona Gold', primary: '#d4af37', primaryDark: '#9f7f20', background: '#090806', cardBg: '#17140d', bubbleSent: '#3a2d0d', bubbleReceived: '#191710', text: '#fff8df', tickColor: '#d4af37', fontFamily: 'system-ui', layoutStyle: 'chat-corona', bubbleRadius: 18 },
+  { id: 'midnight', name: 'Midnight', primary: '#7c8cff', primaryDark: '#5364c9', background: '#070a12', cardBg: '#111725', bubbleSent: '#202b49', bubbleReceived: '#121a2a', text: '#f4f6ff', tickColor: '#7c8cff', fontFamily: 'system-ui', layoutStyle: 'chat-midnight', bubbleRadius: 24 },
   { id: 'cristiano-light', name: 'Cristiano Luz', primary: '#c9a227', background: '#f4f4f4', bubbleSent: '#e6f7d9', bubbleReceived: '#ffffff', text: '#171717', tickColor: '#168cff', fontFamily: 'Roboto' },
   { id: 'cristiano-dark', name: 'Cristiano Oscuro', primary: '#d5b45b', background: '#080808', bubbleSent: '#202020', bubbleReceived: '#111111', text: '#ffffff', tickColor: '#d5b45b', fontFamily: 'Roboto' },
   { id: 'argento', name: 'Argento', primary: '#75bfff', background: '#07111c', bubbleSent: '#102d46', bubbleReceived: '#17202a', text: '#f1f7ff', tickColor: '#75bfff', fontFamily: 'system-ui' },
