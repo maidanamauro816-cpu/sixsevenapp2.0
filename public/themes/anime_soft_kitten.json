@@ -1,0 +1,27 @@
+{
+  "id": "anime_soft_kitten",
+  "name": "Soft Kitten Anime 🖤",
+  "version": "1.0",
+  "author": "SixSevenApp",
+  "is_premium": false,
+  "price": 0,
+  "description": "Manga blanco y negro soft kitten - de tus fotos",
+  "preview_image": "anime_soft_preview.jpg",
+  "colors": {
+    "primary": "#212121",
+    "scaffold_bg": "#FAFAFA",
+    "card_bg": "#FFFFFF",
+    "bubble_me": "#212121",
+    "bubble_other": "#EEEEEE",
+    "bottom_nav_bg": "#FFFFFF"
+  },
+  "shapes": {
+    "bubble_radius": 24,
+    "card_radius": 18,
+    "estado_shape": "squircle",
+    "is_rectangular_estados": true,
+    "estado_rect_width": 75,
+    "estado_rect_height": 95,
+    "estado_border_radius": 18
+  }
+}
