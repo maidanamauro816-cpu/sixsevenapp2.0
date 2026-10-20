@@ -26,7 +26,7 @@ if "android:screenOrientation" not in xml:
     xml = re.sub(r"(<activity\b)", r'\1 android:screenOrientation="portrait"', xml, count=1)
 
 # Android muestra únicamente el alias activo como icono del lanzador.
-activity_match = re.search(r'<activity\b(?=[^>]*android:name="\.MainActivity")[\s\S]*?</activity>', xml)
+activity_match = re.search(r'<activity\b(?=[^>]*android:name="[^"]*MainActivity")[\s\S]*?</activity>', xml)
 if not activity_match:
     sys.exit("No se encontró .MainActivity en AndroidManifest.xml.")
 main_activity = activity_match.group(0)
