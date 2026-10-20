@@ -2,14 +2,7 @@
   "appId": "com.sixseven.app",
   "appName": "SixSeven",
   "webDir": "dist",
-  "backgroundColor": "#000000",
-  "plugins": {
-    "FirebaseAuthentication": {
-      "skipNativeAuth": true,
-      "providers": [
-        "google.com",
-        "phone"
-      ]
-    }
+  "android": {
+    "allowMixedContent": false
   }
 }
