@@ -2,15 +2,9 @@ name: Deploy SixSeven Gemini Worker
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "cloudflare/backblaze-worker/**"
-      - ".github/workflows/deploy-gemini-worker.yml"
 
 jobs:
   deploy:
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' && secrets.GEMINI_API_KEY != '' }}
     runs-on: ubuntu-latest
     defaults:
       run:
