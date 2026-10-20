@@ -85,7 +85,7 @@ async function askGemini(request: Request, env: Env): Promise<Response> {
   try { body = await request.json(); }
   catch { return response({ code: "invalid_request", error: "La solicitud de IA no es válida." }, 400); }
   const prompt = typeof body.message === "string" ? body.message.trim() : "";
-  const username = (typeof body.username === "string" ? body.username : "usuario").replace(/[\\r\\n\\t]/g, " ").trim().slice(0, 80) || "usuario";
+  const username = (typeof body.username === "string" ? body.username : "usuario").replaceAll("\r", " ").replaceAll("\n", " ").replaceAll("\t", " ").trim().slice(0, 80) || "usuario";
   if (!prompt) return response({ code: "empty_message", error: "Escribí o decí qué necesitás." }, 400);
   if (prompt.length > 4000) return response({ code: "message_too_long", error: "El mensaje es demasiado largo (máximo 4000 caracteres)." }, 413);
   try {
