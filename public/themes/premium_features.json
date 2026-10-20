@@ -1,0 +1,54 @@
+{
+  "pack_id": "sixseven_privacy_premium",
+  "pack_name": "SixSeven Privacy Premium 🔒",
+  "price": "$2.99",
+  "is_premium": true,
+  "description": "Todo lo de privacidad que el usuario sí paga",
+  "features": [
+    {
+      "id": "anti_delete_message",
+      "name": "Anti-Eliminar Mensaje",
+      "description": "Ver mensajes que te borraron"
+    },
+    {
+      "id": "anti_delete_status",
+      "name": "Ver Estados Borrados",
+      "description": "Ver estados eliminados por otros"
+    },
+    {
+      "id": "hide_last_seen",
+      "name": "Ocultar Última Vez",
+      "description": "Nadie ve tu última conexión"
+    },
+    {
+      "id": "view_last_seen_hidden",
+      "name": "Ver Última Vez Oculta",
+      "description": "Ver última vez aunque esté oculta"
+    },
+    {
+      "id": "blue_tick_hide",
+      "name": "Ocultar Tick Azul",
+      "description": "Leer sin que sepan"
+    },
+    {
+      "id": "typing_hide",
+      "name": "Ocultar Escribiendo...",
+      "description": "Escribir sin que te vean"
+    },
+    {
+      "id": "bomb_message",
+      "name": "Mensaje Bomba 💣",
+      "description": "Mensaje que se autodestruye"
+    },
+    {
+      "id": "view_once_bypass",
+      "name": "Ver una vez bypass",
+      "description": "Volver a ver contenido de una sola visualización solo cuando esté disponible y autorizado"
+    },
+    {
+      "id": "status_download",
+      "name": "Descargar Estados",
+      "description": "Guardar estados visibles para el usuario"
+    }
+  ]
+}
