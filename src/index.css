@@ -163,3 +163,11 @@ body { font-size: var(--sx-font-size); font-weight: var(--sx-font-weight); }
 html[data-sx-theme] body { color: var(--sx-text, #fff); }
 html[data-sx-theme] [data-sx-message-bubble="sent"] { background-color: var(--sx-bubble-sent) !important; }
 html[data-sx-theme] [data-sx-message-bubble="received"] { background-color: var(--sx-bubble-received) !important; }
+
+
+/* SixSeven IA animated eye orb — separate from the official S+crown app mark. */
+@keyframes sx-orb-ring-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.sx-ai-eye .sx-eye-rotating-ring { transform-origin: 50% 50%; animation: sx-orb-ring-spin 10s linear infinite; }
+.sx-ai-eye { filter: drop-shadow(0 0 3px rgba(255, 20, 40, .55)); }
+.sx-ai-eye.sx-orb-listening { filter: drop-shadow(0 0 9px rgba(255, 20, 40, .95)); }
+@media (prefers-reduced-motion: reduce) { .sx-ai-eye .sx-eye-rotating-ring { animation: none; } }
