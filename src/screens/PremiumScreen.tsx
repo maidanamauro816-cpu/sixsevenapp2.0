@@ -5,6 +5,23 @@ type PremiumFeature = { id: string; name: string; description: string };
 type PremiumPack = { pack_name?: string; price?: string; description?: string; features: PremiumFeature[] };
 type Props = { onBack?: () => void };
 
+const fallbackPack: PremiumPack = {
+  pack_name: 'SixSeven Privacy Premium 🔒',
+  price: '$2.99',
+  description: 'Funciones adicionales de privacidad para tu cuenta.',
+  features: [
+    { id: 'anti_delete_message', name: 'Anti-Eliminar Mensaje', description: 'Ver mensajes que te borraron' },
+    { id: 'anti_delete_status', name: 'Ver Estados Borrados', description: 'Ver estados eliminados por otros' },
+    { id: 'hide_last_seen', name: 'Ocultar Última Vez', description: 'Nadie ve tu última conexión' },
+    { id: 'view_last_seen_hidden', name: 'Ver Última Vez Oculta', description: 'Ver última vez aunque esté oculta' },
+    { id: 'blue_tick_hide', name: 'Ocultar Tick Azul', description: 'Leer sin que sepan' },
+    { id: 'typing_hide', name: 'Ocultar Escribiendo...', description: 'Escribir sin que te vean' },
+    { id: 'bomb_message', name: 'Mensaje Bomba 💣', description: 'Mensaje que se autodestruye' },
+    { id: 'view_once_bypass', name: 'Ver una vez', description: 'Volver a ver contenido de una sola visualización solo cuando esté disponible y autorizado' },
+    { id: 'status_download', name: 'Descargar Estados', description: 'Guardar estados visibles para el usuario' },
+  ],
+};
+
 export const PremiumScreen: React.FC<Props> = ({ onBack }) => {
   const [pack, setPack] = useState<PremiumPack | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +35,12 @@ export const PremiumScreen: React.FC<Props> = ({ onBack }) => {
         return response.json() as Promise<PremiumPack>;
       })
       .then((data) => { if (alive) setPack(data); })
-      .catch((error) => { if (alive) setMessage(error instanceof Error ? error.message : 'Error al cargar Premium.'); })
+      .catch((error) => {
+        if (!alive) return;
+        setPack(fallbackPack);
+        setMessage('Mostrando las 9 funciones guardadas localmente; no se pudo actualizar el catálogo remoto.');
+        console.warn('Catálogo Premium remoto no disponible:', error);
+      })
       .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
   }, []);
