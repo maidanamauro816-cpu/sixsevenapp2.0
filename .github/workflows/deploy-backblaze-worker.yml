@@ -1,11 +1,6 @@
 name: Deploy SixSeven Backblaze Worker
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "cloudflare/backblaze-worker/**"
-      - ".github/workflows/deploy-backblaze-worker.yml"
   workflow_dispatch:
 
 permissions:
