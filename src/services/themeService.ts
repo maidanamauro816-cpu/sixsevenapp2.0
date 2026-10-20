@@ -1,5 +1,3 @@
-import { Capacitor } from '@capacitor/core';
-
 export interface SixSevenTheme {
   id: string;
   name: string;
@@ -122,7 +120,6 @@ export const ThemeService = {
 
     // La pantalla aplica el tema y luego recarga para que los estilos se actualicen.
     // No recargar aquí: interrumpiría applyTheme antes de que termine.
-    void Capacitor.isNativePlatform();
     return theme;
   },
 
