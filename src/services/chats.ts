@@ -2,9 +2,8 @@ import {
   addDoc, collection, doc, getDoc, getDocs, increment, limit, orderBy, query,
   serverTimestamp, setDoc, updateDoc, where, Timestamp,
 } from 'firebase/firestore';
-import { db, storage } from '../firebase';
-import { getDownloadURL, ref } from 'firebase/storage';
-import { uploadFileWithTimeout } from './mediaUpload';
+import { db } from '../firebase';
+import { uploadToBackblaze } from './backblazeUpload';
 import { UserProfile } from '../types';
 
 export interface ChatMember {
@@ -84,20 +83,18 @@ export async function sendMessage(chatId: string, myUid: string, otherUid: strin
 }
 
 
-/** Sube un archivo a Firebase Storage y guarda un mensaje multimedia en Firestore. */
+/** Sube el archivo a Backblaze mediante el Worker y guarda su URL en Firestore. */
 export async function sendMediaMessage(
   chatId: string, myUid: string, otherUid: string, file: File, mediaType: ChatMediaType
 ) {
   if (file.size > 50 * 1024 * 1024) throw new Error('El archivo supera los 50 MB.');
+  if (!file.type.startsWith('image/') && !file.type.startsWith('video/') && !file.type.startsWith('audio/')) {
+    throw new Error('El formato del archivo no es compatible.');
+  }
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) || `media-${Date.now()}`;
-  const objectPath = `users/${myUid}/chat-media/${chatId}/${Date.now()}_${safeName}`;
-  const objectRef = ref(storage, objectPath);
-  await uploadFileWithTimeout(objectRef, file, {
-    contentType: file.type || 'application/octet-stream',
-    customMetadata: { ownerUid: myUid, chatId },
-  });
-  const mediaUrl = await getDownloadURL(objectRef);
-  const preview = mediaType === 'image' ? '📷 Foto' : mediaType === 'video' ? '🎬 Video' : mediaType === 'audio' ? '🎤 Nota de voz' : 'GIF';
+  // El Worker valida la sesión, firma la subida y mantiene las claves de B2 fuera del cliente.
+  const mediaUrl = await uploadToBackblaze(file, mediaType === 'gif' ? 'image' : mediaType);
+  const preview = mediaType === 'image' ? '📷 Foto' : mediaType === 'video' ? '🎬 Video' : mediaType === 'audio' ? '🎤 Nota de voz' : mediaType === 'sticker' ? 'Sticker' : 'GIF';
   await addDoc(collection(db, 'chats', chatId, 'messages'), {
     senderId: myUid, text: '', mediaUrl, mediaType, mediaName: safeName,
     mimeType: file.type || '', createdAt: serverTimestamp(),
