@@ -16,7 +16,6 @@ import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from '../firebase';
 import { uploadToBackblaze } from '../services/backblazeUpload';
 import { UserProfile } from '../types';
-import { fileToAvatarDataUrl } from '../utils/image';
 import { isNative } from '../native';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 
