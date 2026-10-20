@@ -1,11 +1,12 @@
 import { CopyrightFooter } from './CopyrightFooter';
+import { ResourcesDeltaView } from './ResourcesDeltaView';
 import { useAuth } from '../context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2, Download, Upload } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
 
 interface Props { onBack: () => void }
-type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas';
+type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas' | 'recursos';
 
 const read = (key: string, fallback = '') => { try { return localStorage.getItem('sixseven:' + key) || fallback; } catch { return fallback; } };
 const save = (key: string, value: string) => { try { localStorage.setItem('sixseven:' + key, value); } catch {} };
@@ -16,6 +17,7 @@ const sections: { id: Exclude<Section,'menu'>; title: string; subtitle: string; 
   { id:'teclado', title:'Teclado', subtitle:'Tipografía de la aplicación', icon:Keyboard },
   { id:'apariencia', title:'Estilos y apariencia', subtitle:'Diseño principal, perfil y portada', icon:Layout },
   { id:'temas', title:'Temas y copias', subtitle:'Exportar, importar y restaurar tu configuración', icon:Palette },
+  { id:'recursos', title:'Recursos Delta', subtitle:'Catálogo de personalización y privacidad', icon:Download },
 ];
 const sounds = [{id:'classic',name:'SixSeven clásico'},{id:'soft',name:'Suave'},{id:'digital',name:'Digital'},{id:'off',name:'Silencio'}];
 const fonts = [{id:'system',name:'Predeterminada',css:'Inter, system-ui, sans-serif'},{id:'rounded',name:'Redondeada',css:'Trebuchet MS, sans-serif'},{id:'serif',name:'Elegante',css:'Georgia, serif'},{id:'mono',name:'Tecnológica',css:'ui-monospace, monospace'}];
@@ -150,7 +152,7 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
   const row='flex w-full items-center gap-3 rounded-xl border border-neutral-800 bg-neutral-900 p-3 text-left';
   const back = () => section==='menu' ? onBack() : setSection('menu');
 
-  return <div className="fixed inset-0 z-[70] overflow-y-auto bg-black text-white px-4 pb-10 safe-top">
+  if (section === 'recursos') return <ResourcesDeltaView onBack={() => setSection('menu')} />;\n\n  return <div className="fixed inset-0 z-[70] overflow-y-auto bg-black text-white px-4 pb-10 safe-top">
     <header className="sticky top-0 z-10 -mx-4 flex items-center gap-3 border-b border-neutral-900 bg-black/95 px-4 py-3 backdrop-blur">
       <button onClick={back} className="rounded-full p-2 text-red-400" aria-label="Volver"><ArrowLeft size={22}/></button>
       <div className="flex-1"><h1 className="font-black text-lg">{section==='menu'?'Configuración':sections.find(s=>s.id===section)?.title}</h1><p className="text-xs text-neutral-500">SixSeven · Negro + rojo neón</p></div>
