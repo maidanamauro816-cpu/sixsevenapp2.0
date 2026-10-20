@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
 import { SixSevenOrb } from './SixSevenOrb';
-import { auth } from '../firebase';
+import { auth } from '../firebase'; // Firebase se usa aquí únicamente para obtener el token de Authentication.
 import type { WhatsAppTab } from './WhatsAppBottomNav';
 
 type ChatMessage = { role: 'user' | 'assistant'; text: string };
-const AI_WORKER_URL = (import.meta.env.VITE_BACKBLAZE_WORKER_URL || 'https://sixseven-backblaze-signer.sixsevenapp816.workers.dev').replace(/\/$/, '');
+const AI_WORKER_URL = (import.meta.env.VITE_GEMINI_WORKER_URL || import.meta.env.VITE_BACKBLAZE_WORKER_URL || 'https://sixseven-backblaze-signer.sixsevenapp816.workers.dev').replace(/\/$/, '');
 type RecognitionResult = { 0: { transcript: string }; isFinal: boolean };
 type RecognitionEvent = { resultIndex: number; results: ArrayLike<RecognitionResult> };
 type RecognitionLike = {
@@ -108,7 +108,9 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
     } catch (err) {
       console.error('SixSeven IA:', err);
       const code = (err as { code?: string })?.code || '';
-      const detail = code.includes('unauthenticated')
+      const detail = code.includes('Failed to fetch') || code.includes('NetworkError')
+        ? 'No pude llegar al servicio de SixSeven IA. Comprobá que el workflow de Cloudflare haya terminado en verde y probá de nuevo.'
+        : code.includes('unauthenticated')
         ? 'Iniciá sesión para usar SixSeven IA.'
         : code.includes('ai_not_configured')
           ? 'La IA todavía no está activada: falta guardar GEMINI_API_KEY como secreto en el Worker de Cloudflare.'
