@@ -1,0 +1,2 @@
+export interface ThemeJson { id:string; name:string; version?:string; author?:string; is_premium?:boolean; price?:number; description?:string; preview_image?:string; colors:Record<string,string>; shapes:Record<string,string|number|boolean>; }
+export const themeTextColor=(hex:string)=>{const n=parseInt(hex.replace('#',''),16);return(.2126*((n>>16)&255)+.7152*((n>>8)&255)+.0722*(n&255))>145?'#171717':'#ffffff'};
