@@ -54,7 +54,7 @@ jobs:
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               -H "Content-Type: application/json" \
               --data "$payload")"
-            if [ "$http_code" != "200" ] || ! jq -e '.success == true' /tmp/cf-secret-response.json >/dev/null; then
+            if { [ "$http_code" != "200" ] && [ "$http_code" != "201" ]; } || ! jq -e '.success == true' /tmp/cf-secret-response.json >/dev/null; then
               echo "::error::Cloudflare no aceptó el secreto $secret_name (HTTP $http_code). Revisá el permiso Workers Scripts Edit del token."
               jq -r '.errors[]?.message // empty' /tmp/cf-secret-response.json || true
               exit 1
