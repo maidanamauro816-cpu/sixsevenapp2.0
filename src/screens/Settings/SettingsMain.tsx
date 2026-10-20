@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {ArrowLeft,UserRound,Monitor,BellRing,PhoneCall,HardDrive,Crown,Shield,House,Globe,Sparkles,ChevronRight,MessageCircle,SlidersHorizontal} from 'lucide-react';
+import {ArrowLeft,UserRound,Monitor,BellRing,PhoneCall,HardDrive,Crown,Shield,House,Globe,Sparkles,ChevronRight,MessageCircle,SlidersHorizontal,Palette} from 'lucide-react';
 import {FontSettings} from './FontSettings';
 import {UniversalSettings} from './UniversalSettings';
 import {HomeScreenSettings} from './HomeScreenSettings';
@@ -22,11 +22,12 @@ type Page='main'|'account'|'display'|'notifications'|'calls'|'storage'|'premium'
 type Item={id:Page;title:string;desc:string;icon:React.ElementType;gold?:boolean};
 const primaryItems:Item[]=[
  {id:'account',title:'Cuenta / Perfil',desc:'Tu información y foto de perfil',icon:UserRound},
- {id:'display',title:'Pantalla',desc:'Temas, fondo de chat y fuentes',icon:Monitor},
+ {id:'display',title:'Pantalla',desc:'Apariencia y fuentes',icon:Monitor},
+ {id:'themes',title:'Tienda de temas gratis',desc:'19 temas para descargar e instalar',icon:Palette},
  {id:'notifications',title:'Notificaciones',desc:'Sonidos de mensajes',icon:BellRing},
  {id:'calls',title:'Llamadas',desc:'Elegir tono de llamada',icon:PhoneCall},
  {id:'storage',title:'Almacenamiento',desc:'Descargas, archivos y espacio local',icon:HardDrive},
- {id:'premium',title:'Premium',desc:'Íconos, temas y sonidos especiales',icon:Crown,gold:true},
+ {id:'premium',title:'Premium privacidad',desc:'9 funciones de privacidad · $2.99',icon:Crown,gold:true},
 ];
 const extraItems:Item[]=[
  {id:'privacy',title:'Privacidad',desc:'Estados, presencia y confirmaciones',icon:Shield},
