@@ -163,3 +163,47 @@ body { font-size: var(--sx-font-size); font-weight: var(--sx-font-weight); }
 html[data-sx-theme] body { color: var(--sx-text, #fff); }
 html[data-sx-theme] [data-sx-message-bubble="sent"] { background-color: var(--sx-bubble-sent) !important; }
 html[data-sx-theme] [data-sx-message-bubble="received"] { background-color: var(--sx-bubble-received) !important; }
+
+
+/* SixSeven image themes v4: metadata from the selected theme drives the whole UI. */
+html[data-sx-has-wallpaper="true"] body {
+  background-color: var(--scaffold-bg, #000) !important;
+  background-image: linear-gradient(rgba(0,0,0,.30), rgba(0,0,0,.42)), var(--sx-wallpaper-image, none) !important;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+.sx-chat-room, .sx-chat-list-surface, .sx-main-content {
+  background-color: color-mix(in srgb, var(--scaffold-bg, #000) 84%, transparent);
+}
+html[data-sx-header-style="transparent"] .sx-main-header,
+html[data-sx-header-style="transparent"] .sx-chat-header { background: transparent !important; }
+html[data-sx-header-style="glass"] .sx-main-header,
+html[data-sx-header-style="glass"] .sx-chat-header {
+  background: color-mix(in srgb, var(--scaffold-bg, #000) 65%, transparent) !important;
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+html[data-sx-header-style="blur"] .sx-main-header,
+html[data-sx-header-style="blur"] .sx-chat-header {
+  background: color-mix(in srgb, var(--scaffold-bg, #000) 72%, transparent) !important;
+  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+}
+html[data-sx-header-style="image_header"] .sx-main-header,
+html[data-sx-header-style="image_header"] .sx-chat-header {
+  background-color: var(--scaffold-bg, #000) !important;
+  background-image: linear-gradient(rgba(0,0,0,.36),rgba(0,0,0,.6)), var(--sx-header-image, none) !important;
+  background-position: center; background-size: cover;
+}
+html[data-sx-tab-style="capsule"] .sx-bottom-nav > div button { border-radius: 999px; }
+html[data-sx-tab-style="ios_v2"] .sx-bottom-nav { border-top: 1px solid color-mix(in srgb, var(--primary) 30%, transparent); }
+html[data-sx-tab-style="pinterest"] .sx-bottom-nav { box-shadow: 0 -8px 24px rgba(0,0,0,.24); }
+html[data-sx-tab-style="center_floating"] .sx-bottom-nav {
+  left: 12px; right: 12px; bottom: max(8px, env(safe-area-inset-bottom)); border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--primary) 32%, transparent); overflow: visible;
+}
+html[data-sx-bubble-style="sharp"] .sx-message-bubble { border-radius: 4px !important; }
+html[data-sx-bubble-style="ios"] .sx-message-bubble { border-radius: 20px !important; }
+html[data-sx-bubble-style="rounded"] .sx-message-bubble { border-radius: var(--bubble-radius, 20px) !important; }
+html[data-sx-fab-style="capsule"] .sx-fab { border-radius: 999px !important; }
+html[data-sx-fab-style="rounded"] .sx-fab { border-radius: 18px !important; }
+html[data-sx-fab-style="sharp"] .sx-fab { border-radius: 4px !important; }
