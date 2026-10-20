@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { getStorage, ref as storageRef, getDownloadURL } from 'firebase/storage';
-import { uploadFileWithTimeout } from '../services/mediaUpload';
+import { uploadToBackblaze } from '../services/backblazeUpload';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Camera, Sparkles, Send, CheckCircle2, Flame, Wand2, Image as ImageIcon } from 'lucide-react';
@@ -40,10 +39,7 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
     try {
       let mediaUrl = '';
       if (mediaFile && profile) {
-        const safeName = mediaFile.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100);
-        const fileRef = storageRef(getStorage(), `stories/${profile.uid}/${Date.now()}-${safeName}`);
-        const uploaded = await uploadFileWithTimeout(fileRef, mediaFile, { contentType: mediaFile.type });
-        mediaUrl = await getDownloadURL(uploaded.ref);
+        mediaUrl = await uploadToBackblaze(mediaFile, mediaType === 'video' ? 'video' : 'image');
       }
       await addDoc(collection(db, 'stories'), {
         uid: profile.uid,
@@ -119,7 +115,7 @@ export const StoriesCreateView: React.FC<StoriesCreateViewProps> = ({ onStoryPub
           {mediaType === 'video' ? <video src={mediaPreview} controls playsInline className="w-full max-h-72 bg-black object-contain" /> : <img src={mediaPreview} alt="Vista previa del estado" className="w-full max-h-72 object-contain bg-black" />}
           <button type="button" onClick={() => { URL.revokeObjectURL(mediaPreview); setMediaPreview(''); setMediaFile(null); setMediaType(''); }} className="absolute right-2 top-2 rounded-full bg-black/80 px-3 py-1 text-xs font-bold text-white">Quitar</button>
         </div>}
-        <p className="mt-2 text-[10px] text-neutral-500">Fotos hasta 12 MB y videos hasta 50 MB. Se suben a Firebase al publicar.</p>
+        <p className="mt-2 text-[10px] text-neutral-500">Fotos hasta 12 MB y videos hasta 50 MB. Se guardan en Backblaze B2 al publicar.</p>
       </div>
 
       {/* Story Camera Viewport Simulator */}
