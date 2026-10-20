@@ -21,6 +21,7 @@ export type SixSevenTheme = {
   estadoRectHeight?: number;
   estadoBorderRadius?: number;
   layoutStyle?: string;
+  wallpaperUrl?: string;
 };
 
 export const themes: SixSevenTheme[] = [
@@ -93,6 +94,7 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
     estadoRectHeight: Number(shapes.estado_rect_height ?? 92),
     estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
     layoutStyle: String(shapes.layout_style ?? (shapes.is_rectangular_estados === true ? 'square-status' : 'classic')),
+    wallpaperUrl: typeof json.wallpaper_url === 'string' ? json.wallpaper_url : (typeof json.preview_image === 'string' && /^https?:\/\//i.test(json.preview_image) ? json.preview_image : undefined),
   };
 }
 
@@ -120,6 +122,8 @@ function applyCss(t: SixSevenTheme) {
   root.dataset.sxTheme = t.id;
   root.dataset.rectangularEstados = t.isRectangularEstados ? 'true' : 'false';
   root.dataset.sxLayout = t.layoutStyle ?? 'classic';
+  if (t.wallpaperUrl) root.style.setProperty('--sx-theme-wallpaper', `url(\"${t.wallpaperUrl.replace(/[\"\\\\]/g, '')}\")`);
+  else root.style.removeProperty('--sx-theme-wallpaper');
   document.body.style.backgroundColor = t.background;
   document.body.style.color = t.text;
   document.body.style.fontFamily = t.fontFamily;
