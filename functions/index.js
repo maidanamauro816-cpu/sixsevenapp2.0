@@ -95,13 +95,11 @@ exports.askSixSevenIA = onCall(
 );
 
 
-// Backblaze B2: las credenciales se configuran exclusivamente con Firebase Secret Manager.
+// Backblaze B2: las credenciales se leen desde variables de entorno (.env en desarrollo/despliegue).
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { randomUUID } = require('node:crypto');
 
-const b2KeyId = defineSecret('B2_KEY_ID');
-const b2ApplicationKey = defineSecret('B2_APPLICATION_KEY');
 
 const B2_ENDPOINT = 'https://s3.us-east-005.backblazeb2.com';
 const B2_REGION = 'us-east-005';
@@ -124,7 +122,6 @@ const ALLOWED_TYPES = Object.freeze({
 exports.createSixSevenUploadUrl = onCall(
   {
     region: 'us-central1',
-    secrets: [b2KeyId, b2ApplicationKey],
     timeoutSeconds: 30,
     memory: '256MiB',
     cors: true,
@@ -154,10 +151,10 @@ exports.createSixSevenUploadUrl = onCall(
       throw new HttpsError('invalid-argument', 'El archivo está vacío o supera el límite permitido.');
     }
 
-    const keyId = b2KeyId.value()?.trim();
-    const applicationKey = b2ApplicationKey.value()?.trim();
+    const keyId = process.env.B2_KEY_ID?.trim();
+    const applicationKey = process.env.B2_APPLICATION_KEY?.trim();
     if (!keyId || !applicationKey) {
-      throw new HttpsError('failed-precondition', 'Faltan B2_KEY_ID y/o B2_APPLICATION_KEY en Firebase Secrets.');
+      throw new HttpsError('failed-precondition', 'Faltan B2_KEY_ID y/o B2_APPLICATION_KEY en las variables de entorno de Functions (.env).');
     }
 
     const extensionByType = {
