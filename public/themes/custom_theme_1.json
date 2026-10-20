@@ -1,0 +1,27 @@
+{
+  "id": "custom_theme_1",
+  "name": "Custom Theme 1 ✨",
+  "version": "1.0",
+  "author": "SixSevenApp - de tus 14 capturas",
+  "is_premium": false,
+  "price": 0,
+  "description": "Tema extraído de tus capturas .bin #1",
+  "preview_image": "custom_1_preview.jpg",
+  "colors": {
+    "primary": "#7B1FA2",
+    "scaffold_bg": "#E1BEE7",
+    "card_bg": "#FFFFFF",
+    "bubble_me": "#7B1FA2",
+    "bubble_other": "#EEEEEE",
+    "bottom_nav_bg": "#E1BEE7"
+  },
+  "shapes": {
+    "bubble_radius": 20,
+    "card_radius": 20,
+    "estado_shape": "rounded_rectangle",
+    "is_rectangular_estados": true,
+    "estado_rect_width": 72,
+    "estado_rect_height": 92,
+    "estado_border_radius": 16
+  }
+}
