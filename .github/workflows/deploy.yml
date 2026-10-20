@@ -41,6 +41,14 @@ jobs:
           test -n "$B2_KEY_ID" || (echo "::error::Missing B2_KEY_ID" && exit 1)
           test -n "$B2_APPLICATION_KEY" || (echo "::error::Missing B2_APPLICATION_KEY" && exit 1)
 
+      # A first deploy creates the Worker resource; secrets can only be attached after it exists.
+      - name: Bootstrap Worker resource
+        working-directory: cloudflare/backblaze-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler deploy --account-id "$CLOUDFLARE_ACCOUNT_ID"
+
       - name: Configure Backblaze secrets in Worker
         working-directory: cloudflare/backblaze-worker
         env:
