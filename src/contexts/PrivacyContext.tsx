@@ -1,0 +1,3 @@
+import React from 'react';import {useSettings} from './SettingsContext';
+export const usePrivacySettings=()=>{const {values,setValue}=useSettings();return {hideOnline:!!values.hideOnline,hideTyping:!!values.hideTyping,hideRecording:!!values.hideRecording,hideReadReceipts:!!values.hideReadReceipts,hideDeliveryReceipts:!!values.hideDeliveryReceipts,hideStatusViews:!!values.hideStatusViews,antiDeleteMessages:!!values.antiDeleteMessages,antiDeleteStatus:!!values.antiDeleteStatus,chatLock:!!values.chatLock,setPrivacy:(key:string,value:boolean)=>setValue(key,value)}};
+export const PrivacyProvider:React.FC<React.PropsWithChildren>=({children})=><>{children}</>;

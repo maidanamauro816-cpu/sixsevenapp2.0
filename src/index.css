@@ -151,3 +151,11 @@ html[data-sx-theme] .sx-main-header { background-color: #000000 !important; }
   .sx-orb-gaze { animation: none; }
   .sx-orb-nav-button { transition: none; }
 }
+
+
+/* V4 configurable typography and theme tokens */
+:root { --sx-font-size: 16px; --sx-chat-font-size: 16px; --sx-list-font-size: 14px; --sx-font-weight: 400; --sx-bubble-sent: #321014; --sx-bubble-received: #171717; --sx-text: #ffffff; --sx-tick-color: #35b8ff; }
+body { font-size: var(--sx-font-size); font-weight: var(--sx-font-weight); }
+html[data-sx-theme] body { color: var(--sx-text, #fff); }
+html[data-sx-theme] [data-sx-message-bubble="sent"] { background-color: var(--sx-bubble-sent) !important; }
+html[data-sx-theme] [data-sx-message-bubble="received"] { background-color: var(--sx-bubble-received) !important; }

@@ -1,0 +1,102 @@
+[
+  {
+    "id": "system",
+    "name": "Sistema",
+    "family": "system-ui"
+  },
+  {
+    "id": "roboto",
+    "name": "Roboto (WhatsApp)",
+    "family": "Roboto"
+  },
+  {
+    "id": "poppins",
+    "name": "Poppins Moderna",
+    "family": "Poppins"
+  },
+  {
+    "id": "oswald",
+    "name": "Oswald Fuerte",
+    "family": "Oswald"
+  },
+  {
+    "id": "lobster",
+    "name": "Lobster Decorativa",
+    "family": "Lobster"
+  },
+  {
+    "id": "bangers",
+    "name": "Bangers Anime",
+    "family": "Bangers"
+  },
+  {
+    "id": "press_start",
+    "name": "Press Start Gamer",
+    "family": "Press Start 2P"
+  },
+  {
+    "id": "caveat",
+    "name": "Caveat Escrita a Mano",
+    "family": "Caveat"
+  },
+  {
+    "id": "bebas",
+    "name": "Bebas Títulos",
+    "family": "Bebas Neue"
+  },
+  {
+    "id": "monospace",
+    "name": "Mono Hacker",
+    "family": "monospace"
+  },
+  {
+    "id": "serif",
+    "name": "Serif Elegante",
+    "family": "serif"
+  },
+  {
+    "id": "nunito",
+    "name": "Nunito",
+    "family": "Nunito"
+  },
+  {
+    "id": "montserrat",
+    "name": "Montserrat",
+    "family": "Montserrat"
+  },
+  {
+    "id": "lato",
+    "name": "Lato",
+    "family": "Lato"
+  },
+  {
+    "id": "raleway",
+    "name": "Raleway",
+    "family": "Raleway"
+  },
+  {
+    "id": "playfair",
+    "name": "Playfair Display",
+    "family": "Playfair Display"
+  },
+  {
+    "id": "merriweather",
+    "name": "Merriweather",
+    "family": "Merriweather"
+  },
+  {
+    "id": "rubik",
+    "name": "Rubik",
+    "family": "Rubik"
+  },
+  {
+    "id": "outfit",
+    "name": "Outfit",
+    "family": "Outfit"
+  },
+  {
+    "id": "archivo",
+    "name": "Archivo",
+    "family": "Archivo"
+  }
+]

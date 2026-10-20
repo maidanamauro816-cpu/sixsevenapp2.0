@@ -20,7 +20,11 @@ import { ContactsView } from './components/ContactsView';
 import { NewChatView } from './components/NewChatView';
 import { useToast } from './components/Toast';
 import { ProfileMenuView } from './components/ProfileMenuView';
-import { SettingsCustomizationView } from './components/SettingsCustomizationView';
+import { SettingsMain } from './screens/Settings/SettingsMain';
+import { FontProvider } from './contexts/FontContext';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { SettingsProvider } from './contexts/SettingsContext';
+import { PrivacyProvider } from './contexts/PrivacyContext';
 import { MyProfileView } from './components/MyProfileView';
 import { isNative } from './native';
 import { StoriesCreateView } from './components/StoriesCreateView';
@@ -179,7 +183,7 @@ function MainApp() {
       <WhatsAppBottomNav currentTab={currentTab} onChangeTab={setCurrentTab} />
 
       {/* Personalización, tienda de temas, iconos, tonos y burbujas */}
-      {showCustomization && <SettingsCustomizationView onBack={() => setShowCustomization(false)} />}
+      {showCustomization && <SettingsMain onBack={() => setShowCustomization(false)} />}
 
       {/* Mi perfil */}
       {showMyProfile && <MyProfileView onBack={() => setShowMyProfile(false)} />}
@@ -309,9 +313,17 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <SocialProvider>
-        <MainApp />
-      </SocialProvider>
+      <ThemeProvider>
+        <FontProvider>
+          <SettingsProvider>
+            <PrivacyProvider>
+              <SocialProvider>
+                <MainApp />
+              </SocialProvider>
+            </PrivacyProvider>
+          </SettingsProvider>
+        </FontProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

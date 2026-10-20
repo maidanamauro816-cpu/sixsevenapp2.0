@@ -1,0 +1,222 @@
+[
+  {
+    "id": "default",
+    "name": "Default",
+    "primary": "#ff1a1a",
+    "background": "#050505",
+    "bubbleSent": "#321014",
+    "bubbleReceived": "#171717",
+    "text": "#ffffff",
+    "tickColor": "#35b8ff",
+    "fontFamily": "system-ui"
+  },
+  {
+    "id": "cristiano-light",
+    "name": "Cristiano Luz",
+    "primary": "#c9a227",
+    "background": "#f4f4f4",
+    "bubbleSent": "#e6f7d9",
+    "bubbleReceived": "#ffffff",
+    "text": "#171717",
+    "tickColor": "#168cff",
+    "fontFamily": "Roboto"
+  },
+  {
+    "id": "cristiano-dark",
+    "name": "Cristiano Oscuro",
+    "primary": "#d5b45b",
+    "background": "#080808",
+    "bubbleSent": "#202020",
+    "bubbleReceived": "#111111",
+    "text": "#ffffff",
+    "tickColor": "#d5b45b",
+    "fontFamily": "Roboto"
+  },
+  {
+    "id": "argento",
+    "name": "Argento",
+    "primary": "#75bfff",
+    "background": "#07111c",
+    "bubbleSent": "#102d46",
+    "bubbleReceived": "#17202a",
+    "text": "#f1f7ff",
+    "tickColor": "#75bfff",
+    "fontFamily": "system-ui"
+  },
+  {
+    "id": "anime-night",
+    "name": "Anime Night",
+    "primary": "#a56cff",
+    "background": "#10071c",
+    "bubbleSent": "#32164b",
+    "bubbleReceived": "#1a1223",
+    "text": "#ffffff",
+    "tickColor": "#c4a7ff",
+    "fontFamily": "Poppins"
+  },
+  {
+    "id": "gamer",
+    "name": "Gamer",
+    "primary": "#7dff4f",
+    "background": "#030b05",
+    "bubbleSent": "#133018",
+    "bubbleReceived": "#101810",
+    "text": "#f4fff1",
+    "tickColor": "#7dff4f",
+    "fontFamily": "monospace"
+  },
+  {
+    "id": "noche-7",
+    "name": "Noche 7",
+    "primary": "#ff1a1a",
+    "background": "#000000",
+    "bubbleSent": "#241010",
+    "bubbleReceived": "#111111",
+    "text": "#ffffff",
+    "tickColor": "#ff5151",
+    "fontFamily": "system-ui"
+  },
+  {
+    "id": "rosa-amor",
+    "name": "Rosa Amor",
+    "primary": "#ff62bd",
+    "background": "#160914",
+    "bubbleSent": "#411d35",
+    "bubbleReceived": "#21131d",
+    "text": "#fff2fa",
+    "tickColor": "#ff8acb",
+    "fontFamily": "Poppins"
+  },
+  {
+    "id": "ocean",
+    "name": "Océano",
+    "primary": "#22d3ee",
+    "background": "#041219",
+    "bubbleSent": "#10333a",
+    "bubbleReceived": "#102027",
+    "text": "#eaffff",
+    "tickColor": "#22d3ee",
+    "fontFamily": "system-ui"
+  },
+  {
+    "id": "forest",
+    "name": "Bosque",
+    "primary": "#2be58a",
+    "background": "#06120b",
+    "bubbleSent": "#153b28",
+    "bubbleReceived": "#111f18",
+    "text": "#effff5",
+    "tickColor": "#2be58a",
+    "fontFamily": "Nunito"
+  },
+  {
+    "id": "purple",
+    "name": "Púrpura",
+    "primary": "#b56cff",
+    "background": "#10071c",
+    "bubbleSent": "#32164b",
+    "bubbleReceived": "#1a1223",
+    "text": "#ffffff",
+    "tickColor": "#b56cff",
+    "fontFamily": "Rubik"
+  },
+  {
+    "id": "ice",
+    "name": "Hielo",
+    "primary": "#a9e7ff",
+    "background": "#0b1117",
+    "bubbleSent": "#173344",
+    "bubbleReceived": "#151e25",
+    "text": "#f3fbff",
+    "tickColor": "#69d2ff",
+    "fontFamily": "Lato"
+  },
+  {
+    "id": "gold",
+    "name": "Oro",
+    "primary": "#f5c451",
+    "background": "#151006",
+    "bubbleSent": "#3a2b0d",
+    "bubbleReceived": "#201b10",
+    "text": "#fff8e6",
+    "tickColor": "#f5c451",
+    "fontFamily": "serif"
+  },
+  {
+    "id": "sunset",
+    "name": "Atardecer",
+    "primary": "#ff704f",
+    "background": "#190a0b",
+    "bubbleSent": "#49201c",
+    "bubbleReceived": "#241314",
+    "text": "#fff2ef",
+    "tickColor": "#ff704f",
+    "fontFamily": "Montserrat"
+  },
+  {
+    "id": "matrix",
+    "name": "Matrix",
+    "primary": "#7dff4f",
+    "background": "#030b05",
+    "bubbleSent": "#0c2912",
+    "bubbleReceived": "#101810",
+    "text": "#d8ffd8",
+    "tickColor": "#7dff4f",
+    "fontFamily": "monospace"
+  },
+  {
+    "id": "lavender",
+    "name": "Lavanda",
+    "primary": "#c4a7ff",
+    "background": "#120e19",
+    "bubbleSent": "#302343",
+    "bubbleReceived": "#1c1725",
+    "text": "#faf6ff",
+    "tickColor": "#c4a7ff",
+    "fontFamily": "Raleway"
+  },
+  {
+    "id": "coral",
+    "name": "Coral",
+    "primary": "#ff786f",
+    "background": "#170d0d",
+    "bubbleSent": "#48201e",
+    "bubbleReceived": "#251616",
+    "text": "#fff4f2",
+    "tickColor": "#ff786f",
+    "fontFamily": "Outfit"
+  },
+  {
+    "id": "minimal",
+    "name": "Minimal",
+    "primary": "#eeeeee",
+    "background": "#080808",
+    "bubbleSent": "#292929",
+    "bubbleReceived": "#151515",
+    "text": "#ffffff",
+    "tickColor": "#eeeeee",
+    "fontFamily": "system-ui"
+  },
+  {
+    "id": "dragon",
+    "name": "Dragon Solar",
+    "primary": "#ff8a19",
+    "background": "#160b05",
+    "bubbleSent": "#49240d",
+    "bubbleReceived": "#24150b",
+    "text": "#fff5e9",
+    "tickColor": "#ffb15a",
+    "fontFamily": "Bangers"
+  },
+  {
+    "id": "neon-blue",
+    "name": "Neón Azul",
+    "primary": "#4c9fff",
+    "background": "#050b18",
+    "bubbleSent": "#152e51",
+    "bubbleReceived": "#111a2b",
+    "text": "#f2f7ff",
+    "tickColor": "#4c9fff",
+    "fontFamily": "Outfit"
+  }
+]
