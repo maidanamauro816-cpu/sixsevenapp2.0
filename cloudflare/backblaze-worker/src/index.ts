@@ -115,11 +115,6 @@ async function uploadMultipart(request: Request, env: Env, uid: string, kind: "p
   const extByMime: Record<string, string> = {
     "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif",
   };
-  const safeUsername = String(form.get("username") || "usuario")
-    .replace(/^@/, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]/g, "")
-    .slice(0, 32) || "usuario";
   // El UID autenticado forma parte de la ruta para impedir que otro usuario sobrescriba esta portada.
   const key = kind === "cover"
     ? `portadas/${uid}.jpg`
