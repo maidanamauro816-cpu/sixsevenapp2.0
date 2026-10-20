@@ -4,6 +4,7 @@ import { Camera, Pencil, Plus, X, Music2, LoaderCircle, Trash2, MoreVertical, Se
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 import { useSocial } from '../context/SocialContext';
+import { useThemeSettings } from '../contexts/ThemeContext';
 import { useBackHandler } from '../backStack';
 
 type Story = { id: string; uid: string; name: string; avatar: string; text: string; sticker: string; filter: string; songTitle: string; mediaUrl?: string; mediaType?: 'image' | 'video' | ''; audience?: 'contacts' | 'except' | 'only'; audienceList?: string[]; createdAt?: { toMillis?: () => number } | null; expiresAt?: { toMillis?: () => number } | null };
@@ -24,20 +25,26 @@ const readViewed = (): Record<string, number> => {
 };
 
 /** Estado rectangular SixSeven: miniatura vertical, sin avatar circular. */
-const StatusRing: React.FC<{ count: number; viewed: boolean; src?: string; name: string }> = ({ viewed, src, name }) => (
-  <div className={`relative h-[90px] w-[70px] shrink-0 overflow-hidden rounded-xl border-2 bg-neutral-900 ${viewed ? 'border-neutral-600' : 'border-[#ff1a1a] shadow-[0_0_10px_rgba(255,26,26,0.2)]'}`}>
-    {src
-      ? <img src={src} alt={name} className="absolute inset-0 h-full w-full object-cover" />
-      : <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-neutral-400">{name.slice(0, 1).toUpperCase()}</div>}
-    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
-  </div>
-);
+const StatusRing: React.FC<{ count: number; viewed: boolean; src?: string; name: string; rectangular: boolean; shape: string; width: number; height: number; radius: number }> = ({ viewed, src, name, rectangular, shape, width, height, radius }) => {
+  const borderRadius = rectangular
+    ? `${radius}px`
+    : shape === 'pill' ? '999px' : shape === 'squircle' ? '28%' : '50%';
+  return (
+    <div className={`relative shrink-0 overflow-hidden border-2 bg-neutral-900 ${viewed ? 'border-neutral-600' : 'border-[var(--primary,#ff1a1a)] shadow-[0_0_10px_rgba(255,26,26,0.2)]'}`} style={{ width, height, borderRadius }}>
+      {src
+        ? <img src={src} alt={name} className="absolute inset-0 h-full w-full object-cover" />
+        : <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-neutral-400">{name.slice(0, 1).toUpperCase()}</div>}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
+    </div>
+  );
+};
 
 const STEP_MS = 5000;
 
 export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) => {
   const { user, profile } = useAuth();
   const { friends } = useSocial();
+  const { currentTheme } = useThemeSettings();
   const [stories, setStories] = useState<Story[]>([]);
   const [viewer, setViewer] = useState<{ group: Group; index: number } | null>(null);
   const [progress, setProgress] = useState(0);
@@ -126,7 +133,17 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
   const Row: React.FC<{ g: Group; label?: string }> = ({ g, label }) => (
     <button onClick={() => open(g)} className="flex w-[70px] shrink-0 flex-col items-center gap-1.5 text-left active:scale-[0.98]" aria-label={`Ver estado de ${label || g.name}`}>
       <div className="relative">
-        <StatusRing count={g.items.length} viewed={isViewed(g)} src={g.avatar} name={g.name} />
+        <StatusRing
+          count={g.items.length}
+          viewed={isViewed(g)}
+          src={g.avatar}
+          name={g.name}
+          rectangular={currentTheme.isRectangularEstados === true}
+          shape={currentTheme.estadoShape || 'circle'}
+          width={currentTheme.isRectangularEstados ? currentTheme.estadoRectWidth || 72 : currentTheme.estadoShape === 'pill' ? 56 : 64}
+          height={currentTheme.isRectangularEstados ? currentTheme.estadoRectHeight || 92 : currentTheme.estadoShape === 'circle' ? 64 : 80}
+          radius={currentTheme.estadoBorderRadius || 16}
+        />
         {label === 'Mi estado' && <span className="absolute -bottom-1 left-1/2 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full border-2 border-black bg-[#ff1a1a] text-white shadow-[0_0_10px_rgba(255,0,0,0.6)]"><Plus size={14} /></span>}
       </div>
       <span className="w-full truncate text-center text-[10px] font-semibold text-neutral-200">{label || g.name}</span>
