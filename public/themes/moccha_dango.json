@@ -1,0 +1,26 @@
+{
+  "id": "moccha_dango",
+  "name": "Moccha Dango 🍡",
+  "version": "1.0",
+  "author": "SixSevenApp",
+  "is_premium": false,
+  "price": 0,
+  "description": "Cute café con ositos, estilo capybara",
+  "preview_image": "moccha_dango_preview.jpg",
+  "colors": {
+    "primary": "#6D4C41",
+    "primary_dark": "#3E2723",
+    "scaffold_bg": "#D7CCC8",
+    "card_bg": "#E8D5C4",
+    "bubble_me": "#6D4C41",
+    "bubble_other": "#EFEBE9",
+    "text_primary": "#3E2723",
+    "bottom_nav_bg": "#BCAAA4"
+  },
+  "shapes": {
+    "bubble_radius": 28,
+    "card_radius": 28,
+    "estado_shape": "pill",
+    "is_rectangular_estados": false
+  }
+}
