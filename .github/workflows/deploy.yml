@@ -114,14 +114,14 @@ jobs:
         run: |
           set -e
           for attempt in $(seq 1 20); do
-            if curl --connect-timeout 10 --max-time 15 --fail --silent --show-error "$WORKER_URL/health"; then
+            if curl --connect-timeout 10 --max-time 15 --fail --silent --show-error "$WORKER_URL/api/health"; then
               echo
               exit 0
             fi
             echo "Health check attempt $attempt/20; waiting for Cloudflare edge/TLS provisioning..."
             sleep 5
           done
-          echo "::error::Worker deployed but /health did not return HTTP 200."
+          echo "::error::Worker deployed but /api/health did not return HTTP 200."
           exit 1
 
       - name: Publish backend URL to workflow summary
@@ -132,7 +132,7 @@ jobs:
             echo "## SixSeven Backblaze Worker"
             echo
             echo "- Backend URL: $WORKER_URL"
-            echo "- Health check: $WORKER_URL/health"
+            echo "- Health check: $WORKER_URL/api/health"
             echo "- Upload signing endpoint: $WORKER_URL/upload-url"
             echo
             echo "Add the backend URL as the GitHub Actions repository secret VITE_BACKBLAZE_WORKER_URL before rebuilding the APK."
