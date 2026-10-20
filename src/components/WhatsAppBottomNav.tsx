@@ -18,7 +18,7 @@ const TABS = [
 ];
 
 export const WhatsAppBottomNav: React.FC<BottomNavProps> = ({ currentTab, onChangeTab }) => (
-  <nav aria-label="Navegación principal SixSeven" className="sx-bottom-nav fixed bottom-0 left-0 right-0 z-40 select-none bg-black px-1 pb-safe">
+  <nav aria-label="Navegación principal SixSeven" className="sx-bottom-nav fixed bottom-0 left-0 right-0 z-40 select-none bg-[var(--bottom-nav-bg,#000000)] px-1 pb-safe">
     <svg className="sx-bottom-nav-line pointer-events-none absolute left-0 top-0 h-10 w-full" viewBox="0 0 360 40" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0 12 H122 C148 12 146 1 180 1 C214 1 212 12 238 12 H360" fill="none" stroke="#ff1a1a" strokeWidth="1.35" />
       <path d="M0 13 H122 C148 13 146 2 180 2 C214 2 212 13 238 13 H360" fill="none" stroke="#ff1a1a" strokeWidth="4" opacity=".12" />
