@@ -71,7 +71,7 @@ export const MyProfileView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     }
   };
 
-  const coverURL = profile?.coverURL || (() => { try { return localStorage.getItem('sixseven:coverPhoto') || ''; } catch { return ''; } })();
+  const coverURL = profile?.coverPhotoUrl || profile?.coverURL || (() => { try { return localStorage.getItem('sixseven:coverPhoto') || ''; } catch { return ''; } })();
   const photoURL = profile?.photoURL || user?.photoURL || AVATARS.mauro;
 
   return (
@@ -83,9 +83,9 @@ export const MyProfileView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <h1 className="text-base font-bold">Mi perfil</h1>
       </header>
 
-      <section className="relative h-40 bg-neutral-950 border-b border-neutral-900">
+      <section className="relative w-full aspect-[16/9] max-h-[260px] bg-gradient-to-br from-[#4a0508] via-[#160204] to-black border-b border-neutral-900 overflow-hidden">
         {coverURL && <img src={coverURL} alt="Portada de perfil" className="absolute inset-0 w-full h-full object-cover" />}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/75" />
         <button onClick={() => coverInput.current?.click()} disabled={uploadingCover} className="absolute right-3 bottom-3 z-10 flex items-center gap-2 rounded-full border border-red-700 bg-black/80 px-3 py-2 text-xs font-bold text-white disabled:opacity-60">
           {uploadingCover ? <LoaderCircle size={15} className="animate-spin" /> : <ImagePlus size={15} />}
           {uploadingCover ? 'Subiendo portada…' : 'Cambiar portada'}
