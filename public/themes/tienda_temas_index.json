@@ -1,0 +1,518 @@
+{
+  "store_version": "2.0",
+  "all_free": true,
+  "last_updated": "2026-10-20",
+  "themes": [
+    {
+      "id": "moccha_dango",
+      "name": "Moccha Dango 🍡",
+      "version": "1.0",
+      "author": "SixSevenApp",
+      "is_premium": false,
+      "price": 0,
+      "description": "Cute café con ositos, estilo capybara",
+      "preview_image": "moccha_dango_preview.jpg",
+      "colors": {
+        "primary": "#6D4C41",
+        "primary_dark": "#3E2723",
+        "scaffold_bg": "#D7CCC8",
+        "card_bg": "#E8D5C4",
+        "bubble_me": "#6D4C41",
+        "bubble_other": "#EFEBE9",
+        "text_primary": "#3E2723",
+        "bottom_nav_bg": "#BCAAA4"
+      },
+      "shapes": {
+        "bubble_radius": 28,
+        "card_radius": 28,
+        "estado_shape": "pill",
+        "is_rectangular_estados": false
+      }
+    },
+    {
+      "id": "yushi_pink_love",
+      "name": "Yushi Pink Love 💖",
+      "version": "1.0",
+      "author": "SixSevenApp",
+      "is_premium": false,
+      "price": 0,
+      "description": "Rosa pastel con corazoncitos",
+      "preview_image": "yushi_pink_preview.jpg",
+      "colors": {
+        "primary": "#FF4D6D",
+        "primary_dark": "#C9184A",
+        "scaffold_bg": "#FFC2D1",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#FF8FA3",
+        "bubble_other": "#FFE4EC",
+        "bottom_nav_bg": "#FF8FA3"
+      },
+      "shapes": {
+        "bubble_radius": 22,
+        "card_radius": 22,
+        "estado_shape": "circle",
+        "is_rectangular_estados": false
+      }
+    },
+    {
+      "id": "anime_soft_kitten",
+      "name": "Soft Kitten Anime 🖤",
+      "version": "1.0",
+      "author": "SixSevenApp",
+      "is_premium": false,
+      "price": 0,
+      "description": "Manga blanco y negro soft kitten - de tus fotos",
+      "preview_image": "anime_soft_preview.jpg",
+      "colors": {
+        "primary": "#212121",
+        "scaffold_bg": "#FAFAFA",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#212121",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#FFFFFF"
+      },
+      "shapes": {
+        "bubble_radius": 24,
+        "card_radius": 18,
+        "estado_shape": "squircle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 75,
+        "estado_rect_height": 95,
+        "estado_border_radius": 18
+      }
+    },
+    {
+      "id": "demon_slayer_tanjiro",
+      "name": "Demon Slayer Tanjiro 🔥",
+      "version": "1.0",
+      "author": "SixSevenApp",
+      "is_premium": false,
+      "price": 0,
+      "description": "Rojo fuego anime iOS 15 personalizado - de tus fotos",
+      "preview_image": "demon_slayer_preview.jpg",
+      "colors": {
+        "primary": "#D32F2F",
+        "scaffold_bg": "#1A0000",
+        "card_bg": "#2C0A0A",
+        "bubble_me": "#D32F2F",
+        "bubble_other": "#424242",
+        "bottom_nav_bg": "#7F0000"
+      },
+      "shapes": {
+        "bubble_radius": 8,
+        "card_radius": 12,
+        "estado_shape": "sharp_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 70,
+        "estado_rect_height": 90,
+        "estado_border_radius": 8
+      }
+    },
+    {
+      "id": "black_pink_anna",
+      "name": "Annonna Black Pink 🖤💗",
+      "version": "1.0",
+      "author": "SixSevenApp",
+      "is_premium": false,
+      "price": 0,
+      "description": "Negro con rosa pastel japonés kawaii dark - de tus fotos",
+      "preview_image": "black_pink_preview.jpg",
+      "colors": {
+        "primary": "#000000",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#F8BBD0",
+        "bubble_me": "#000000",
+        "bubble_other": "#F48FB1",
+        "bottom_nav_bg": "#F8BBD0"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 24,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 20,
+        "header_radius": 24
+      }
+    },
+    {
+      "id": "custom_theme_1",
+      "name": "Custom Theme 1 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #1",
+      "preview_image": "custom_1_preview.jpg",
+      "colors": {
+        "primary": "#7B1FA2",
+        "scaffold_bg": "#E1BEE7",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#7B1FA2",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#E1BEE7"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_2",
+      "name": "Custom Theme 2 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #2",
+      "preview_image": "custom_2_preview.jpg",
+      "colors": {
+        "primary": "#00695C",
+        "scaffold_bg": "#B2DFDB",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#00695C",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#B2DFDB"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_3",
+      "name": "Custom Theme 3 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #3",
+      "preview_image": "custom_3_preview.jpg",
+      "colors": {
+        "primary": "#BF360C",
+        "scaffold_bg": "#FFCCBC",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#BF360C",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#FFCCBC"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_4",
+      "name": "Custom Theme 4 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #4",
+      "preview_image": "custom_4_preview.jpg",
+      "colors": {
+        "primary": "#1A237E",
+        "scaffold_bg": "#C5CAE9",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#1A237E",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#C5CAE9"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_5",
+      "name": "Custom Theme 5 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #5",
+      "preview_image": "custom_5_preview.jpg",
+      "colors": {
+        "primary": "#004D40",
+        "scaffold_bg": "#A7FFEB",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#004D40",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#A7FFEB"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_6",
+      "name": "Custom Theme 6 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #6",
+      "preview_image": "custom_6_preview.jpg",
+      "colors": {
+        "primary": "#3E2723",
+        "scaffold_bg": "#D7CCC8",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#3E2723",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#D7CCC8"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_7",
+      "name": "Custom Theme 7 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #7",
+      "preview_image": "custom_7_preview.jpg",
+      "colors": {
+        "primary": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#F8BBD0"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_8",
+      "name": "Custom Theme 8 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #8",
+      "preview_image": "custom_8_preview.jpg",
+      "colors": {
+        "primary": "#1B5E20",
+        "scaffold_bg": "#C8E6C9",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#1B5E20",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#C8E6C9"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_9",
+      "name": "Custom Theme 9 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #9",
+      "preview_image": "custom_9_preview.jpg",
+      "colors": {
+        "primary": "#0D47A1",
+        "scaffold_bg": "#BBDEFB",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#0D47A1",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#BBDEFB"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_10",
+      "name": "Custom Theme 10 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #10",
+      "preview_image": "custom_10_preview.jpg",
+      "colors": {
+        "primary": "#4A148C",
+        "scaffold_bg": "#E1BEE7",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#4A148C",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#E1BEE7"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_11",
+      "name": "Custom Theme 11 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #11",
+      "preview_image": "custom_11_preview.jpg",
+      "colors": {
+        "primary": "#B71C1C",
+        "scaffold_bg": "#FFCDD2",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#B71C1C",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#FFCDD2"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_12",
+      "name": "Custom Theme 12 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #12",
+      "preview_image": "custom_12_preview.jpg",
+      "colors": {
+        "primary": "#263238",
+        "scaffold_bg": "#CFD8DC",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#263238",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#CFD8DC"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_13",
+      "name": "Custom Theme 13 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #13",
+      "preview_image": "custom_13_preview.jpg",
+      "colors": {
+        "primary": "#F57F17",
+        "scaffold_bg": "#FFF9C4",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#F57F17",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#FFF9C4"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    },
+    {
+      "id": "custom_theme_14",
+      "name": "Custom Theme 14 ✨",
+      "version": "1.0",
+      "author": "SixSevenApp - de tus 14 capturas",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tema extraído de tus capturas .bin #14",
+      "preview_image": "custom_14_preview.jpg",
+      "colors": {
+        "primary": "#4E342E",
+        "scaffold_bg": "#D7CCC8",
+        "card_bg": "#FFFFFF",
+        "bubble_me": "#4E342E",
+        "bubble_other": "#EEEEEE",
+        "bottom_nav_bg": "#D7CCC8"
+      },
+      "shapes": {
+        "bubble_radius": 20,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 16
+      }
+    }
+  ]
+}
