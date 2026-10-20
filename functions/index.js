@@ -181,7 +181,6 @@ exports.createSixSevenUploadUrl = onCall(
         Bucket: bucket,
         Key: objectKey,
         ContentType: contentType,
-        Metadata: { owneruid: request.auth.uid, originalname: fileName.replace(/[\\r\\n]/g, '').slice(0, 120) },
       });
       const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 });
       const publicUrl = `https://${bucket}.s3.us-east-005.backblazeb2.com/${objectKey.split('/').map(encodeURIComponent).join('/')}`;
