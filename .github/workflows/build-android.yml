@@ -22,6 +22,11 @@ jobs:
           java-version: '21'
       - name: Install web dependencies
         run: npm ci --no-audit --no-fund --legacy-peer-deps
+      - name: Generate official black and neon-red S icons
+        run: |
+          npm install --no-save --no-audit --no-fund sharp
+          node scripts/generate-icons.mjs
+
       - name: Build web application with Gemini Worker URL
         run: npm run build
         env:
