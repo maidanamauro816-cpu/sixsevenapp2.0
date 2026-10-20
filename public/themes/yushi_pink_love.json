@@ -1,0 +1,25 @@
+{
+  "id": "yushi_pink_love",
+  "name": "Yushi Pink Love 💖",
+  "version": "1.0",
+  "author": "SixSevenApp",
+  "is_premium": false,
+  "price": 0,
+  "description": "Rosa pastel con corazoncitos",
+  "preview_image": "yushi_pink_preview.jpg",
+  "colors": {
+    "primary": "#FF4D6D",
+    "primary_dark": "#C9184A",
+    "scaffold_bg": "#FFC2D1",
+    "card_bg": "#FFFFFF",
+    "bubble_me": "#FF8FA3",
+    "bubble_other": "#FFE4EC",
+    "bottom_nav_bg": "#FF8FA3"
+  },
+  "shapes": {
+    "bubble_radius": 22,
+    "card_radius": 22,
+    "estado_shape": "circle",
+    "is_rectangular_estados": false
+  }
+}
