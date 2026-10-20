@@ -1,0 +1,101 @@
+name: Deploy SixSeven Backblaze Worker
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "cloudflare/backblaze-worker/**"
+      - ".github/workflows/deploy.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Worker dependencies
+        working-directory: cloudflare/backblaze-worker
+        run: npm install --no-audit --no-fund
+
+      - name: Validate required secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || (echo "::error::Missing CLOUDFLARE_API_TOKEN" && exit 1)
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "::error::Missing CLOUDFLARE_ACCOUNT_ID" && exit 1)
+          test -n "$B2_KEY_ID" || (echo "::error::Missing B2_KEY_ID" && exit 1)
+          test -n "$B2_APPLICATION_KEY" || (echo "::error::Missing B2_APPLICATION_KEY" && exit 1)
+
+      - name: Configure Backblaze secrets in Worker
+        working-directory: cloudflare/backblaze-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+        run: |
+          printf '%s' "$B2_KEY_ID" | npx wrangler secret put B2_KEY_ID --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          printf '%s' "$B2_APPLICATION_KEY" | npx wrangler secret put B2_APPLICATION_KEY --account-id "$CLOUDFLARE_ACCOUNT_ID"
+
+      - name: Deploy Worker and capture URL
+        id: deploy
+        working-directory: cloudflare/backblaze-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEPLOY_OUTPUT="$(npx wrangler deploy --account-id "$CLOUDFLARE_ACCOUNT_ID" 2>&1)" || { printf '%s\n' "$DEPLOY_OUTPUT"; exit 1; }
+          printf '%s\n' "$DEPLOY_OUTPUT"
+          WORKER_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^[:space:]]+\.workers\.dev' | tail -n 1 || true)"
+          if [ -z "$WORKER_URL" ]; then
+            echo "::error::Could not extract the workers.dev URL from Wrangler output."
+            exit 1
+          fi
+          echo "worker_url=$WORKER_URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed Worker URL: $WORKER_URL"
+
+      - name: Verify live health endpoint
+        env:
+          WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
+        run: |
+          set -e
+          for attempt in 1 2 3 4 5; do
+            if curl --fail --silent --show-error "$WORKER_URL/health"; then
+              echo
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "::error::Worker deployed but /health did not return HTTP 200."
+          exit 1
+
+      - name: Publish backend URL to workflow summary
+        env:
+          WORKER_URL: ${{ steps.deploy.outputs.worker_url }}
+        run: |
+          {
+            echo "## SixSeven Backblaze Worker"
+            echo
+            echo "- Backend URL: $WORKER_URL"
+            echo "- Health check: $WORKER_URL/health"
+            echo "- Upload signing endpoint: $WORKER_URL/upload-url"
+            echo
+            echo "Add the backend URL as the GitHub Actions repository secret VITE_BACKBLAZE_WORKER_URL before rebuilding the APK."
+          } >> "$GITHUB_STEP_SUMMARY"
