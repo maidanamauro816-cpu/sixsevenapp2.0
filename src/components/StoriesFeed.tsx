@@ -23,24 +23,15 @@ const readViewed = (): Record<string, number> => {
   try { return JSON.parse(localStorage.getItem('sixseven:viewedStatus') || '{}'); } catch { return {}; }
 };
 
-/** Aro dividido en segmentos (uno por actualización), como los estados de WhatsApp. */
-const StatusRing: React.FC<{ count: number; viewed: boolean; src?: string; name: string }> = ({ count, viewed, src, name }) => {
-  const r = 26, c = 2 * Math.PI * r, gap = count > 1 ? 5 : 0, seg = c / count - gap;
-  const color = viewed ? '#52525b' : '#ff1a1a';
-  return (
-    <div className="relative w-14 h-14 shrink-0">
-      <svg viewBox="0 0 56 56" className="absolute inset-0 -rotate-90">
-        {Array.from({ length: count }).map((_, i) => (
-          <circle key={i} cx="28" cy="28" r={r} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round"
-            strokeDasharray={`${Math.max(seg, 1)} ${c - Math.max(seg, 1)}`} strokeDashoffset={-(i * (c / count))} />
-        ))}
-      </svg>
-      <div className="absolute inset-[5px] rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center text-sm font-bold">
-        {src ? <img src={src} alt="" className="w-full h-full object-cover" /> : name.slice(0, 1).toUpperCase()}
-      </div>
-    </div>
-  );
-};
+/** Estado rectangular SixSeven: miniatura vertical, sin avatar circular. */
+const StatusRing: React.FC<{ count: number; viewed: boolean; src?: string; name: string }> = ({ viewed, src, name }) => (
+  <div className={`relative h-[90px] w-[70px] shrink-0 overflow-hidden rounded-xl border-2 bg-neutral-900 ${viewed ? 'border-neutral-600' : 'border-[#ff1a1a] shadow-[0_0_10px_rgba(255,26,26,0.2)]'}`}>
+    {src
+      ? <img src={src} alt={name} className="absolute inset-0 h-full w-full object-cover" />
+      : <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-neutral-400">{name.slice(0, 1).toUpperCase()}</div>}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
+  </div>
+);
 
 const STEP_MS = 5000;
 
@@ -133,12 +124,13 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
   };
 
   const Row: React.FC<{ g: Group; label?: string }> = ({ g, label }) => (
-    <button onClick={() => open(g)} className="w-full flex items-center gap-3.5 px-4 py-2.5 text-left active:bg-neutral-950">
-      <StatusRing count={g.items.length} viewed={isViewed(g)} src={g.avatar} name={g.name} />
-      <span className="flex-1 min-w-0">
-        <span className="block text-[15px] font-semibold truncate">{label || g.name}</span>
-        <span className="block text-xs text-neutral-500">{ago(lastMs(g))}</span>
-      </span>
+    <button onClick={() => open(g)} className="flex w-[70px] shrink-0 flex-col items-center gap-1.5 text-left active:scale-[0.98]" aria-label={`Ver estado de ${label || g.name}`}>
+      <div className="relative">
+        <StatusRing count={g.items.length} viewed={isViewed(g)} src={g.avatar} name={g.name} />
+        {label === 'Mi estado' && <span className="absolute -bottom-1 left-1/2 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full border-2 border-black bg-[#ff1a1a] text-white shadow-[0_0_10px_rgba(255,0,0,0.6)]"><Plus size={14} /></span>}
+      </div>
+      <span className="w-full truncate text-center text-[10px] font-semibold text-neutral-200">{label || g.name}</span>
+      <span className="w-full truncate text-center text-[9px] text-neutral-500">{ago(lastMs(g))}</span>
     </button>
   );
 
@@ -160,34 +152,29 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
         </div>
       </header>
 
-      {/* Mi estado */}
-      {mine ? (
-        <div className="flex items-center">
-          <div className="flex-1 min-w-0"><Row g={mine} label="Mi estado" /></div>
-          <button onClick={onCreate} aria-label="Agregar actualización" className="mr-4 w-9 h-9 rounded-full border border-neutral-800 flex items-center justify-center text-[#ff1a1a]"><Plus size={18} /></button>
-        </div>
-      ) : (
-        <button onClick={onCreate} className="w-full flex items-center gap-3.5 px-4 py-2.5 text-left active:bg-neutral-950">
-          <div className="relative w-14 h-14 shrink-0">
-            <div className="w-full h-full rounded-full overflow-hidden bg-neutral-900 flex items-center justify-center">
-              {myPhoto ? <img src={myPhoto} alt="" className="w-full h-full object-cover" /> : <Camera size={22} className="text-neutral-400" />}
+      {/* Estados rectangulares: Mi estado primero y luego los contactos. */}
+      <div className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-3 pt-2">
+        {mine ? (
+          <Row g={mine} label="Mi estado" />
+        ) : (
+          <button onClick={onCreate} className="flex w-[70px] shrink-0 flex-col items-center gap-1.5 text-left" aria-label="Crear mi estado">
+            <div className="relative h-[90px] w-[70px] overflow-hidden rounded-xl border-2 border-neutral-700 bg-gradient-to-br from-[#4a0508] via-[#160204] to-black">
+              {myPhoto && <img src={myPhoto} alt="" className="absolute inset-0 h-full w-full object-cover opacity-80" />}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
+              <span className="absolute bottom-1 left-1/2 flex h-6 w-6 -translate-x-1/2 items-center justify-center rounded-full border-2 border-black bg-[#ff1a1a] text-white shadow-[0_0_10px_rgba(255,0,0,0.6)]"><Plus size={14} /></span>
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 w-6 h-6 rounded-full bg-[#ff1a1a] border-2 border-black flex items-center justify-center text-white"><Plus size={14} /></span>
-          </div>
-          <span className="flex-1 min-w-0"><span className="block text-[15px] font-semibold">Mi estado</span><span className="block text-xs text-neutral-500">Tocá para agregar una actualización</span></span>
-        </button>
-      )}
+            <span className="w-full truncate text-center text-[10px] font-semibold text-neutral-200">Mi estado</span>
+            <span className="w-full truncate text-center text-[9px] text-neutral-500">Agregar</span>
+          </button>
+        )}
+        {recent.map((g) => <Row key={g.uid} g={g} />)}
+        {seen.map((g) => <Row key={g.uid} g={g} />)}
+      </div>
 
       {loading && <div className="py-10 text-center text-neutral-500 text-sm"><LoaderCircle size={18} className="inline animate-spin mr-2" />Cargando estados…</div>}
 
-      {recent.length > 0 && <h2 className="px-4 pt-5 pb-1 text-xs font-semibold text-neutral-500">Recientes</h2>}
-      {recent.map((g) => <Row key={g.uid} g={g} />)}
-
-      {seen.length > 0 && <h2 className="px-4 pt-5 pb-1 text-xs font-semibold text-neutral-500">Vistos</h2>}
-      {seen.map((g) => <Row key={g.uid} g={g} />)}
-
       {!loading && others.length === 0 && (
-        <p className="px-8 pt-10 text-center text-xs text-neutral-500">Cuando tus contactos publiquen un estado, lo vas a ver acá. Desaparecen a las 24 horas.</p>
+        <p className="px-8 pt-10 text-center text-xs text-neutral-500">Cuando tus contactos publiquen un estado, sus rectángulos van a aparecer acá. Desaparecen a las 24 horas.</p>
       )}
 
       {/* Botones flotantes: texto y cámara */}
