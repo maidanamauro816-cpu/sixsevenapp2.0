@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Send, Sparkles, Mic, MicOff, Volume2, VolumeX, LoaderCircle } from 'lucide-react';
 import { SixSevenOrb } from './SixSevenOrb';
 import { auth } from '../firebase'; // Firebase se usa aquí únicamente para obtener el token de Authentication.
+import { useAuth } from '../context/AuthContext';
 import type { WhatsAppTab } from './WhatsAppBottomNav';
 
 type ChatMessage = { role: 'user' | 'assistant'; text: string };
@@ -23,6 +24,8 @@ type RecognitionConstructor = new () => RecognitionLike;
 interface Props { onNavigate: (tab: WhatsAppTab) => void }
 
 export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
+  const { user: sessionUser, profile } = useAuth();
+  const username = (sessionUser?.displayName || sessionUser?.phoneNumber || profile?.displayName || profile?.username || 'usuario').trim() || 'usuario';
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -96,7 +99,7 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
           Authorization: `Bearer ${idToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: prompt }),
+        body: JSON.stringify({ message: prompt, username }),
       });
       const data = await response.json().catch(() => ({})) as { answer?: string; error?: string; code?: string };
       if (!response.ok) {
@@ -176,7 +179,7 @@ export const SixSevenIA: React.FC<Props> = ({ onNavigate }) => {
     <div ref={scrollRef} className="flex-1 px-4 py-5 space-y-3 overflow-y-auto">
       {messages.length === 0 && <div className="mt-12 text-center px-5">
         <div className="mx-auto flex h-24 w-24 items-center justify-center"><SixSevenOrb size={84} listening={listening} /></div>
-        <h2 className="mt-5 text-xl font-bold">Hola Mauro, ¿qué querés que haga por ti?</h2>
+        <h2 className="mt-5 text-xl font-bold">Hola {username}, ¿qué querés que haga por vos?</h2>
         <p className="mt-2 text-sm text-neutral-400">Preguntame lo que necesites o tocá el micrófono y hablame.</p>
         <p className="mt-3 text-xs text-neutral-500">También podés decir: “abrir chats”, “abrir estados”, “abrir música” o “abrir perfil”.</p>
       </div>}

@@ -81,10 +81,11 @@ async function askGemini(request: Request, env: Env): Promise<Response> {
   if (!env.GEMINI_API_KEY?.trim()) {
     return response({ code: "ai_not_configured", error: "La IA todavía no está activada. Volvé a ejecutar el workflow Deploy SixSeven Gemini Worker para configurar el secreto de Cloudflare." }, 503);
   }
-  let body: { message?: unknown };
+  let body: { message?: unknown; username?: unknown };
   try { body = await request.json(); }
   catch { return response({ code: "invalid_request", error: "La solicitud de IA no es válida." }, 400); }
   const prompt = typeof body.message === "string" ? body.message.trim() : "";
+  const username = (typeof body.username === "string" ? body.username : "usuario").replaceAll("\r", " ").replaceAll("\n", " ").replaceAll("\t", " ").trim().slice(0, 80) || "usuario";
   if (!prompt) return response({ code: "empty_message", error: "Escribí o decí qué necesitás." }, 400);
   if (prompt.length > 4000) return response({ code: "message_too_long", error: "El mensaje es demasiado largo (máximo 4000 caracteres)." }, 413);
   try {
@@ -92,7 +93,7 @@ async function askGemini(request: Request, env: Env): Promise<Response> {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY.trim() },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: "Sos SixSeven IA, el asistente oficial de la app SixSeven. Respondé siempre en español latinoamericano, con tono amable, claro y natural de Argentina. Usá voseo argentino cuando suene natural. Ayudá con consultas generales y con el uso de SixSeven. La app tiene Chats, Estados, Música, Llamadas, Perfil y configuración. No afirmes haber ejecutado acciones que la app no te haya permitido realizar. Si no sabés algo, decilo con honestidad. Mantené las respuestas concisas y útiles." }] },
+        systemInstruction: { parts: [{ text: `Sos SixSeven IA, asistente personal de ${username}. Dirigite siempre a ${username} por su nombre, nunca uses otro nombre. Sos en español latino, amigable, claro y natural de Argentina; usá voseo cuando suene natural. Ayudá con consultas generales y con el uso de SixSeven. La app tiene Chats, Estados, Música, Llamadas, Perfil y configuración. No afirmes haber ejecutado acciones que la app no te haya permitido realizar. Si no sabés algo, decilo con honestidad. Mantené las respuestas concisas y útiles.` }] },
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: { maxOutputTokens: 900, temperature: 0.7, topP: 0.9 },
       }),

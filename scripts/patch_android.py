@@ -61,7 +61,7 @@ shapes = {
     "7": 'M30,27 L80,27 L80,38 L54,82 L40,82 L66,39 L30,39 Z',
     "10": 'M30,35 L42,27 L42,80 L30,80 Z M62,27 C76,27 82,38 82,54 C82,70 76,81 62,81 C48,81 42,70 42,54 C42,38 48,27 62,27 Z M62,39 C57,39 55,45 55,54 C55,63 57,69 62,69 C67,69 69,63 69,54 C69,45 67,39 62,39 Z',
     "crown": 'M23,38 L40,51 L53,27 L67,51 L85,36 L79,73 L29,73 Z M31,79 L77,79 L77,85 L31,85 Z',
-    "sx": 'M27,30 L61,30 L61,41 L41,41 L35,48 L55,58 L55,69 L45,80 L23,80 L23,69 L40,69 L45,64 L25,54 L25,44 Z M64,30 L84,30 L84,41 L72,41 L72,50 L83,50 L83,61 L72,61 L72,69 L85,69 L85,80 L61,80 L61,30 Z',
+    "sx": 'M76,29 C69,22 60,18 49,18 C29,18 17,28 17,43 C17,57 28,63 49,68 C64,72 69,75 69,81 C69,87 62,91 52,91 C40,91 30,86 21,77 L12,88 C23,99 37,104 53,104 C74,104 88,93 88,76 C88,62 78,56 57,51 C41,47 36,44 36,39 C36,34 42,31 51,31 C60,31 68,34 75,40 Z',
     "fire": 'M58,20 C64,35 81,42 78,61 C76,78 64,88 51,88 C36,88 26,76 29,61 C31,48 42,43 44,31 C53,39 54,48 51,56 C62,49 63,37 58,20 Z M52,61 C43,69 45,79 53,81 C61,79 63,70 57,63 Z',
     "bolt": 'M60,18 L31,58 L49,58 L43,89 L78,44 L59,44 Z',
 }
@@ -80,12 +80,13 @@ for alias_id, suffix, resource, background, accent, shape in icons:
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <path android:fillColor="{background}" android:pathData="M18,0 L90,0 C100,0 108,8 108,18 L108,90 C108,100 100,108 90,108 L18,108 C8,108 0,100 0,90 L0,18 C0,8 8,0 18,0 Z"/>
+    <path android:fillColor="#00000000" android:strokeColor="{accent}" android:strokeWidth="2.2" android:pathData="M18,3 L90,3 C98,3 105,10 105,18 L105,90 C105,98 98,105 90,105 L18,105 C10,105 3,98 3,90 L3,18 C3,10 10,3 18,3 Z"/>
     <path android:fillColor="{accent}" android:pathData="{shapes[shape]}"/>
     {extra}
 </vector>
 '''
     (drawable_dir / f"{resource}.xml").write_text(vector, encoding="utf-8")
-    enabled = "true" if alias_id == "sixseven-crown" else "false"
+    enabled = "true" if alias_id == "neon-red" else "false"
     alias_entries.append(f'''        <activity-alias
             android:name=".IconAlias{suffix}"
             android:enabled="{enabled}"
