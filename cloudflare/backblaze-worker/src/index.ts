@@ -112,7 +112,6 @@ async function uploadMultipart(request: Request, env: Env, uid: string, kind: "p
   if (!allowedMime[kind].test(contentType)) return response({ error: "Formato no permitido. Usá JPG, PNG, WebP o GIF." }, 415);
 
   const bucket = env.B2_BUCKET_NAME?.trim() || buckets[kind];
-  const folder = kind === "profile" ? "avatars" : "portadas";
   const extByMime: Record<string, string> = {
     "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif",
   };
