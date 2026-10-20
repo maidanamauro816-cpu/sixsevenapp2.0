@@ -1,8 +1,8 @@
 import React from 'react';
-import logoMark from '../assets/logo-mark.png';
 import logoWordmark from '../assets/logo-wordmark.png';
+import { SixSevenOrb } from './SixSevenOrb';
 
-/** Pantalla de inicio: S con corona, logotipo, lema y círculo de carga rojo (como en el diseño). */
+/** Splash SixSeven: ojo de IA separado de la marca oficial. */
 export const SplashScreen: React.FC = () => (
   <div
     className="fixed inset-0 z-[100] flex flex-col items-center justify-between overflow-hidden text-white"
@@ -20,7 +20,7 @@ export const SplashScreen: React.FC = () => (
       }}
     />
     <div className="flex-1 flex flex-col items-center justify-center px-8 w-full max-w-md relative">
-      <img src={logoMark} alt="" className="w-56 h-auto drop-shadow-[0_0_28px_rgba(255,0,0,0.65)]" draggable={false} />
+      <div className="mb-2 drop-shadow-[0_0_28px_rgba(255,0,0,0.65)]"><SixSevenOrb size={154} label="Orbe ocular de SixSeven IA" /></div>
       <img src={logoWordmark} alt="SixSeven" className="w-64 h-auto mt-4" draggable={false} />
       <p className="mt-3 text-[10px] font-medium tracking-[0.32em] text-neutral-200 uppercase whitespace-nowrap">
         Conecta · Comparte · Sin límites
