@@ -10,6 +10,8 @@ import { playConfiguredSound } from '../utils/audio';
 import { EmojiPicker } from './EmojiPicker';
 import { StickerPicker, SixSevenSticker } from './StickerPicker';
 import { MusicShareButton, MusicClip } from './MusicShareButton';
+import { useThemeSettings } from '../contexts/ThemeContext';
+import '../chat-layouts.css';
 
 interface WhatsAppChatRoomProps {
   chat: WhatsAppChat;
@@ -21,6 +23,7 @@ const fmt = (ms?: number) =>
 
 export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack }) => {
   const { profile } = useAuth();
+  const { themeId } = useThemeSettings();
   const myUid = profile?.uid || '';
   const [messages, setMessages] = useState<MessageDoc[]>([]);
   const [inputText, setInputText] = useState('');
@@ -205,6 +208,8 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div
                 data-sx-message-bubble="true"
+                data-chat-layout={m.mediaType === 'sticker' ? undefined : themeId === 'corona-gold' ? 'corona' : themeId === 'midnight' ? 'midnight' : undefined}
+                data-message-owner={mine ? 'sent' : 'received'}
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug ${
                   m.mediaType === 'sticker' ? 'bg-transparent !px-0' : mine
                     ? 'bg-gradient-to-br from-[#d4141c] to-[#a00d14] text-white rounded-br-md ring-1 ring-red-400/40 shadow-[0_0_12px_rgba(255,0,0,0.3)]'
