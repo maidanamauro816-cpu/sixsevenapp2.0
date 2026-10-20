@@ -112,11 +112,19 @@ async function uploadMultipart(request: Request, env: Env, uid: string, kind: "p
   if (!allowedMime[kind].test(contentType)) return response({ error: "Formato no permitido. Usá JPG, PNG, WebP o GIF." }, 415);
 
   const bucket = env.B2_BUCKET_NAME?.trim() || buckets[kind];
-  const folder = kind === "profile" ? "avatars" : "covers";
+  const folder = kind === "profile" ? "avatars" : "portadas";
   const extByMime: Record<string, string> = {
     "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif",
   };
-  const key = `${folder}/${uid}/${crypto.randomUUID()}.${extByMime[contentType] || "img"}`;
+  const safeUsername = String(form.get("username") || "usuario")
+    .replace(/^@/, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "")
+    .slice(0, 32) || "usuario";
+  // El UID autenticado forma parte de la ruta para impedir que otro usuario sobrescriba esta portada.
+  const key = kind === "cover"
+    ? `portadas/${uid}/${safeUsername}.${extByMime[contentType] || "jpg"}`
+    : `avatars/${uid}/${crypto.randomUUID()}.${extByMime[contentType] || "img"}`;
   const endpoint = b2Endpoint(env);
   try {
     await s3Client(env).send(new PutObjectCommand({
