@@ -1,518 +1,1310 @@
 {
-  "store_version": "2.0",
+  "store_version": "4.0_image_themes",
   "all_free": true,
   "last_updated": "2026-10-20",
   "themes": [
     {
       "id": "moccha_dango",
-      "name": "Moccha Dango 🍡",
-      "version": "1.0",
-      "author": "SixSevenApp",
+      "name": "Moccha Dango Café 🍡",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Cute café con ositos, estilo capybara",
+      "description": "Café con ositos, fondo imagen cafetería anime, no solo color",
       "preview_image": "moccha_dango_preview.jpg",
+      "wallpaper_image": "cafe_anime_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
         "primary": "#6D4C41",
-        "primary_dark": "#3E2723",
+        "primary_dark": "#6D4C41",
         "scaffold_bg": "#D7CCC8",
-        "card_bg": "#E8D5C4",
+        "card_bg": "#FFFFFFE6",
         "bubble_me": "#6D4C41",
-        "bubble_other": "#EFEBE9",
-        "text_primary": "#3E2723",
-        "bottom_nav_bg": "#BCAAA4"
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#6D4C41CC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "cafe_anime_wallpaper.jpg",
+        "header_bg": "moccha_dango_header.jpg",
+        "pattern": "moccha_dango_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 28,
-        "card_radius": 28,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "pill",
-        "is_rectangular_estados": false
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "pinterest",
+        "header_style": "transparent",
+        "icon_pack": "cute",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/moccha_dango.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/moccha_dango/",
+        "download_url": "themes/moccha_dango.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "moccha_dango.json",
+        "save_images": true
       }
     },
     {
       "id": "yushi_pink_love",
       "name": "Yushi Pink Love 💖",
-      "version": "1.0",
-      "author": "SixSevenApp",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Rosa pastel con corazoncitos",
-      "preview_image": "yushi_pink_preview.jpg",
+      "description": "Fondo kawaii con corazones, imagen rosada",
+      "preview_image": "yushi_pink_love_preview.jpg",
+      "wallpaper_image": "kawaii_hearts_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
         "primary": "#FF4D6D",
-        "primary_dark": "#C9184A",
+        "primary_dark": "#FF4D6D",
         "scaffold_bg": "#FFC2D1",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#FF8FA3",
-        "bubble_other": "#FFE4EC",
-        "bottom_nav_bg": "#FF8FA3"
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#FF4D6D",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#FF4D6DCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "kawaii_hearts_wallpaper.jpg",
+        "header_bg": "yushi_pink_love_header.jpg",
+        "pattern": "yushi_pink_love_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 22,
-        "card_radius": 22,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "circle",
+        "bubble_style": "ios",
         "is_rectangular_estados": false
+      },
+      "layout": {
+        "tab_style": "ios_v2",
+        "header_style": "glass",
+        "icon_pack": "heart",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "top_horizontal",
+        "llamadas_position": "bottom"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/yushi_pink_love.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/yushi_pink_love/",
+        "download_url": "themes/yushi_pink_love.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "yushi_pink_love.json",
+        "save_images": true
       }
     },
     {
       "id": "anime_soft_kitten",
       "name": "Soft Kitten Anime 🖤",
-      "version": "1.0",
-      "author": "SixSevenApp",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Manga blanco y negro soft kitten - de tus fotos",
-      "preview_image": "anime_soft_preview.jpg",
+      "description": "Tu foto 1 - manga blanco y negro, fondo con imagen anime, corazones",
+      "preview_image": "anime_soft_kitten_preview.jpg",
+      "wallpaper_image": "soft_kitten_manga_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
         "primary": "#212121",
+        "primary_dark": "#212121",
         "scaffold_bg": "#FAFAFA",
-        "card_bg": "#FFFFFF",
+        "card_bg": "#FFFFFFE6",
         "bubble_me": "#212121",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#FFFFFF"
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#212121CC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "soft_kitten_manga_wallpaper.jpg",
+        "header_bg": "anime_soft_kitten_header.jpg",
+        "pattern": "anime_soft_kitten_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 24,
-        "card_radius": 18,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "squircle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 75,
-        "estado_rect_height": 95,
-        "estado_border_radius": 18
+        "bubble_style": "sharp",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "ios_black",
+        "header_style": "blur",
+        "icon_pack": "cat",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/anime_soft_kitten.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/anime_soft_kitten/",
+        "download_url": "themes/anime_soft_kitten.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "anime_soft_kitten.json",
+        "save_images": true
       }
     },
     {
       "id": "demon_slayer_tanjiro",
       "name": "Demon Slayer Tanjiro 🔥",
-      "version": "1.0",
-      "author": "SixSevenApp",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Rojo fuego anime iOS 15 personalizado - de tus fotos",
-      "preview_image": "demon_slayer_preview.jpg",
+      "description": "Tu foto 2 - fondo Demon Slayer fuego, imagen Nezuko",
+      "preview_image": "demon_slayer_tanjiro_preview.jpg",
+      "wallpaper_image": "demon_slayer_fire_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
         "primary": "#D32F2F",
+        "primary_dark": "#D32F2F",
         "scaffold_bg": "#1A0000",
-        "card_bg": "#2C0A0A",
+        "card_bg": "#FFFFFFE6",
         "bubble_me": "#D32F2F",
-        "bubble_other": "#424242",
-        "bottom_nav_bg": "#7F0000"
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#D32F2FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "demon_slayer_fire_wallpaper.jpg",
+        "header_bg": "demon_slayer_tanjiro_header.jpg",
+        "pattern": "demon_slayer_tanjiro_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 8,
-        "card_radius": 12,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "sharp_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 70,
-        "estado_rect_height": 90,
-        "estado_border_radius": 8
+        "bubble_style": "sharp",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "capsule",
+        "header_style": "image_header",
+        "icon_pack": "fire",
+        "fab_style": "capsule",
+        "navigation_bar": "center_floating",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/demon_slayer_tanjiro.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/demon_slayer_tanjiro/",
+        "download_url": "themes/demon_slayer_tanjiro.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "demon_slayer_tanjiro.json",
+        "save_images": true
       }
     },
     {
       "id": "black_pink_anna",
       "name": "Annonna Black Pink 🖤💗",
-      "version": "1.0",
-      "author": "SixSevenApp",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Negro con rosa pastel japonés kawaii dark - de tus fotos",
-      "preview_image": "black_pink_preview.jpg",
+      "description": "Tu foto 3 - fondo dark kawaii japonés con imagen",
+      "preview_image": "black_pink_anna_preview.jpg",
+      "wallpaper_image": "black_pink_dark_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
         "primary": "#000000",
+        "primary_dark": "#000000",
         "scaffold_bg": "#F8BBD0",
-        "card_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
         "bubble_me": "#000000",
-        "bubble_other": "#F48FB1",
-        "bottom_nav_bg": "#F8BBD0"
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#000000CC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "black_pink_dark_wallpaper.jpg",
+        "header_bg": "black_pink_anna_header.jpg",
+        "pattern": "black_pink_anna_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 24,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 20,
-        "header_radius": 24
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "center_floating",
+        "header_style": "black_header",
+        "icon_pack": "crown",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/black_pink_anna.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/black_pink_anna/",
+        "download_url": "themes/black_pink_anna.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "black_pink_anna.json",
+        "save_images": true
+      }
+    },
+    {
+      "id": "naruto_akatsuki",
+      "name": "Naruto Akatsuki ☁️",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
+      "is_premium": false,
+      "price": 0,
+      "description": "Nubes rojas Akatsuki, fondo anime",
+      "preview_image": "naruto_akatsuki_preview.jpg",
+      "wallpaper_image": "akatsuki_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
+      "colors": {
+        "primary": "#000000",
+        "primary_dark": "#000000",
+        "scaffold_bg": "#1A0000",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#000000",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#000000CC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "akatsuki_wallpaper.jpg",
+        "header_bg": "naruto_akatsuki_header.jpg",
+        "pattern": "naruto_akatsuki_pattern.png",
+        "requires_download": true
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 16,
+        "estado_shape": "circle",
+        "bubble_style": "sharp",
+        "is_rectangular_estados": false
+      },
+      "layout": {
+        "tab_style": "naruto_style",
+        "header_style": "dark",
+        "icon_pack": "cloud",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "top_horizontal",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/naruto_akatsuki.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/naruto_akatsuki/",
+        "download_url": "themes/naruto_akatsuki.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "naruto_akatsuki.json",
+        "save_images": true
+      }
+    },
+    {
+      "id": "one_piece_luffy",
+      "name": "One Piece Luffy 🏴‍☠️",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
+      "is_premium": false,
+      "price": 0,
+      "description": "Fondo Thousand Sunny con imagen",
+      "preview_image": "one_piece_luffy_preview.jpg",
+      "wallpaper_image": "one_piece_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
+      "colors": {
+        "primary": "#FF0000",
+        "primary_dark": "#FF0000",
+        "scaffold_bg": "#FFF3E0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#FF0000",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#FF0000CC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "one_piece_wallpaper.jpg",
+        "header_bg": "one_piece_luffy_header.jpg",
+        "pattern": "one_piece_luffy_pattern.png",
+        "requires_download": true
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 16,
+        "estado_shape": "pill",
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "pinterest",
+        "header_style": "transparent",
+        "icon_pack": "hat",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/one_piece_luffy.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/one_piece_luffy/",
+        "download_url": "themes/one_piece_luffy.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "one_piece_luffy.json",
+        "save_images": true
+      }
+    },
+    {
+      "id": "jujutsu_gojo",
+      "name": "Jujutsu Gojo 👁️",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
+      "is_premium": false,
+      "price": 0,
+      "description": "Ojos Gojo, fondo infinito con imagen",
+      "preview_image": "jujutsu_gojo_preview.jpg",
+      "wallpaper_image": "gojo_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
+      "colors": {
+        "primary": "#7B1FA2",
+        "primary_dark": "#7B1FA2",
+        "scaffold_bg": "#E1BEE7",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#7B1FA2",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#7B1FA2CC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "gojo_wallpaper.jpg",
+        "header_bg": "jujutsu_gojo_header.jpg",
+        "pattern": "jujutsu_gojo_pattern.png",
+        "requires_download": true
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 16,
+        "estado_shape": "squircle",
+        "bubble_style": "ios",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "glass",
+        "header_style": "blur",
+        "icon_pack": "eye",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/jujutsu_gojo.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/jujutsu_gojo/",
+        "download_url": "themes/jujutsu_gojo.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "jujutsu_gojo.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_1",
-      "name": "Custom Theme 1 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 1 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #1",
-      "preview_image": "custom_1_preview.jpg",
+      "description": "Tema con imagen 1 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_1_preview.jpg",
+      "wallpaper_image": "custom_1_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#7B1FA2",
-        "scaffold_bg": "#E1BEE7",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#7B1FA2",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#E1BEE7"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_1_wallpaper.jpg",
+        "header_bg": "custom_theme_1_header.jpg",
+        "pattern": "custom_theme_1_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_1.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_1/",
+        "download_url": "themes/custom_theme_1.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_1.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_2",
-      "name": "Custom Theme 2 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 2 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #2",
-      "preview_image": "custom_2_preview.jpg",
+      "description": "Tema con imagen 2 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_2_preview.jpg",
+      "wallpaper_image": "custom_2_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#00695C",
-        "scaffold_bg": "#B2DFDB",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#00695C",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#B2DFDB"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_2_wallpaper.jpg",
+        "header_bg": "custom_theme_2_header.jpg",
+        "pattern": "custom_theme_2_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_2.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_2/",
+        "download_url": "themes/custom_theme_2.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_2.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_3",
-      "name": "Custom Theme 3 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 3 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #3",
-      "preview_image": "custom_3_preview.jpg",
+      "description": "Tema con imagen 3 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_3_preview.jpg",
+      "wallpaper_image": "custom_3_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#BF360C",
-        "scaffold_bg": "#FFCCBC",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#BF360C",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#FFCCBC"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_3_wallpaper.jpg",
+        "header_bg": "custom_theme_3_header.jpg",
+        "pattern": "custom_theme_3_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_3.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_3/",
+        "download_url": "themes/custom_theme_3.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_3.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_4",
-      "name": "Custom Theme 4 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 4 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #4",
-      "preview_image": "custom_4_preview.jpg",
+      "description": "Tema con imagen 4 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_4_preview.jpg",
+      "wallpaper_image": "custom_4_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#1A237E",
-        "scaffold_bg": "#C5CAE9",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#1A237E",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#C5CAE9"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_4_wallpaper.jpg",
+        "header_bg": "custom_theme_4_header.jpg",
+        "pattern": "custom_theme_4_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_4.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_4/",
+        "download_url": "themes/custom_theme_4.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_4.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_5",
-      "name": "Custom Theme 5 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 5 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #5",
-      "preview_image": "custom_5_preview.jpg",
+      "description": "Tema con imagen 5 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_5_preview.jpg",
+      "wallpaper_image": "custom_5_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#004D40",
-        "scaffold_bg": "#A7FFEB",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#004D40",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#A7FFEB"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_5_wallpaper.jpg",
+        "header_bg": "custom_theme_5_header.jpg",
+        "pattern": "custom_theme_5_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_5.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_5/",
+        "download_url": "themes/custom_theme_5.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_5.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_6",
-      "name": "Custom Theme 6 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 6 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #6",
-      "preview_image": "custom_6_preview.jpg",
+      "description": "Tema con imagen 6 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_6_preview.jpg",
+      "wallpaper_image": "custom_6_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#3E2723",
-        "scaffold_bg": "#D7CCC8",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#3E2723",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#D7CCC8"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_6_wallpaper.jpg",
+        "header_bg": "custom_theme_6_header.jpg",
+        "pattern": "custom_theme_6_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_6.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_6/",
+        "download_url": "themes/custom_theme_6.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_6.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_7",
-      "name": "Custom Theme 7 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 7 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #7",
-      "preview_image": "custom_7_preview.jpg",
+      "description": "Tema con imagen 7 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_7_preview.jpg",
+      "wallpaper_image": "custom_7_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
         "primary": "#880E4F",
+        "primary_dark": "#880E4F",
         "scaffold_bg": "#F8BBD0",
-        "card_bg": "#FFFFFF",
+        "card_bg": "#FFFFFFE6",
         "bubble_me": "#880E4F",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#F8BBD0"
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_7_wallpaper.jpg",
+        "header_bg": "custom_theme_7_header.jpg",
+        "pattern": "custom_theme_7_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_7.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_7/",
+        "download_url": "themes/custom_theme_7.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_7.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_8",
-      "name": "Custom Theme 8 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 8 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #8",
-      "preview_image": "custom_8_preview.jpg",
+      "description": "Tema con imagen 8 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_8_preview.jpg",
+      "wallpaper_image": "custom_8_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#1B5E20",
-        "scaffold_bg": "#C8E6C9",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#1B5E20",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#C8E6C9"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_8_wallpaper.jpg",
+        "header_bg": "custom_theme_8_header.jpg",
+        "pattern": "custom_theme_8_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_8.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_8/",
+        "download_url": "themes/custom_theme_8.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_8.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_9",
-      "name": "Custom Theme 9 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 9 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #9",
-      "preview_image": "custom_9_preview.jpg",
+      "description": "Tema con imagen 9 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_9_preview.jpg",
+      "wallpaper_image": "custom_9_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#0D47A1",
-        "scaffold_bg": "#BBDEFB",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#0D47A1",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#BBDEFB"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_9_wallpaper.jpg",
+        "header_bg": "custom_theme_9_header.jpg",
+        "pattern": "custom_theme_9_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_9.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_9/",
+        "download_url": "themes/custom_theme_9.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_9.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_10",
-      "name": "Custom Theme 10 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 10 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #10",
-      "preview_image": "custom_10_preview.jpg",
+      "description": "Tema con imagen 10 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_10_preview.jpg",
+      "wallpaper_image": "custom_10_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#4A148C",
-        "scaffold_bg": "#E1BEE7",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#4A148C",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#E1BEE7"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_10_wallpaper.jpg",
+        "header_bg": "custom_theme_10_header.jpg",
+        "pattern": "custom_theme_10_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_10.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_10/",
+        "download_url": "themes/custom_theme_10.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_10.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_11",
-      "name": "Custom Theme 11 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 11 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #11",
-      "preview_image": "custom_11_preview.jpg",
+      "description": "Tema con imagen 11 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_11_preview.jpg",
+      "wallpaper_image": "custom_11_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#B71C1C",
-        "scaffold_bg": "#FFCDD2",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#B71C1C",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#FFCDD2"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_11_wallpaper.jpg",
+        "header_bg": "custom_theme_11_header.jpg",
+        "pattern": "custom_theme_11_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_11.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_11/",
+        "download_url": "themes/custom_theme_11.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_11.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_12",
-      "name": "Custom Theme 12 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 12 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #12",
-      "preview_image": "custom_12_preview.jpg",
+      "description": "Tema con imagen 12 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_12_preview.jpg",
+      "wallpaper_image": "custom_12_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#263238",
-        "scaffold_bg": "#CFD8DC",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#263238",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#CFD8DC"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_12_wallpaper.jpg",
+        "header_bg": "custom_theme_12_header.jpg",
+        "pattern": "custom_theme_12_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_12.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_12/",
+        "download_url": "themes/custom_theme_12.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_12.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_13",
-      "name": "Custom Theme 13 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 13 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #13",
-      "preview_image": "custom_13_preview.jpg",
+      "description": "Tema con imagen 13 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_13_preview.jpg",
+      "wallpaper_image": "custom_13_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#F57F17",
-        "scaffold_bg": "#FFF9C4",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#F57F17",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#FFF9C4"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_13_wallpaper.jpg",
+        "header_bg": "custom_theme_13_header.jpg",
+        "pattern": "custom_theme_13_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_13.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_13/",
+        "download_url": "themes/custom_theme_13.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_13.json",
+        "save_images": true
       }
     },
     {
       "id": "custom_theme_14",
-      "name": "Custom Theme 14 ✨",
-      "version": "1.0",
-      "author": "SixSevenApp - de tus 14 capturas",
+      "name": "Custom Image 14 ✨",
+      "version": "4.0",
+      "author": "SixSeven Delta Image",
       "is_premium": false,
       "price": 0,
-      "description": "Tema extraído de tus capturas .bin #14",
-      "preview_image": "custom_14_preview.jpg",
+      "description": "Tema con imagen 14 - como Delta, con fondo, iconos y layout diferente",
+      "preview_image": "custom_theme_14_preview.jpg",
+      "wallpaper_image": "custom_14_wallpaper.jpg",
+      "has_images": true,
+      "is_image_theme": true,
       "colors": {
-        "primary": "#4E342E",
-        "scaffold_bg": "#D7CCC8",
-        "card_bg": "#FFFFFF",
-        "bubble_me": "#4E342E",
-        "bubble_other": "#EEEEEE",
-        "bottom_nav_bg": "#D7CCC8"
+        "primary": "#880E4F",
+        "primary_dark": "#880E4F",
+        "scaffold_bg": "#F8BBD0",
+        "card_bg": "#FFFFFFE6",
+        "bubble_me": "#880E4F",
+        "bubble_other": "#FFFFFF",
+        "bottom_nav_bg": "#880E4FCC",
+        "text_primary": "#212121"
+      },
+      "images": {
+        "chat_wallpaper": "custom_14_wallpaper.jpg",
+        "header_bg": "custom_theme_14_header.jpg",
+        "pattern": "custom_theme_14_pattern.png",
+        "requires_download": true
       },
       "shapes": {
-        "bubble_radius": 20,
-        "card_radius": 20,
+        "bubble_radius": 18,
+        "card_radius": 16,
         "estado_shape": "rounded_rectangle",
-        "is_rectangular_estados": true,
-        "estado_rect_width": 72,
-        "estado_rect_height": 92,
-        "estado_border_radius": 16
+        "bubble_style": "rounded",
+        "is_rectangular_estados": true
+      },
+      "layout": {
+        "tab_style": "basic",
+        "header_style": "transparent",
+        "icon_pack": "star",
+        "fab_style": "capsule",
+        "navigation_bar": "basic",
+        "estado_position": "grid",
+        "llamadas_position": "top"
+      },
+      "storage": {
+        "folder": "SixSeven/SStemas",
+        "path": "/storage/emulated/0/SixSeven/SStemas/custom_theme_14.json",
+        "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/custom_theme_14/",
+        "download_url": "themes/custom_theme_14.json"
+      },
+      "persist": {
+        "save_in_device": true,
+        "folder_name": "SixSeven/SStemas",
+        "file_name": "custom_theme_14.json",
+        "save_images": true
       }
     }
-  ]
+  ],
+  "delta_level": true,
+  "total_themes": 22,
+  "has_delta_resources": true,
+  "persistence": {
+    "folder": "SixSeven/SStemas",
+    "full_path": "/storage/emulated/0/SixSeven/SStemas/",
+    "images_path": "/storage/emulated/0/SixSeven/SixSeven Wallpapers/",
+    "description": "Cada usuario descarga su tema con imágenes y se guarda en su dispositivo en SixSeven/SStemas + Wallpapers",
+    "behavior": "Al descargar y aplicar tema, se guarda JSON + imágenes en SStemas y Wallpapers para uso offline",
+    "permissions": [
+      "WRITE_EXTERNAL_STORAGE",
+      "READ_EXTERNAL_STORAGE"
+    ]
+  },
+  "folders": {
+    "store_version": "3.2",
+    "base_folder": "SixSeven",
+    "base_path": "/storage/emulated/0/SixSeven/",
+    "auto_create": true,
+    "folders": [
+      "SStemas",
+      "SixSeven Images",
+      "SixSeven Video",
+      "SixSeven Audio",
+      "SixSeven Voice Notes",
+      "SixSeven Stickers",
+      "SixSeven Documents",
+      "SixSeven Backup",
+      "SixSeven Wallpapers",
+      "SixSeven Profile Photos"
+    ],
+    "details": {
+      "SStemas": "Temas descargados - tienda funcional",
+      "SixSeven Images": "Fotos como WhatsApp Images",
+      "SixSeven Video": "Videos",
+      "SixSeven Audio": "Audios",
+      "SixSeven Voice Notes": "Notas de voz",
+      "SixSeven Stickers": "Stickers",
+      "SixSeven Documents": "Documentos",
+      "SixSeven Backup": "Backups de chats y temas",
+      "SixSeven Wallpapers": "Fondos",
+      "SixSeven Profile Photos": "Fotos perfil"
+    },
+    "code": "Crear carpetas automaticamente en main() al iniciar app, igual que WhatsApp lo hace"
+  },
+  "description": "Temas con imágenes reales como WhatsApp Delta - no solo colores, con wallpapers, icon packs, formas de estados y layouts diferentes",
+  "has_images": true,
+  "image_themes": true,
+  "whats_new": "Temas con imágenes reales, wallpapers, icon packs, cambio de forma de estados, tab styles, header styles - como WhatsApp Delta"
 }
