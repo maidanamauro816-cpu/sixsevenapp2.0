@@ -29,6 +29,7 @@ import { MyProfileView } from './components/MyProfileView';
 import { isNative } from './native';
 import { StoriesCreateView } from './components/StoriesCreateView';
 import { StoriesFeed } from './components/StoriesFeed';
+import { InstagramStoriesView } from './components/InstagramStoriesView';
 import { StoryStatus } from './components/MauroProfileBanner';
 import { SixSevenEasterEgg } from './components/SixSevenEasterEgg';
 import { PWAInstallButton } from './components/PWAInstallButton';
@@ -179,7 +180,7 @@ function MainApp() {
         {currentTab === 'perfil' && <ProfileMenuView onOpenProfile={() => setShowMyProfile(true)} onOpenContacts={() => setShowContacts(true)} onOpenCustomization={() => setShowCustomization(true)} />}
       </main>
 
-      {/* Barra principal de cinco posiciones: Chats, Estados, orbe IA, Llamadas y Música. */}
+      {/* Navegación principal: Chats, Estados, IA, Historias, Llamadas y Música. */}
       <WhatsAppBottomNav currentTab={currentTab} onChangeTab={setCurrentTab} />
 
       {/* Personalización, tienda de temas, iconos, tonos y burbujas */}
