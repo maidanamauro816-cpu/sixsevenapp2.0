@@ -18,7 +18,7 @@ jobs:
 
       - uses: android-actions/setup-android@v3
 
-      - run: npm install --omit=optional --legacy-peer-deps
+      - run: npm ci --include=optional --legacy-peer-deps
 
       - run: npm run build
 
