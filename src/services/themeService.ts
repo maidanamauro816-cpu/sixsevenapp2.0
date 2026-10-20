@@ -1,3 +1,5 @@
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 export interface SixSevenTheme {
   id: string;
   name: string;
@@ -111,16 +113,55 @@ export const ThemeService = {
     }
 
     try {
-      localStorage.setItem(PREF_KEY, themeId);
       localStorage.setItem(`theme_${themeId}`, JSON.stringify(theme));
       localStorage.setItem(`sixseven:downloaded-theme:${themeId}`, JSON.stringify(theme));
     } catch {
       throw new Error('No hay espacio disponible para guardar el tema en este dispositivo.');
     }
 
-    // La pantalla aplica el tema y luego recarga para que los estilos se actualicen.
-    // No recargar aquí: interrumpiría applyTheme antes de que termine.
+    // En Android se guarda una copia real en Documentos/SStemas además del almacenamiento interno.
+    if (Capacitor.isNativePlatform()) {
+      const filePath = `SStemas/${themeId}.json`;
+      try {
+        await Filesystem.mkdir({ path: 'SStemas', directory: Directory.Documents, recursive: true });
+      } catch {
+        // La carpeta puede existir ya; se confirma al escribir el archivo.
+      }
+      try {
+        await Filesystem.writeFile({
+          path: filePath,
+          data: JSON.stringify(theme, null, 2),
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8,
+          recursive: true,
+        });
+      } catch (error) {
+        throw new Error('El tema se descargó, pero Android no permitió guardarlo en Documentos/SStemas. Revisá el espacio disponible e intentá otra vez.');
+      }
+    }
+
+    // No seleccionar automáticamente: descargar y aplicar son acciones distintas.
     return theme;
+  },
+
+
+  selectTheme(themeId: string): void {
+    if (!isValidThemeId(themeId)) throw new Error('Identificador de tema no válido.');
+    const raw = localStorage.getItem(`theme_${themeId}`) ?? localStorage.getItem(`sixseven:downloaded-theme:${themeId}`);
+    if (!raw) throw new Error('Primero descargá el tema para poder aplicarlo.');
+    localStorage.setItem(PREF_KEY, themeId);
+    localStorage.setItem('sixseven:theme', themeId);
+  },
+
+  getDownloadedThemeIds(): string[] {
+    try {
+      const ids: string[] = [];
+      for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i) ?? '';
+        if (key.startsWith('theme_') && key !== 'theme_custom') ids.push(key.slice(6));
+      }
+      return [...new Set(ids)];
+    } catch { return []; }
   },
 
   getSavedTheme(): SixSevenTheme | null {
