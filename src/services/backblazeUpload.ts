@@ -5,7 +5,7 @@ type SignedUpload = { uploadUrl: string; publicUrl: string; headers: Record<stri
 
 const WORKER_URL = (import.meta.env.VITE_BACKBLAZE_WORKER_URL || 'https://sixseven-backblaze-signer.sixsevenapp816.workers.dev').replace(/\/$/, '');
 
-export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 'image'): Promise<string> {
+export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 'image', username?: string): Promise<string> {
   if (!(file instanceof File) || file.size <= 0) throw new Error('Elegí un archivo válido para subir.');
   const user = auth.currentUser;
   if (!user) throw new Error('Iniciá sesión en SixSeven antes de subir archivos.');
@@ -15,6 +15,7 @@ export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 
     const endpoint = kind === 'profile' ? '/api/upload-avatar' : '/api/upload-cover';
     const form = new FormData();
     form.append('file', file, file.name || (kind === 'profile' ? 'avatar' : 'cover'));
+    if (kind === 'cover' && username) form.append('username', username);
     let response: Response;
     try {
       response = await fetch(`${WORKER_URL}${endpoint}`, {
