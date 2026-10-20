@@ -34,6 +34,34 @@ interface AuthContextType {
   updateCoverPhoto: (file: File) => Promise<string>;
 }
 
+async function compressCoverImage(file: File, maxDimension = 1080): Promise<File> {
+  if (!file.type.startsWith('image/')) throw new Error('Elegí una imagen válida para la portada.');
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    throw new Error('No se pudo preparar la imagen. Elegí otra foto e intentá de nuevo.');
+  }
+  try {
+    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('No se pudo comprimir la imagen.');
+    context.drawImage(bitmap, 0, 0, width, height);
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((result) => result ? resolve(result) : reject(new Error('No se pudo comprimir la imagen.')), 'image/jpeg', 0.86);
+    });
+    const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_') || 'portada';
+    return new File([blob], `${baseName}.jpg`, { type: 'image/jpeg', lastModified: Date.now() });
+  } finally {
+    bitmap.close();
+  }
+}
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -255,13 +283,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!file || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       throw new Error('Elegí una imagen JPG, PNG o WebP válida.');
     }
-    if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera los 10 MB. Elegí una más liviana.');
+    const compressedFile = await compressCoverImage(file, 1080);
+    if (compressedFile.size > 10 * 1024 * 1024) throw new Error('La portada comprimida supera los 10 MB. Elegí otra imagen.');
     try {
-      const url = await uploadToBackblaze(file, 'cover');
-      await setDoc(doc(db, 'users', user.uid), { uid: user.uid, coverURL: url }, { merge: true });
-      setProfile((current) => current ? { ...current, coverURL: url } : {
-        uid: user.uid, displayName: user.displayName || 'Usuario SixSeven', username: 'usuario',
-        coverURL: url, score67: 0, followersCount: 0, followingCount: 0,
+      const username = (profile?.username || user.displayName || 'usuario').replace(/^@/, '');
+      const url = await uploadToBackblaze(compressedFile, 'cover', username);
+      await setDoc(doc(db, 'users', user.uid), { uid: user.uid, coverPhotoUrl: url, coverURL: url }, { merge: true });
+      setProfile((current) => current ? { ...current, coverPhotoUrl: url, coverURL: url } : {
+        uid: user.uid, displayName: user.displayName || 'Usuario SixSeven', username,
+        coverPhotoUrl: url, coverURL: url, score67: 0, followersCount: 0, followingCount: 0,
       });
       return url;
     } catch (error) {
