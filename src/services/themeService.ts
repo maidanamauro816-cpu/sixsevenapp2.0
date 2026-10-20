@@ -74,7 +74,7 @@ export const ThemeService = {
     if (!theme || theme.id !== themeId) throw new Error(`No se encontró el tema ${themeId}.`);
     return persistTheme(validateTheme(theme));
   },
-  async importThemeFile(file: File): Promise<SixSevenTheme> {
+  async importDeltaTheme(theme: SixSevenTheme): Promise<SixSevenTheme> {\n    // Delta metadata is preserved as extra JSON properties while the visual fields map to SixSeven's theme schema.\n    return persistTheme(validateTheme(theme));\n  },\n  async importThemeFile(file: File): Promise<SixSevenTheme> {
     if (!file.name.toLowerCase().endsWith('.json')) throw new Error('Elegí un archivo de tema .json.');
     let parsed: unknown;
     try { parsed = JSON.parse(await file.text()); } catch { throw new Error('El archivo no contiene JSON válido.'); }
