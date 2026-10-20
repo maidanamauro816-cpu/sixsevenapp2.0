@@ -93,3 +93,110 @@ exports.askSixSevenIA = onCall(
     }
   }
 );
+
+
+// Backblaze B2: las credenciales se configuran exclusivamente con Firebase Secret Manager.
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { randomUUID } = require('node:crypto');
+
+const b2KeyId = defineSecret('B2_KEY_ID');
+const b2ApplicationKey = defineSecret('B2_APPLICATION_KEY');
+
+const B2_ENDPOINT = 'https://s3.us-east-005.backblazeb2.com';
+const B2_REGION = 'us-east-005';
+const B2_BUCKETS = Object.freeze({
+  profile: 'sixseven-profiles',
+  cover: 'sixseven-covers',
+  image: 'sixseven-images',
+  audio: 'sixseven-audios',
+  video: 'sixseven-images',
+});
+
+const ALLOWED_TYPES = Object.freeze({
+  profile: ['image/jpeg', 'image/png', 'image/webp'],
+  cover: ['image/jpeg', 'image/png', 'image/webp'],
+  image: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+  audio: ['audio/mpeg', 'audio/mp4', 'audio/aac', 'audio/ogg', 'audio/wav', 'audio/webm'],
+  video: ['video/mp4', 'video/webm', 'video/quicktime'],
+});
+
+exports.createSixSevenUploadUrl = onCall(
+  {
+    region: 'us-central1',
+    secrets: [b2KeyId, b2ApplicationKey],
+    timeoutSeconds: 30,
+    memory: '256MiB',
+    cors: true,
+  },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'Inicia sesión para subir archivos.');
+    }
+
+    const kind = typeof request.data?.kind === 'string' ? request.data.kind : '';
+    const contentType = typeof request.data?.contentType === 'string'
+      ? request.data.contentType.toLowerCase().trim()
+      : '';
+    const fileName = typeof request.data?.fileName === 'string'
+      ? request.data.fileName.slice(0, 180)
+      : 'upload';
+    const fileSize = Number(request.data?.fileSize);
+
+    if (!Object.prototype.hasOwnProperty.call(B2_BUCKETS, kind)) {
+      throw new HttpsError('invalid-argument', 'Tipo de archivo no permitido.');
+    }
+    if (!ALLOWED_TYPES[kind].includes(contentType)) {
+      throw new HttpsError('invalid-argument', 'Formato de archivo no permitido.');
+    }
+    const maxBytes = kind === 'audio' || kind === 'video' ? 100 * 1024 * 1024 : 20 * 1024 * 1024;
+    if (!Number.isFinite(fileSize) || fileSize <= 0 || fileSize > maxBytes) {
+      throw new HttpsError('invalid-argument', 'El archivo está vacío o supera el límite permitido.');
+    }
+
+    const keyId = b2KeyId.value()?.trim();
+    const applicationKey = b2ApplicationKey.value()?.trim();
+    if (!keyId || !applicationKey) {
+      throw new HttpsError('failed-precondition', 'Faltan B2_KEY_ID y/o B2_APPLICATION_KEY en Firebase Secrets.');
+    }
+
+    const extensionByType = {
+      'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp',
+      'image/gif': 'gif', 'audio/mpeg': 'mp3', 'audio/mp4': 'm4a',
+      'audio/aac': 'aac', 'audio/ogg': 'ogg', 'audio/wav': 'wav',
+      'audio/webm': 'webm', 'video/mp4': 'mp4', 'video/webm': 'webm',
+      'video/quicktime': 'mov',
+    };
+    const bucket = B2_BUCKETS[kind];
+    const objectKey = `${request.auth.uid}/${kind}/${randomUUID()}.${extensionByType[contentType]}`;
+
+    try {
+      const client = new S3Client({
+        endpoint: B2_ENDPOINT,
+        region: B2_REGION,
+        forcePathStyle: true,
+        credentials: { accessKeyId: keyId, secretAccessKey: applicationKey },
+      });
+      const command = new PutObjectCommand({
+        Bucket: bucket,
+        Key: objectKey,
+        ContentType: contentType,
+        Metadata: { owneruid: request.auth.uid, originalname: fileName.replace(/[\\r\\n]/g, '').slice(0, 120) },
+      });
+      const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 });
+      const publicUrl = `https://${bucket}.s3.us-east-005.backblazeb2.com/${objectKey.split('/').map(encodeURIComponent).join('/')}`;
+      return {
+        uploadUrl,
+        publicUrl,
+        objectKey,
+        bucket,
+        method: 'PUT',
+        headers: { 'Content-Type': contentType },
+        expiresInSeconds: 300,
+      };
+    } catch (error) {
+      console.error('createSixSevenUploadUrl failed:', error?.message || error);
+      throw new HttpsError('internal', 'No se pudo preparar la subida. Revisa la configuración de Backblaze.');
+    }
+  }
+);
