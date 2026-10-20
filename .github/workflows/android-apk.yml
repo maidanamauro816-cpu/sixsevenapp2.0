@@ -38,6 +38,7 @@ jobs:
         run: npm run build
         env:
           VITE_GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
+          VITE_BACKBLAZE_WORKER_URL: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev
 
       - name: Generate Android project
         run: npx cap add android
