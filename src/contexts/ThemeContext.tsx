@@ -5,7 +5,9 @@ export type SixSevenTheme = {
   id: string;
   name: string;
   primary: string;
+  primaryDark?: string;
   background: string;
+  cardBg?: string;
   bubbleSent: string;
   bubbleReceived: string;
   text: string;
@@ -56,18 +58,30 @@ function hexColor(value: unknown, fallback: string): string {
   return typeof value === 'string' && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value) ? value : fallback;
 }
 
+function readableText(hex: string): string {
+  const normalized = hex.replace('#', '');
+  const expanded = normalized.length === 3 ? normalized.split('').map((part) => part + part).join('') : normalized;
+  const value = Number.parseInt(expanded, 16);
+  if (!Number.isFinite(value)) return '#ffffff';
+  const r = (value >> 16) & 255, g = (value >> 8) & 255, b = value & 255;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) > 145 ? '#171717' : '#ffffff';
+}
+
 function fromThemeJson(json: ThemeJson): SixSevenTheme {
   const colors = json.colors ?? {};
   const shapes = json.shapes ?? {};
   const bg = hexColor(colors.scaffold_bg, '#050505');
+  const primary = hexColor(colors.primary, '#ff1a1a');
   return {
     id: json.id,
     name: json.name,
-    primary: hexColor(colors.primary, '#ff1a1a'),
+    primary,
+    primaryDark: hexColor(colors.primary_dark, primary),
     background: bg,
-    bubbleSent: hexColor(colors.bubble_me, hexColor(colors.primary, '#321014')),
+    cardBg: hexColor(colors.card_bg, bg),
+    bubbleSent: hexColor(colors.bubble_me, primary),
     bubbleReceived: hexColor(colors.bubble_other, hexColor(colors.card_bg, '#171717')),
-    text: hexColor(colors.text_primary, '#ffffff'),
+    text: hexColor(colors.text_primary, readableText(bg)),
     tickColor: hexColor(colors.primary, '#ff1a1a'),
     fontFamily: 'system-ui',
     bottomNavBg: hexColor(colors.bottom_nav_bg, bg),
@@ -83,6 +97,8 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
 function applyCss(t: SixSevenTheme) {
   const root = document.documentElement;
   root.style.setProperty('--primary', t.primary);
+  root.style.setProperty('--primary-dark', t.primaryDark ?? t.primary);
+  root.style.setProperty('--card-bg', t.cardBg ?? t.background);
   root.style.setProperty('--bubble-me', t.bubbleSent);
   root.style.setProperty('--bubble-other', t.bubbleReceived);
   root.style.setProperty('--scaffold-bg', t.background);
