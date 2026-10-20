@@ -49,8 +49,18 @@ async function persistTheme(theme: SixSevenTheme) {
 }
 export const ThemeService = {
   async fetchStoreIndex(): Promise<ThemeStoreIndex> {
-    try { const remote = await fetchJson<ThemeStoreIndex>(`${REMOTE_BASE_URL}/tienda_temas_index.json`); if (Array.isArray(remote.themes)) { try { localStorage.setItem(INDEX_CACHE_KEY, JSON.stringify(remote)); } catch {} return remote; } } catch {}
-    try { const local = await fetchJson<ThemeStoreIndex>(`${LOCAL_BASE_URL}/tienda_temas_index.json`); if (Array.isArray(local.themes)) { try { localStorage.setItem(INDEX_CACHE_KEY, JSON.stringify(local)); } catch {} return local; } } catch {}
+    let remote: ThemeStoreIndex | null = null;
+    let local: ThemeStoreIndex | null = null;
+    try { remote = await fetchJson<ThemeStoreIndex>(`${REMOTE_BASE_URL}/tienda_temas_index.json`); } catch {}
+    try { local = await fetchJson<ThemeStoreIndex>(`${LOCAL_BASE_URL}/tienda_temas_index.json`); } catch {}
+    const sources = [remote, local].filter((source): source is ThemeStoreIndex => Boolean(source && Array.isArray(source.themes)));
+    if (sources.length) {
+      const merged = new Map<string, SixSevenTheme>();
+      for (const source of sources) for (const theme of source.themes) if (theme?.id) merged.set(theme.id, theme);
+      const index: ThemeStoreIndex = { store_version: '2.1', all_free: true, last_updated: '2026-10-20', themes: [...merged.values()] };
+      try { localStorage.setItem(INDEX_CACHE_KEY, JSON.stringify(index)); } catch {}
+      return index;
+    }
     return readCachedIndex() ?? { themes: [], all_free: true, store_version: '2.1' };
   },
   async downloadTheme(themeId: string): Promise<SixSevenTheme> {
