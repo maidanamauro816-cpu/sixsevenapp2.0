@@ -72,6 +72,7 @@ export async function sendMessage(chatId: string, myUid: string, otherUid: strin
   await addDoc(collection(db, 'chats', chatId, 'messages'), {
     senderId: myUid,
     text: clean,
+    messageType: 'text',
     createdAt: serverTimestamp(),
   });
   await updateDoc(doc(db, 'chats', chatId), {
