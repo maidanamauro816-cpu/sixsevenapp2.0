@@ -1,0 +1,75 @@
+name: Deploy SixSeven Gemini Worker
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "cloudflare/backblaze-worker/src/index.ts"
+      - "cloudflare/backblaze-worker/wrangler.toml"
+      - ".github/workflows/deploy-sixseven-gemini-worker.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: cloudflare/backblaze-worker
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cloudflare/backblaze-worker/package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate required secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$GEMINI_API_KEY" || { echo "::error::Falta el secreto GEMINI_API_KEY"; exit 1; }
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Falta CLOUDFLARE_API_TOKEN"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Falta CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+      - name: Save Gemini API key as a Cloudflare Worker secret
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$GEMINI_API_KEY" | npx wrangler secret put GEMINI_API_KEY --name sixseven-backblaze-signer
+      - name: Deploy combined Backblaze and Gemini Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler deploy --name sixseven-backblaze-signer
+      - name: Verify public health and protected Gemini route
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://sixseven-backblaze-signer.sixsevenapp816.workers.dev"
+          curl --fail --silent --show-error --max-time 20 "$URL/api/health" | tee /tmp/health.json
+          grep -q '"ok":true' /tmp/health.json
+          CODE="$(curl --silent --output /tmp/gemini.json --write-out '%{http_code}' --max-time 20 -X POST "$URL/api/ask-gemini" -H 'Content-Type: application/json' --data '{"message":"test"}')"
+          test "$CODE" = "401" || { echo "::error::La ruta Gemini debía rechazar usuarios no autenticados; HTTP $CODE"; cat /tmp/gemini.json; exit 1; }
+          echo "Worker activo; ruta Gemini protegida por Firebase Authentication."
+      - name: Deployment summary
+        run: |
+          {
+            echo "## SixSeven IA / Cloudflare Worker"
+            echo "- Endpoint: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev/api/ask-gemini"
+            echo "- GEMINI_API_KEY está guardada como secreto de Cloudflare; nunca se publica en el frontend."
+            echo "- Firebase se usa solo para Auth y validar la sesión; IA no usa Firebase Functions ni Firestore."
+          } >> "$GITHUB_STEP_SUMMARY"
