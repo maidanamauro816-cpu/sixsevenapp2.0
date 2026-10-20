@@ -8,6 +8,7 @@ interface Env {
   B2_APP_KEY?: string;
   B2_BUCKET_NAME?: string;
   B2_ENDPOINT?: string;
+  GEMINI_API_KEY?: string;
 }
 
 const PROJECT_ID = "sixseven-c86ac";
@@ -96,6 +97,82 @@ async function verifyUser(request: Request): Promise<string | null> {
   }
 }
 
+
+async function askGemini(request: Request, env: Env, uid: string): Promise<Response> {
+  if (!env.GEMINI_API_KEY?.trim()) {
+    return response({
+      code: "ai_not_configured",
+      error: "La IA todavía no está configurada. Falta guardar GEMINI_API_KEY como secreto del Worker de Cloudflare.",
+    }, 503);
+  }
+
+  let body: { message?: unknown };
+  try {
+    body = await request.json();
+  } catch {
+    return response({ code: "invalid_request", error: "La solicitud de IA no es válida." }, 400);
+  }
+
+  const prompt = typeof body.message === "string" ? body.message.trim() : "";
+  if (!prompt) return response({ code: "empty_message", error: "Escribí o decí qué necesitás." }, 400);
+  if (prompt.length > 4000) {
+    return response({ code: "message_too_long", error: "El mensaje es demasiado largo (máximo 4000 caracteres)." }, 413);
+  }
+
+  try {
+    const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": env.GEMINI_API_KEY.trim(),
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{
+            text: `Sos SixSeven IA, el asistente oficial de la app SixSeven.
+Respondé siempre en español latinoamericano, con tono amable, claro y natural de Argentina.
+Ayudá con consultas generales y con el uso de SixSeven. La app tiene Chats, Estados, Música, Llamadas, Perfil y configuración.
+No afirmes haber ejecutado acciones que la app no te haya permitido realizar. Si no sabés algo, decilo con honestidad.
+Mantené las respuestas concisas y útiles. El usuario autenticado tiene el identificador interno ${uid}; no lo reveles ni lo uses para otros fines.`,
+          }],
+        },
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 900, temperature: 0.7, topP: 0.9 },
+      }),
+    });
+
+    const payload = await upstream.json().catch(() => ({})) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      error?: { message?: string; status?: string };
+    };
+
+    if (!upstream.ok) {
+      console.error("Gemini API request failed", upstream.status, payload.error?.status || "unknown");
+      if (upstream.status === 429) {
+        return response({ code: "quota_exceeded", error: "Se alcanzó el límite gratuito de Gemini por ahora. Esperá a que se renueve la cuota y volvé a intentar." }, 429);
+      }
+      if (upstream.status === 401 || upstream.status === 403 || upstream.status === 400) {
+        return response({ code: "gemini_key_or_model_error", error: "Google Gemini rechazó la solicitud. Revisá que la clave de AI Studio sea válida y que el modelo gratuito esté habilitado." }, 502);
+      }
+      return response({ code: "gemini_unavailable", error: "Gemini no está disponible en este momento. Intentá de nuevo en un rato." }, 502);
+    }
+
+    const answer = (payload.candidates || [])
+      .flatMap((candidate) => candidate.content?.parts || [])
+      .map((part) => part.text || "")
+      .join("")
+      .trim();
+
+    if (!answer) {
+      return response({ code: "empty_response", error: "Gemini no devolvió texto. Probá de nuevo con otra pregunta." }, 502);
+    }
+    return response({ answer }, 200);
+  } catch (error) {
+    console.error("Gemini request failed", error instanceof Error ? error.message : "unknown error");
+    return response({ code: "network_error", error: "No se pudo conectar con Gemini. Revisá tu conexión e intentá de nuevo." }, 502);
+  }
+}
+
 async function uploadMultipart(request: Request, env: Env, uid: string, kind: "profile" | "cover"): Promise<Response> {
   let form: FormData;
   try {
@@ -141,6 +218,12 @@ export default {
     const url = new URL(request.url);
     if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/health" || url.pathname === "/api/health")) {
       return response({ ok: true, service: "SixSeven Backblaze signer", status: "ok" });
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/ask-gemini") {
+      const uid = await verifyUser(request);
+      if (!uid) return response({ code: "unauthenticated", error: "Iniciá sesión en SixSeven para usar la IA." }, 401);
+      return askGemini(request, env, uid);
     }
 
     if (request.method === "POST" && (url.pathname === "/api/upload-avatar" || url.pathname === "/api/upload-cover")) {
