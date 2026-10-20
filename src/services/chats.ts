@@ -23,6 +23,7 @@ export interface ChatDoc {
 }
 
 export type ChatMediaType = 'image' | 'video' | 'audio' | 'gif' | 'sticker';
+export type MessageType = 'text' | 'sticker' | 'emoji' | 'audio';
 
 export interface MessageDoc {
   id: string;
@@ -34,6 +35,9 @@ export interface MessageDoc {
   mediaName?: string;
   mimeType?: string;
   stickerData?: string;
+  messageType?: MessageType;
+  stickerId?: string;
+  audioClipId?: string;
 }
 
 export const chatIdFor = (a: string, b: string) => [a, b].sort().join('_');
@@ -115,6 +119,31 @@ export async function sendRemoteGifMessage(chatId: string, myUid: string, otherU
   });
   await updateDoc(doc(db, 'chats', chatId), {
     lastMessage: 'GIF', lastSender: myUid, updatedAt: serverTimestamp(),
+    [`unread.${otherUid}`]: increment(1),
+  });
+}
+
+
+/** Envía un sticker de catálogo como mensaje estructurado de Firestore. */
+export async function sendCatalogStickerMessage(chatId: string, myUid: string, otherUid: string, stickerId: string, text: string, emoji: string) {
+  const messageText = `${emoji} ${text}`;
+  await addDoc(collection(db, 'chats', chatId, 'messages'), {
+    senderId: myUid, text: messageText, messageType: 'sticker', stickerId, createdAt: serverTimestamp(),
+  });
+  await updateDoc(doc(db, 'chats', chatId), {
+    lastMessage: `Sticker: ${text}`, lastSender: myUid, updatedAt: serverTimestamp(),
+    [`unread.${otherUid}`]: increment(1),
+  });
+}
+
+/** Comparte la referencia de un clip musical del manifiesto (demo sin archivo de audio). */
+export async function sendMusicClipMessage(chatId: string, myUid: string, otherUid: string, clipId: string, name: string, duration: string) {
+  const text = `🎵 ${name} · ${duration}`;
+  await addDoc(collection(db, 'chats', chatId, 'messages'), {
+    senderId: myUid, text, messageType: 'audio', audioClipId: clipId, createdAt: serverTimestamp(),
+  });
+  await updateDoc(doc(db, 'chats', chatId), {
+    lastMessage: text, lastSender: myUid, updatedAt: serverTimestamp(),
     [`unread.${otherUid}`]: increment(1),
   });
 }
