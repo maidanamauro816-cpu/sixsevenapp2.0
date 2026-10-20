@@ -41,6 +41,35 @@ jobs:
           test -n "$B2_KEY_ID" || (echo "::error::Missing B2_KEY_ID" && exit 1)
           test -n "$B2_APPLICATION_KEY" || (echo "::error::Missing B2_APPLICATION_KEY" && exit 1)
 
+      - name: Ensure workers.dev subdomain exists
+        id: subdomain
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
+          HTTP_CODE="$(curl -sS -o /tmp/cf-subdomain.json -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API")"
+          SUBDOMAIN=""
+          if [ "$HTTP_CODE" = "200" ] && jq -e '.success == true' /tmp/cf-subdomain.json >/dev/null; then
+            SUBDOMAIN="$(jq -r '.result.subdomain' /tmp/cf-subdomain.json)"
+          else
+            for candidate in sixsevenapp816 sixseven-mauro816 sixsevenapp-mauro816; do
+              CODE="$(curl -sS -o /tmp/cf-subdomain-create.json -w '%{http_code}' -X PUT "$API" -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" --data "{\"subdomain\":\"$candidate\"}")"
+              if [ "$CODE" = "200" ] && jq -e '.success == true' /tmp/cf-subdomain-create.json >/dev/null; then
+                SUBDOMAIN="$(jq -r '.result.subdomain' /tmp/cf-subdomain-create.json)"
+                break
+              fi
+            done
+          fi
+          if [ -z "$SUBDOMAIN" ]; then
+            echo "::error::Cloudflare could not register or read a workers.dev subdomain. Check that the API token has Workers Scripts Write permission."
+            exit 1
+          fi
+          echo "workers_subdomain=$SUBDOMAIN" >> "$GITHUB_OUTPUT"
+          echo "workers.dev subdomain is ready."
+
       # A first deploy creates the Worker resource; secrets can only be attached after it exists.
       - name: Bootstrap Worker resource
         working-directory: cloudflare/backblaze-worker
