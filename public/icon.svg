@@ -1,10 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <linearGradient id="letter" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#ff333d"/></linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="92" fill="#000"/>
-  <rect x="18" y="18" width="476" height="476" rx="78" fill="none" stroke="#ff1725" stroke-width="8" filter="url(#glow)"/>
-  <rect x="31" y="31" width="450" height="450" rx="66" fill="none" stroke="#ff1725" stroke-opacity=".35" stroke-width="2"/>
-  <path d="M342 151c-28-24-61-36-101-36-75 0-126 39-126 99 0 54 41 78 119 95 55 12 73 23 73 45 0 24-25 39-64 39-43 0-80-16-111-47l-43 53c39 39 94 61 154 61 80 0 134-39 134-105 0-55-36-79-115-98-59-14-78-23-78-43 0-19 21-32 54-32 32 0 60 10 87 31z" fill="url(#letter)" stroke="#ff1725" stroke-width="2" filter="url(#glow)"/>
+<defs><filter id="g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7777"/><stop offset=".45" stop-color="#ff0808"/><stop offset="1" stop-color="#a90008"/></linearGradient></defs>
+<rect width="512" height="512" rx="94" fill="#000"/><rect x="20" y="20" width="472" height="472" rx="86" fill="none" stroke="#ff151f" stroke-width="8" filter="url(#g)"/>
+<path d="M250 96 L281 161 L329 126 L315 183 L362 174 L298 212 L241 204 L205 229 L193 176 L166 142 L211 161 Z" fill="none" stroke="#ff282f" stroke-width="11" stroke-linejoin="round" filter="url(#g)"/>
+<path d="M353 178 C322 150 280 135 239 138 C163 143 119 186 119 244 C119 293 163 317 235 337 C283 350 305 365 305 385 C305 409 276 425 236 425 C192 425 153 407 123 377 L91 415 C132 457 181 477 240 477 C321 477 375 436 375 372 C375 318 336 292 260 273 C202 259 185 247 185 226 C185 207 206 193 238 193 C271 193 302 204 328 225 Z" fill="url(#s)" stroke="#ff3b43" stroke-width="3" filter="url(#g)" transform="translate(0 -30) scale(1 .94)"/>
 </svg>

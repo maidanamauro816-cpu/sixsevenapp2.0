@@ -9,6 +9,11 @@ export interface SixSevenTheme {
   price?: number;
   description?: string;
   preview_image?: string;
+  wallpaper_image?: string;
+  images?: { chat_wallpaper?: string; header_background?: string; preview?: string; [key: string]: unknown };
+  layout?: { tab_style?: string; header_style?: string; icon_pack?: string; [key: string]: unknown };
+  bubble_pattern?: string;
+  emoji_style?: string;
   colors: {
     primary: string;
     primary_dark?: string;

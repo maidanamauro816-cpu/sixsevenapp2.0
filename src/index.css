@@ -163,3 +163,24 @@ body { font-size: var(--sx-font-size); font-weight: var(--sx-font-weight); }
 html[data-sx-theme] body { color: var(--sx-text, #fff); }
 html[data-sx-theme] [data-sx-message-bubble="sent"] { background-color: var(--sx-bubble-sent) !important; }
 html[data-sx-theme] [data-sx-message-bubble="received"] { background-color: var(--sx-bubble-received) !important; }
+
+/* Animated IA eye orb (kept separate from the official S/crown brand mark). */
+@keyframes sx-eye-rotate { to { transform: rotate(360deg); } }
+.sx-ai-eye .sx-eye-rotate { transform-origin: 50% 50%; animation: sx-eye-rotate 14s linear infinite; }
+.sx-ai-eye.sx-orb-listening { filter: drop-shadow(0 0 8px rgba(255,20,40,.95)); }
+@media (prefers-reduced-motion: reduce) { .sx-ai-eye .sx-eye-rotate { animation: none; } }
+
+/* Downloaded theme imagery: wallpaper/header assets supplied by the theme index. */
+html[data-sx-theme] .sx-chat-list-surface,
+html[data-sx-theme] .sx-chat-room-surface {
+  background-image: var(--sx-chat-wallpaper, none) !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+html[data-sx-theme] .sx-main-header {
+  background-image: var(--sx-header-wallpaper, none) !important;
+  background-position: center !important;
+  background-size: cover !important;
+}
+html[data-sx-theme] .sx-theme-wallpaper-overlay { background: var(--sx-wallpaper-overlay, transparent); }

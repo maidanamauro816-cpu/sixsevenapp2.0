@@ -20,6 +20,13 @@ export type SixSevenTheme = {
   estadoRectWidth?: number;
   estadoRectHeight?: number;
   estadoBorderRadius?: number;
+  chatWallpaper?: string;
+  headerWallpaper?: string;
+  tabStyle?: string;
+  headerStyle?: string;
+  iconPack?: string;
+  bubblePattern?: string;
+  emojiStyle?: string;
 };
 
 export const themes: SixSevenTheme[] = [
@@ -91,6 +98,13 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
     estadoRectWidth: Number(shapes.estado_rect_width ?? 72),
     estadoRectHeight: Number(shapes.estado_rect_height ?? 92),
     estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
+    chatWallpaper: typeof json.images?.chat_wallpaper === 'string' ? json.images.chat_wallpaper : json.wallpaper_image,
+    headerWallpaper: typeof json.images?.header_background === 'string' ? json.images.header_background : undefined,
+    tabStyle: json.layout?.tab_style,
+    headerStyle: json.layout?.header_style,
+    iconPack: json.layout?.icon_pack,
+    bubblePattern: json.bubble_pattern,
+    emojiStyle: json.emoji_style,
   };
 }
 
@@ -109,6 +123,15 @@ function applyCss(t: SixSevenTheme) {
   root.style.setProperty('--estado-height', `${t.estadoRectHeight ?? 92}px`);
   root.style.setProperty('--estado-radius', `${t.estadoBorderRadius ?? 16}px`);
   root.style.setProperty('--sx-theme-bg', t.background);
+  const wallpaper = t.chatWallpaper;
+  const headerWallpaper = t.headerWallpaper;
+  root.style.setProperty('--sx-chat-wallpaper', wallpaper ? `url("${wallpaper.replace(/["\\\\]/g, '')}")` : 'none');
+  root.style.setProperty('--sx-header-wallpaper', headerWallpaper ? `url("${headerWallpaper.replace(/["\\\\]/g, '')}")` : 'none');
+  root.dataset.sxTabStyle = t.tabStyle ?? 'basic';
+  root.dataset.sxHeaderStyle = t.headerStyle ?? 'black_header';
+  root.dataset.sxIconPack = t.iconPack ?? 'default';
+  root.dataset.sxBubblePattern = t.bubblePattern ?? 'none';
+  root.dataset.sxEmojiStyle = t.emojiStyle ?? 'default';
   root.style.setProperty('--sx-theme-accent', t.primary);
   root.style.setProperty('--sx-bubble-sent', t.bubbleSent);
   root.style.setProperty('--sx-bubble-received', t.bubbleReceived);
