@@ -57,8 +57,8 @@ jobs:
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
         run: |
-          printf '%s' "$B2_KEY_ID" | npx wrangler secret put B2_KEY_ID --account-id "$CLOUDFLARE_ACCOUNT_ID"
-          printf '%s' "$B2_APPLICATION_KEY" | npx wrangler secret put B2_APPLICATION_KEY --account-id "$CLOUDFLARE_ACCOUNT_ID"
+          printf '%s' "$B2_KEY_ID" | npx wrangler secret put B2_KEY_ID --name sixseven-backblaze-signer
+          printf '%s' "$B2_APPLICATION_KEY" | npx wrangler secret put B2_APPLICATION_KEY --name sixseven-backblaze-signer
 
       - name: Deploy Worker and capture URL
         id: deploy
