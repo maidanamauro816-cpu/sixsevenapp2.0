@@ -208,7 +208,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div
                 data-sx-message-bubble="true"
-                data-chat-layout={m.mediaType === 'sticker' ? undefined : themeId === 'corona-gold' ? 'corona' : themeId === 'midnight' ? 'midnight' : undefined}
+                data-chat-layout={m.mediaType === 'sticker' ? undefined : themeId === 'corona_gold' ? 'corona' : themeId === 'midnight' ? 'midnight' : undefined}
                 data-message-owner={mine ? 'sent' : 'received'}
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug ${
                   m.mediaType === 'sticker' ? 'bg-transparent !px-0' : mine
