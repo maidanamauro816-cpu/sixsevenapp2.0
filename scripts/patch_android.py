@@ -80,7 +80,8 @@ for alias_id, suffix, resource, background, accent, shape in icons:
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <path android:fillColor="{background}" android:pathData="M18,0 L90,0 C100,0 108,8 108,18 L108,90 C108,100 100,108 90,108 L18,108 C8,108 0,100 0,90 L0,18 C0,8 8,0 18,0 Z"/>
-    <path android:fillColor="#00000000" android:strokeColor="{accent}" android:strokeWidth="2.2" android:pathData="M18,3 L90,3 C98,3 105,10 105,18 L105,90 C105,98 98,105 90,105 L18,105 C10,105 3,98 3,90 L3,18 C3,10 10,3 18,3 Z"/>\n    <path android:fillColor="#00000000" android:strokeColor="{accent}" android:strokeWidth="2.2" android:pathData="M18,3 L90,3 C98,3 105,10 105,18 L105,90 C105,98 98,105 90,105 L18,105 C10,105 3,98 3,90 L3,18 C3,10 10,3 18,3 Z"/>\n    <path android:fillColor="{accent}" android:pathData="{shapes[shape]}"/>
+    <path android:fillColor="#00000000" android:strokeColor="{accent}" android:strokeWidth="2.2" android:pathData="M18,3 L90,3 C98,3 105,10 105,18 L105,90 C105,98 98,105 90,105 L18,105 C10,105 3,98 3,90 L3,18 C3,10 10,3 18,3 Z"/>
+    <path android:fillColor="{accent}" android:pathData="{shapes[shape]}"/>
     {extra}
 </vector>
 '''
