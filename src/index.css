@@ -105,12 +105,15 @@ html[data-sx-bubble="neon"] [data-sx-message-bubble="true"] { border-radius: 1.1
   --sx-theme-bg: #000000;
   --sx-theme-accent: #ff1a1a;
 }
-html, body, #root { background-color: #000000 !important; }
-html[data-sx-theme] body,
-html[data-sx-theme] .sx-chat-list-surface,
-html[data-sx-theme] .sx-main-header { background-color: #000000 !important; }
-/* Avoid dark blood-red panels in the chat list; retain red only for small brand/status accents. */
-.sx-chat-list-surface { background-color: #000000 !important; }
+html, body, #root { background-color: var(--sx-theme-bg, var(--scaffold-bg, #000000)) !important; }
+html[data-sx-theme] body { background-color: var(--sx-theme-bg, var(--scaffold-bg, #000000)) !important; color: var(--sx-text, #ffffff) !important; }
+html[data-sx-theme] .sx-chat-list-surface { background-color: var(--sx-chat-bg, var(--scaffold-bg, #000000)) !important; }
+html[data-sx-theme] .sx-main-header { background-color: var(--sx-header-bg, var(--scaffold-bg, #000000)) !important; }
+/* El tema controla las superficies; el rojo neón queda como acento de identidad. */
+html[data-sx-theme] .bg-black { background-color: var(--sx-theme-bg, #000000) !important; }
+html[data-sx-theme] .bg-neutral-950 { background-color: var(--card-bg, var(--scaffold-bg, #050505)) !important; }
+html[data-sx-theme] .bg-neutral-900 { background-color: color-mix(in srgb, var(--card-bg, #171717) 82%, var(--sx-theme-accent, #ff1a1a) 3%) !important; }
+html[data-sx-theme] .text-white { color: var(--sx-text, #ffffff) !important; }
 
 /* Selector de emojis: oscuro, 8 columnas, como WhatsApp */
 .sx-emoji aside.EmojiPickerReact {
