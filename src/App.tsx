@@ -73,7 +73,7 @@ function MainApp() {
     try {
       const themeId = localStorage.getItem('sixseven:theme') || 'neon';
       const palettes: Record<string, { bg: string; accent: string }> = {
-        neon:{bg:'#050505',accent:'#ff1a1a'}, midnight:{bg:'#080b12',accent:'#7c8cff'}, pink:{bg:'#160914',accent:'#ff62bd'},
+        neon:{bg:'#050505',accent:'#ff1a1a'}, graphite:{bg:'#101114',accent:'#ff1a1a'}, glass:{bg:'#090b10',accent:'#ff1a1a'}, light:{bg:'#f4f4f5',accent:'#ff1a1a'}, violet:{bg:'#160d24',accent:'#ff1a1a'}, midnight:{bg:'#080b12',accent:'#7c8cff'}, pink:{bg:'#160914',accent:'#ff62bd'},
         dragon:{bg:'#160b05',accent:'#ff8a19'}, fire:{bg:'#10100a',accent:'#f7d64a'}, ocean:{bg:'#041219',accent:'#22d3ee'},
         forest:{bg:'#06120b',accent:'#2be58a'}, purple:{bg:'#10071c',accent:'#b56cff'}, ice:{bg:'#0b1117',accent:'#a9e7ff'},
         gold:{bg:'#151006',accent:'#f5c451'}, sunset:{bg:'#190a0b',accent:'#ff704f'}, matrix:{bg:'#030b05',accent:'#7dff4f'},

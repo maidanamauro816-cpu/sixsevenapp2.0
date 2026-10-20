@@ -1,0 +1,16 @@
+import React,{useEffect,useState} from 'react';
+import {ArrowLeft,RefreshCw,ShieldCheck,Palette,MessageSquare,LockKeyhole,CloudDownload} from 'lucide-react';
+
+type Resource={id:string;title:string;description:string;type:string;status:'existing'|'planned';options?:string[];target_count?:number};
+type Section={id:string;title:string;items:Resource[]};
+type Catalog={title:string;description:string;sections:Section[];notes?:string[]};
+const icons:Record<string,React.ElementType>={themes:Palette,privacy:LockKeyhole,messaging:MessageSquare,platform:ShieldCheck};
+export const ResourcesDeltaView:React.FC<{onBack:()=>void}>=({onBack})=>{
+ const [catalog,setCatalog]=useState<Catalog|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true);
+ const load=async()=>{setLoading(true);setError('');try{const r=await fetch('/tienda_recursos_delta.json',{cache:'no-cache'});if(!r.ok)throw Error('No se pudo cargar el catálogo remoto.');const data=await r.json() as Catalog;if(!Array.isArray(data.sections))throw Error('El catálogo tiene un formato inválido.');setCatalog(data)}catch(e){setError(e instanceof Error?e.message:'Error de carga');}finally{setLoading(false)}};
+ useEffect(()=>{void load()},[]);
+ return <div className="fixed inset-0 z-[80] overflow-y-auto bg-black px-4 pb-10 pt-[env(safe-area-inset-top)] text-white"><header className="sticky top-0 z-10 -mx-4 flex items-center gap-3 border-b border-neutral-800 bg-black/95 px-4 py-3 backdrop-blur"><button onClick={onBack} aria-label="Volver" className="rounded-full p-2 text-red-400"><ArrowLeft size={22}/></button><div className="flex-1"><h1 className="font-black">Recursos Delta</h1><p className="text-xs text-neutral-500">Catálogo descargable de SixSeven</p></div><button onClick={()=>void load()} aria-label="Actualizar catálogo" className="p-2 text-red-400"><RefreshCw size={18}/></button></header>
+ <main className="mx-auto max-w-md space-y-4 pt-4">{loading&&<p className="text-sm text-neutral-400">Cargando catálogo…</p>}{error&&<div role="alert" className="rounded-xl border border-red-900 p-3 text-sm">{error}<button onClick={()=>void load()} className="ml-2 underline">Reintentar</button></div>}
+ {catalog&&<><p className="text-sm text-neutral-400">{catalog.description}</p>{catalog.sections.map(section=>{const Icon=icons[section.id]||CloudDownload;return <section key={section.id} className="space-y-2"><h2 className="flex items-center gap-2 font-bold"><Icon size={18} className="text-red-400"/>{section.title}</h2>{section.items.map(item=><article key={item.id} className="rounded-xl border border-neutral-800 bg-neutral-950 p-3"><div className="flex items-start gap-2"><div className="flex-1"><h3 className="text-sm font-semibold">{item.title}</h3><p className="mt-1 text-xs leading-relaxed text-neutral-400">{item.description}</p></div><span className={'shrink-0 rounded-full px-2 py-1 text-[10px] '+(item.status==='existing'?'bg-emerald-950 text-emerald-300':'bg-neutral-800 text-neutral-300')}>{item.status==='existing'?'Disponible':'Planificado'}</span></div></article>)}</section>})}{catalog.notes?.map(note=><p key={note} className="text-[11px] text-neutral-500">{note}</p>)}</>}</main></div>
+};
+export default ResourcesDeltaView;
