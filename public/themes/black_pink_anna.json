@@ -1,0 +1,28 @@
+{
+  "id": "black_pink_anna",
+  "name": "Annonna Black Pink 🖤💗",
+  "version": "1.0",
+  "author": "SixSevenApp",
+  "is_premium": false,
+  "price": 0,
+  "description": "Negro con rosa pastel japonés kawaii dark - de tus fotos",
+  "preview_image": "black_pink_preview.jpg",
+  "colors": {
+    "primary": "#000000",
+    "scaffold_bg": "#F8BBD0",
+    "card_bg": "#F8BBD0",
+    "bubble_me": "#000000",
+    "bubble_other": "#F48FB1",
+    "bottom_nav_bg": "#F8BBD0"
+  },
+  "shapes": {
+    "bubble_radius": 20,
+    "card_radius": 24,
+    "estado_shape": "rounded_rectangle",
+    "is_rectangular_estados": true,
+    "estado_rect_width": 72,
+    "estado_rect_height": 92,
+    "estado_border_radius": 20,
+    "header_radius": 24
+  }
+}
