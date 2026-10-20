@@ -105,12 +105,22 @@ html[data-sx-bubble="neon"] [data-sx-message-bubble="true"] { border-radius: 1.1
   --sx-theme-bg: #000000;
   --sx-theme-accent: #ff1a1a;
 }
-html, body, #root { background-color: #000000 !important; }
-html[data-sx-theme] body,
-html[data-sx-theme] .sx-chat-list-surface,
-html[data-sx-theme] .sx-main-header { background-color: #000000 !important; }
-/* Avoid dark blood-red panels in the chat list; retain red only for small brand/status accents. */
-.sx-chat-list-surface { background-color: #000000 !important; }
+html, body, #root { background-color: var(--sx-theme-bg, #000000) !important; }
+html[data-sx-theme] body { background-color: var(--sx-theme-bg, #000000) !important; }
+html[data-sx-theme] .sx-chat-list-surface { background-color: var(--sx-chat-bg, #000000) !important; }
+html[data-sx-theme] .sx-main-header { background-color: var(--sx-header-bg, #000000) !important; }
+/* Tema claro: conservar contraste en el texto y las superficies principales. */
+html[data-sx-theme="light"] body,
+html[data-sx-theme="light"] #root { color: #111111 !important; }
+html[data-sx-theme="light"] .text-white { color: #111111 !important; }
+html[data-sx-theme="light"] .text-neutral-400,
+html[data-sx-theme="light"] .text-neutral-500 { color: #52525b !important; }
+html[data-sx-theme="light"] .bg-black { background-color: #ffffff !important; }
+html[data-sx-theme="light"] .bg-neutral-950 { background-color: #f4f4f5 !important; }
+html[data-sx-theme="light"] .bg-neutral-900 { background-color: #e4e4e7 !important; }
+html[data-sx-theme="light"] .border-neutral-800,
+html[data-sx-theme="light"] .border-neutral-900 { border-color: #d4d4d8 !important; }
+/* SixSeven conserva el rojo neón como acento de marca. */
 
 /* Selector de emojis: oscuro, 8 columnas, como WhatsApp */
 .sx-emoji aside.EmojiPickerReact {
