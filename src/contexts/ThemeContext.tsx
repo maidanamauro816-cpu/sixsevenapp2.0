@@ -20,6 +20,18 @@ export type SixSevenTheme = {
   estadoRectWidth?: number;
   estadoRectHeight?: number;
   estadoBorderRadius?: number;
+  wallpaperImage?: string;
+  headerBackgroundImage?: string;
+  bubblePattern?: string;
+  tabStyle?: string;
+  headerStyle?: string;
+  iconPack?: string;
+  fabStyle?: string;
+  navigationBar?: string;
+  estadoPosition?: string;
+  llamadasPosition?: string;
+  bubbleStyle?: string;
+  emojiStyle?: string;
 };
 
 export const themes: SixSevenTheme[] = [
@@ -91,6 +103,18 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
     estadoRectWidth: Number(shapes.estado_rect_width ?? 72),
     estadoRectHeight: Number(shapes.estado_rect_height ?? 92),
     estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
+    wallpaperImage: json.images?.chat_wallpaper || json.wallpaper_image || undefined,
+    headerBackgroundImage: json.images?.header_bg || undefined,
+    bubblePattern: json.images?.pattern || undefined,
+    tabStyle: json.layout?.tab_style || 'basic',
+    headerStyle: json.layout?.header_style || 'black_header',
+    iconPack: json.layout?.icon_pack || 'default',
+    fabStyle: json.layout?.fab_style || 'rounded',
+    navigationBar: json.layout?.navigation_bar || 'basic',
+    estadoPosition: json.layout?.estado_position || 'top',
+    llamadasPosition: json.layout?.llamadas_position || 'tab',
+    bubbleStyle: shapes.bubble_style || 'rounded',
+    emojiStyle: json.emoji_style || 'default',
   };
 }
 
@@ -115,6 +139,20 @@ function applyCss(t: SixSevenTheme) {
   root.style.setProperty('--sx-text', t.text);
   root.style.setProperty('--sx-tick-color', t.tickColor);
   root.style.setProperty('--sx-font', t.fontFamily);
+  const assetUrl = (value?: string) => !value ? 'none' : /^https?:\\/\\//i.test(value) ? `url("${value.replace(/"/g, '%22')}")` : `url("${value.startsWith('/') ? value : `/themes/${value.split('/').map(encodeURIComponent).join('/')}`}")`;
+  root.style.setProperty('--sx-wallpaper-image', assetUrl(t.wallpaperImage));
+  root.style.setProperty('--sx-header-image', assetUrl(t.headerBackgroundImage));
+  root.style.setProperty('--sx-bubble-pattern', assetUrl(t.bubblePattern));
+  root.dataset.sxTabStyle = t.tabStyle || 'basic';
+  root.dataset.sxHeaderStyle = t.headerStyle || 'black_header';
+  root.dataset.sxIconPack = t.iconPack || 'default';
+  root.dataset.sxFabStyle = t.fabStyle || 'rounded';
+  root.dataset.sxNavigationBar = t.navigationBar || 'basic';
+  root.dataset.sxEstadoPosition = t.estadoPosition || 'top';
+  root.dataset.sxLlamadasPosition = t.llamadasPosition || 'tab';
+  root.dataset.sxBubbleStyle = t.bubbleStyle || 'rounded';
+  root.dataset.sxEmojiStyle = t.emojiStyle || 'default';
+  root.dataset.sxHasWallpaper = t.wallpaperImage ? 'true' : 'false';
   root.dataset.sxTheme = t.id;
   root.dataset.rectangularEstados = t.isRectangularEstados ? 'true' : 'false';
   document.body.style.backgroundColor = t.background;
