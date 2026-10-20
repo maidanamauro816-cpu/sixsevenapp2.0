@@ -19,19 +19,19 @@ perms = [
 ]
 for perm in perms:
     if perm not in xml:
-        xml = xml.replace("</manifest>", f'    <uses-permission android:name="{perm}" />\\n</manifest>')
+        xml = xml.replace("</manifest>", f'    <uses-permission android:name="{perm}" />\n</manifest>')
 
 # Solo vertical, como en el diseño.
 if "android:screenOrientation" not in xml:
-    xml = re.sub(r"(<activity\\b)", r'\\1 android:screenOrientation="portrait"', xml, count=1)
+    xml = re.sub(r"(<activity\b)", r'\1 android:screenOrientation="portrait"', xml, count=1)
 
 # Android muestra únicamente el alias activo como icono del lanzador.
-activity_match = re.search(r'<activity\\b(?=[^>]*android:name="\\.MainActivity")[\\s\\S]*?</activity>', xml)
+activity_match = re.search(r'<activity\b(?=[^>]*android:name="\.MainActivity")[\s\S]*?</activity>', xml)
 if not activity_match:
     sys.exit("No se encontró .MainActivity en AndroidManifest.xml.")
 main_activity = activity_match.group(0)
 main_activity = re.sub(
-    r'\\s*<intent-filter>\\s*<action android:name="android.intent.action.MAIN"\\s*/>\\s*<category android:name="android.intent.category.LAUNCHER"\\s*/>\\s*</intent-filter>',
+    r'\s*<intent-filter>\s*<action android:name="android.intent.action.MAIN"\s*/>\s*<category android:name="android.intent.category.LAUNCHER"\s*/>\s*</intent-filter>',
     '',
     main_activity,
 )
@@ -102,7 +102,7 @@ for alias_id, suffix, resource, background, accent, shape in icons:
 
 marker = "<!-- SIXSEVEN_ICON_ALIASES -->"
 if marker not in xml:
-    xml = xml.replace("</application>", "        " + marker + "\\n" + "\\n".join(alias_entries) + "\\n    </application>")
+    xml = xml.replace("</application>", "        " + marker + "\n" + "\n".join(alias_entries) + "\n    </application>")
 manifest.write_text(xml, encoding="utf-8")
 print("AndroidManifest.xml: 15 iconos alternativos configurados")
 
@@ -125,7 +125,7 @@ import java.util.Map;
 public class IconChangerPlugin extends Plugin {
     private static final Map<String, String> ALIASES = new LinkedHashMap<>();
     static {
-''' + "\\n".join(alias_map) + '''
+''' + "\n".join(alias_map) + '''
     }
 
     @PluginMethod
@@ -172,12 +172,12 @@ if not main_java.exists():
 main_source = main_java.read_text(encoding="utf-8")
 if "IconChangerPlugin.class" not in main_source:
     main_source = re.sub(
-        r'public class MainActivity extends BridgeActivity\\s*\\{\\s*\\}',
-        'public class MainActivity extends BridgeActivity {\\n    @Override\\n    public void onCreate(android.os.Bundle savedInstanceState) {\\n        super.onCreate(savedInstanceState);\\n        registerPlugin(IconChangerPlugin.class);\\n    }\\n}',
+        r'public class MainActivity extends BridgeActivity\s*\{\s*\}',
+        'public class MainActivity extends BridgeActivity {\n    @Override\n    public void onCreate(android.os.Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        registerPlugin(IconChangerPlugin.class);\n    }\n}',
         main_source,
     )
     if "IconChangerPlugin.class" not in main_source:
-        main_source = main_source.replace("public class MainActivity extends BridgeActivity {", "public class MainActivity extends BridgeActivity {\\n    @Override\\n    public void onCreate(android.os.Bundle savedInstanceState) {\\n        super.onCreate(savedInstanceState);\\n        registerPlugin(IconChangerPlugin.class);\\n    }")
+        main_source = main_source.replace("public class MainActivity extends BridgeActivity {", "public class MainActivity extends BridgeActivity {\n    @Override\n    public void onCreate(android.os.Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        registerPlugin(IconChangerPlugin.class);\n    }")
 main_java.write_text(main_source, encoding="utf-8")
 print("Plugin nativo IconChanger registrado")
 print("Firma fija: verificación separada")
