@@ -5,7 +5,7 @@ import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../backStack';
 
-type Story = { id: string; uid: string; name: string; avatar: string; text: string; sticker: string; filter: string; songTitle: string; mediaUrl?: string; mediaType?: 'image' | 'video' | ''; createdAt?: { toMillis?: () => number } | null; expiresAt?: { toMillis?: () => number } | null };
+type Story = { id: string; uid: string; name: string; avatar: string; text: string; sticker: string; filter: string; songTitle: string; mediaUrl?: string; mediaType?: 'image' | 'video' | ''; audience?: 'contacts' | 'except' | 'only'; audienceList?: string[]; createdAt?: { toMillis?: () => number } | null; expiresAt?: { toMillis?: () => number } | null };
 
 const ago = (ms: number) => {
   const minutes = Math.max(0, Math.floor((Date.now() - ms) / 60000));
@@ -60,9 +60,19 @@ export const StoriesFeed: React.FC<{ onCreate: () => void }> = ({ onCreate }) =>
     if (!uid) { setLoading(false); return; }
     return onSnapshot(collection(db, 'stories'), (snapshot) => {
       const now = Date.now();
+      const currentUsername = String(profile?.username || '').replace(/^@/, '').toLowerCase();
       const active = snapshot.docs
         .map((item) => ({ id: item.id, ...(item.data() as Omit<Story, 'id'>) }))
         .filter((story) => !story.expiresAt?.toMillis || story.expiresAt.toMillis() > now)
+        .filter((story) => {
+          if (story.uid === uid) return true;
+          const audience = story.audience || 'contacts';
+          const list = (story.audienceList || []).map((entry) => String(entry).replace(/^@/, '').toLowerCase());
+          const isIncluded = list.includes(currentUsername) || list.includes(uid);
+          if (audience === 'only') return isIncluded;
+          if (audience === 'except') return !isIncluded;
+          return true;
+        })
         .sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
       setStories(active);
       setLoading(false);
