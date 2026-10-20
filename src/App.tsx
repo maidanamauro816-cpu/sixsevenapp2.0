@@ -28,6 +28,7 @@ import { PrivacyProvider } from './contexts/PrivacyContext';
 import { MyProfileView } from './components/MyProfileView';
 import { isNative } from './native';
 import { StoriesCreateView } from './components/StoriesCreateView';
+import { CreateWhatsAppStatus } from './components/CreateWhatsAppStatus';
 import { StoriesFeed } from './components/StoriesFeed';
 import { InstagramStoriesView } from './components/InstagramStoriesView';
 import { StoryStatus } from './components/MauroProfileBanner';
@@ -54,6 +55,7 @@ function MainApp() {
 
   // Story creator modal
   const [creatingStory, setCreatingStory] = useState(false);
+  const [creatingTextStatus, setCreatingTextStatus] = useState(false);
 
   // Nuevo chat
   const [newChatOpen, setNewChatOpen] = useState(false);
@@ -99,6 +101,7 @@ function MainApp() {
       if (runBack()) return;
       if (viewingStory) { setViewingStory(null); return; }
       if (creatingStory) { setCreatingStory(false); return; }
+      if (creatingTextStatus) { setCreatingTextStatus(false); return; }
       if (activeChat) { setActiveChat(null); return; }
       if (newChatOpen) { setNewChatOpen(false); return; }
       if (showMyProfile) { setShowMyProfile(false); return; }
@@ -111,7 +114,7 @@ function MainApp() {
       active = false;
       void registration.then((listener) => listener.remove());
     };
-  }, [activeChat, viewingStory, creatingStory, newChatOpen, showMyProfile, showContacts, showCustomization, currentTab]);
+  }, [activeChat, viewingStory, creatingStory, creatingTextStatus, newChatOpen, showMyProfile, showContacts, showCustomization, currentTab]);
 
   // Auto advance timer for story viewer
   React.useEffect(() => {
@@ -169,7 +172,7 @@ function MainApp() {
         )}
 
         {currentTab === 'estados' && (
-          <StoriesFeed onCreate={() => setCreatingStory(true)} />
+          <StoriesFeed onCreate={() => setCreatingTextStatus(true)} />
         )}
 
         {<div className={currentTab === 'musica' ? 'block' : 'hidden'}><MusicView /></div>}
@@ -216,7 +219,9 @@ function MainApp() {
       {/* Chat abierto (pantalla completa) */}
       {activeChat && <WhatsAppChatRoom chat={activeChat} onBack={() => setActiveChat(null)} />}
 
-      {/* Story Creator Modal */}
+      {creatingTextStatus && <CreateWhatsAppStatus onBack={() => setCreatingTextStatus(false)} onPublished={() => { setCreatingTextStatus(false); setCurrentTab('estados'); }} />}
+
+      {/* Story Creator Modal: media remains in the separate Stories flow. */}
       {creatingStory && (
         <div className="fixed inset-0 z-50 bg-black">
           <StoriesCreateView
