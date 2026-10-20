@@ -122,7 +122,7 @@ async function uploadMultipart(request: Request, env: Env, uid: string, kind: "p
     .slice(0, 32) || "usuario";
   // El UID autenticado forma parte de la ruta para impedir que otro usuario sobrescriba esta portada.
   const key = kind === "cover"
-    ? `portadas/${uid}/${safeUsername}.${extByMime[contentType] || "jpg"}`
+    ? `portadas/${uid}.jpg`
     : `avatars/${uid}/${crypto.randomUUID()}.${extByMime[contentType] || "img"}`;
   const endpoint = b2Endpoint(env);
   try {
