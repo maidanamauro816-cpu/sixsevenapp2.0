@@ -98,7 +98,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          DEPLOY_OUTPUT="$(npx wrangler deploy --account-id "$CLOUDFLARE_ACCOUNT_ID" 2>&1)" || { printf '%s\n' "$DEPLOY_OUTPUT"; exit 1; }
+          DEPLOY_OUTPUT="$(npx wrangler deploy 2>&1)" || { printf '%s\n' "$DEPLOY_OUTPUT"; exit 1; }
           printf '%s\n' "$DEPLOY_OUTPUT"
           WORKER_URL="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[^[:space:]]+\.workers\.dev' | tail -n 1 || true)"
           if [ -z "$WORKER_URL" ]; then
