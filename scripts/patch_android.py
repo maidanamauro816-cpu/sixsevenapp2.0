@@ -159,7 +159,7 @@ public class IconChangerPlugin extends Plugin {
             result.put("alias", alias);
             call.resolve(result);
         } catch (Exception error) {
-            call.reject("No se pudo cambiar el ícono: " + error.getMessage(), error);
+            call.reject("No se pudo cambiar el ícono: " + error.getMessage());
         }
     }
 }
