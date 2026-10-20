@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -32,13 +33,20 @@ jobs:
           java-version: '21'
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --legacy-peer-deps
+        run: npm ci --no-audit --no-fund --legacy-peer-deps
 
-      - name: Build web app
+      - name: Build web app with the deployed Gemini Worker URL
         run: npm run build
         env:
           VITE_GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
           VITE_BACKBLAZE_WORKER_URL: https://sixseven-backblaze-signer.sixsevenapp816.workers.dev
+
+      - name: Verify web bundle was generated
+        run: |
+          test -s dist/index.html
+          echo "Web bundle size:"
+          du -sh dist
+          find dist -maxdepth 2 -type f | head -40
 
       - name: Generate Android project
         run: npx cap add android
@@ -46,27 +54,40 @@ jobs:
       - name: Generate SixSeven launcher icon and splash screen
         run: npx capacitor-assets generate --android
 
-      - name: Configure Firebase Android file
+      - name: Configure and validate Firebase Android file
         run: |
-          if [ -f google-services.json ]; then
-            mkdir -p android/app
-            cp google-services.json android/app/google-services.json
-          else
-            echo "::warning::google-services.json is missing; native Google/phone sign-in may need Firebase setup."
-          fi
+          test -s google-services.json || { echo "::error::google-services.json is missing from the repository."; exit 1; }
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          cfg = json.loads(Path("google-services.json").read_text(encoding="utf-8"))
+          assert cfg.get("project_info", {}).get("project_id") == "sixseven-c86ac", "Firebase project_id does not match SixSeven."
+          clients = cfg.get("client", [])
+          assert any(c.get("client_info", {}).get("android_client_info", {}).get("package_name") == "com.sixseven.app" for c in clients), "google-services.json does not include package com.sixseven.app."
+          Path("android/app").mkdir(parents=True, exist_ok=True)
+          Path("android/app/google-services.json").write_text(Path("google-services.json").read_text(encoding="utf-8"), encoding="utf-8")
+          print("Firebase config validated for sixseven-c86ac / com.sixseven.app.")
+          PY
+          test -s android/app/google-services.json
 
       - name: Apply SixSeven Android permissions and fixed signing
-        run: python3 scripts/patch_android.py
+        run: |
+          test -s android-signing/debug.keystore
+          python3 scripts/patch_android.py
+          keytool -list -v -keystore android-signing/debug.keystore -storepass android -alias androiddebugkey | grep -E 'SHA1:|SHA256:'
 
       - name: Sync Capacitor web assets and plugins
         run: npx cap sync android
 
       - name: Build Android APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
 
-      - name: Verify APK exists
-        run: test -s android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Verify APK and report its size
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          ls -lh android/app/build/outputs/apk/debug/app-debug.apk
+          du -h android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
