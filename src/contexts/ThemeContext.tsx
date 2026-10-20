@@ -1,3 +1,169 @@
-import React,{createContext,useContext,useEffect,useMemo,useState} from 'react';
-export type SixSevenTheme={id:string;name:string;primary:string;background:string;bubbleSent:string;bubbleReceived:string;text:string;tickColor:string;fontFamily:string};export const themes:SixSevenTheme[]=[{id:'default',name:'Default',primary:'#ff1a1a',background:'#050505',bubbleSent:'#321014',bubbleReceived:'#171717',text:'#ffffff',tickColor:'#35b8ff',fontFamily:'system-ui'},{id:'cristiano-light',name:'Cristiano Luz',primary:'#c9a227',background:'#f4f4f4',bubbleSent:'#e6f7d9',bubbleReceived:'#ffffff',text:'#171717',tickColor:'#168cff',fontFamily:'Roboto'},{id:'cristiano-dark',name:'Cristiano Oscuro',primary:'#d5b45b',background:'#080808',bubbleSent:'#202020',bubbleReceived:'#111111',text:'#ffffff',tickColor:'#d5b45b',fontFamily:'Roboto'},{id:'argento',name:'Argento',primary:'#75bfff',background:'#07111c',bubbleSent:'#102d46',bubbleReceived:'#17202a',text:'#f1f7ff',tickColor:'#75bfff',fontFamily:'system-ui'},{id:'anime-night',name:'Anime Night',primary:'#a56cff',background:'#10071c',bubbleSent:'#32164b',bubbleReceived:'#1a1223',text:'#ffffff',tickColor:'#c4a7ff',fontFamily:'Poppins'},{id:'gamer',name:'Gamer',primary:'#7dff4f',background:'#030b05',bubbleSent:'#133018',bubbleReceived:'#101810',text:'#f4fff1',tickColor:'#7dff4f',fontFamily:'monospace'},{id:'noche-7',name:'Noche 7',primary:'#ff1a1a',background:'#000000',bubbleSent:'#241010',bubbleReceived:'#111111',text:'#ffffff',tickColor:'#ff5151',fontFamily:'system-ui'},{id:'rosa-amor',name:'Rosa Amor',primary:'#ff62bd',background:'#160914',bubbleSent:'#411d35',bubbleReceived:'#21131d',text:'#fff2fa',tickColor:'#ff8acb',fontFamily:'Poppins'},{id:'ocean',name:'Océano',primary:'#22d3ee',background:'#041219',bubbleSent:'#10333a',bubbleReceived:'#102027',text:'#eaffff',tickColor:'#22d3ee',fontFamily:'system-ui'},{id:'forest',name:'Bosque',primary:'#2be58a',background:'#06120b',bubbleSent:'#153b28',bubbleReceived:'#111f18',text:'#effff5',tickColor:'#2be58a',fontFamily:'Nunito'},{id:'purple',name:'Púrpura',primary:'#b56cff',background:'#10071c',bubbleSent:'#32164b',bubbleReceived:'#1a1223',text:'#ffffff',tickColor:'#b56cff',fontFamily:'Rubik'},{id:'ice',name:'Hielo',primary:'#a9e7ff',background:'#0b1117',bubbleSent:'#173344',bubbleReceived:'#151e25',text:'#f3fbff',tickColor:'#69d2ff',fontFamily:'Lato'},{id:'gold',name:'Oro',primary:'#f5c451',background:'#151006',bubbleSent:'#3a2b0d',bubbleReceived:'#201b10',text:'#fff8e6',tickColor:'#f5c451',fontFamily:'serif'},{id:'sunset',name:'Atardecer',primary:'#ff704f',background:'#190a0b',bubbleSent:'#49201c',bubbleReceived:'#241314',text:'#fff2ef',tickColor:'#ff704f',fontFamily:'Montserrat'},{id:'matrix',name:'Matrix',primary:'#7dff4f',background:'#030b05',bubbleSent:'#0c2912',bubbleReceived:'#101810',text:'#d8ffd8',tickColor:'#7dff4f',fontFamily:'monospace'},{id:'lavender',name:'Lavanda',primary:'#c4a7ff',background:'#120e19',bubbleSent:'#302343',bubbleReceived:'#1c1725',text:'#faf6ff',tickColor:'#c4a7ff',fontFamily:'Raleway'},{id:'coral',name:'Coral',primary:'#ff786f',background:'#170d0d',bubbleSent:'#48201e',bubbleReceived:'#251616',text:'#fff4f2',tickColor:'#ff786f',fontFamily:'Outfit'},{id:'minimal',name:'Minimal',primary:'#eeeeee',background:'#080808',bubbleSent:'#292929',bubbleReceived:'#151515',text:'#ffffff',tickColor:'#eeeeee',fontFamily:'system-ui'},{id:'dragon',name:'Dragon Solar',primary:'#ff8a19',background:'#160b05',bubbleSent:'#49240d',bubbleReceived:'#24150b',text:'#fff5e9',tickColor:'#ffb15a',fontFamily:'Bangers'},{id:'neon-blue',name:'Neón Azul',primary:'#4c9fff',background:'#050b18',bubbleSent:'#152e51',bubbleReceived:'#111a2b',text:'#f2f7ff',tickColor:'#4c9fff',fontFamily:'Outfit'}];
-type ThemeCtx={themeId:string;applyTheme:(id:string,custom?:Partial<SixSevenTheme>)=>void;themes:SixSevenTheme[]};const C=createContext<ThemeCtx|null>(null);export const ThemeProvider:React.FC<React.PropsWithChildren>=({children})=>{const [themeId,setThemeId]=useState(()=>{try{return localStorage.getItem('sixseven:themeV4')||'default'}catch{return'default'}});const applyTheme=(id:string,custom?:Partial<SixSevenTheme>)=>{const t={...themes.find(x=>x.id===id)||themes[0],...custom};setThemeId(id);const root=document.documentElement;root.style.setProperty('--sx-theme-bg',t.background);root.style.setProperty('--sx-theme-accent',t.primary);root.style.setProperty('--sx-bubble-sent',t.bubbleSent);root.style.setProperty('--sx-bubble-received',t.bubbleReceived);root.style.setProperty('--sx-text',t.text);root.style.setProperty('--sx-tick-color',t.tickColor);root.style.setProperty('--sx-font',t.fontFamily);root.dataset.sxTheme=id;try{localStorage.setItem('sixseven:themeV4',id);localStorage.setItem('sixseven:themeCustom',JSON.stringify(t));localStorage.setItem('sixseven:theme',id)}catch{}window.dispatchEvent(new Event('sixseven:appearanceChanged'))};useEffect(()=>{try{const raw=localStorage.getItem('sixseven:themeCustom');if(raw){const t=JSON.parse(raw) as SixSevenTheme;applyTheme(t.id,t)}else applyTheme(themeId)}catch{applyTheme('default')}},[]);const v=useMemo(()=>({themeId,applyTheme,themes}),[themeId]);return <C.Provider value={v}>{children}</C.Provider>};export const useThemeSettings=()=>{const v=useContext(C);if(!v)throw new Error('useThemeSettings requiere ThemeProvider');return v};
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import type { SixSevenTheme as ThemeJson } from '../services/themeService';
+
+export type SixSevenTheme = {
+  id: string;
+  name: string;
+  primary: string;
+  background: string;
+  bubbleSent: string;
+  bubbleReceived: string;
+  text: string;
+  tickColor: string;
+  fontFamily: string;
+  bottomNavBg?: string;
+  bubbleRadius?: number;
+  estadoShape?: string;
+  isRectangularEstados?: boolean;
+  estadoRectWidth?: number;
+  estadoRectHeight?: number;
+  estadoBorderRadius?: number;
+};
+
+export const themes: SixSevenTheme[] = [
+  { id: 'default', name: 'Default', primary: '#ff1a1a', background: '#050505', bubbleSent: '#321014', bubbleReceived: '#171717', text: '#ffffff', tickColor: '#35b8ff', fontFamily: 'system-ui' },
+  { id: 'cristiano-light', name: 'Cristiano Luz', primary: '#c9a227', background: '#f4f4f4', bubbleSent: '#e6f7d9', bubbleReceived: '#ffffff', text: '#171717', tickColor: '#168cff', fontFamily: 'Roboto' },
+  { id: 'cristiano-dark', name: 'Cristiano Oscuro', primary: '#d5b45b', background: '#080808', bubbleSent: '#202020', bubbleReceived: '#111111', text: '#ffffff', tickColor: '#d5b45b', fontFamily: 'Roboto' },
+  { id: 'argento', name: 'Argento', primary: '#75bfff', background: '#07111c', bubbleSent: '#102d46', bubbleReceived: '#17202a', text: '#f1f7ff', tickColor: '#75bfff', fontFamily: 'system-ui' },
+  { id: 'anime-night', name: 'Anime Night', primary: '#a56cff', background: '#10071c', bubbleSent: '#32164b', bubbleReceived: '#1a1223', text: '#ffffff', tickColor: '#c4a7ff', fontFamily: 'Poppins' },
+  { id: 'gamer', name: 'Gamer', primary: '#7dff4f', background: '#030b05', bubbleSent: '#133018', bubbleReceived: '#101810', text: '#f4fff1', tickColor: '#7dff4f', fontFamily: 'monospace' },
+  { id: 'noche-7', name: 'Noche 7', primary: '#ff1a1a', background: '#000000', bubbleSent: '#241010', bubbleReceived: '#111111', text: '#ffffff', tickColor: '#ff5151', fontFamily: 'system-ui' },
+  { id: 'rosa-amor', name: 'Rosa Amor', primary: '#ff62bd', background: '#160914', bubbleSent: '#411d35', bubbleReceived: '#21131d', text: '#fff2fa', tickColor: '#ff8acb', fontFamily: 'Poppins' },
+  { id: 'ocean', name: 'Océano', primary: '#22d3ee', background: '#041219', bubbleSent: '#10333a', bubbleReceived: '#102027', text: '#eaffff', tickColor: '#22d3ee', fontFamily: 'system-ui' },
+  { id: 'forest', name: 'Bosque', primary: '#2be58a', background: '#06120b', bubbleSent: '#153b28', bubbleReceived: '#111f18', text: '#effff5', tickColor: '#2be58a', fontFamily: 'Nunito' },
+  { id: 'purple', name: 'Púrpura', primary: '#b56cff', background: '#10071c', bubbleSent: '#32164b', bubbleReceived: '#1a1223', text: '#ffffff', tickColor: '#b56cff', fontFamily: 'Rubik' },
+  { id: 'ice', name: 'Hielo', primary: '#a9e7ff', background: '#0b1117', bubbleSent: '#173344', bubbleReceived: '#151e25', text: '#f3fbff', tickColor: '#69d2ff', fontFamily: 'Lato' },
+  { id: 'gold', name: 'Oro', primary: '#f5c451', background: '#151006', bubbleSent: '#3a2b0d', bubbleReceived: '#201b10', text: '#fff8e6', tickColor: '#f5c451', fontFamily: 'serif' },
+  { id: 'sunset', name: 'Atardecer', primary: '#ff704f', background: '#190a0b', bubbleSent: '#49201c', bubbleReceived: '#241314', text: '#fff2ef', tickColor: '#ff704f', fontFamily: 'Montserrat' },
+  { id: 'matrix', name: 'Matrix', primary: '#7dff4f', background: '#030b05', bubbleSent: '#0c2912', bubbleReceived: '#101810', text: '#d8ffd8', tickColor: '#7dff4f', fontFamily: 'monospace' },
+  { id: 'lavender', name: 'Lavanda', primary: '#c4a7ff', background: '#120e19', bubbleSent: '#302343', bubbleReceived: '#1c1725', text: '#faf6ff', tickColor: '#c4a7ff', fontFamily: 'Raleway' },
+  { id: 'coral', name: 'Coral', primary: '#ff786f', background: '#170d0d', bubbleSent: '#48201e', bubbleReceived: '#251616', text: '#fff4f2', tickColor: '#ff786f', fontFamily: 'Outfit' },
+  { id: 'minimal', name: 'Minimal', primary: '#eeeeee', background: '#080808', bubbleSent: '#292929', bubbleReceived: '#151515', text: '#ffffff', tickColor: '#eeeeee', fontFamily: 'system-ui' },
+  { id: 'dragon', name: 'Dragon Solar', primary: '#ff8a19', background: '#160b05', bubbleSent: '#49240d', bubbleReceived: '#24150b', text: '#fff5e9', tickColor: '#ffb15a', fontFamily: 'Bangers' },
+  { id: 'neon-blue', name: 'Neón Azul', primary: '#4c9fff', background: '#050b18', bubbleSent: '#152e51', bubbleReceived: '#111a2b', text: '#f2f7ff', tickColor: '#4c9fff', fontFamily: 'Outfit' },
+];
+
+type ThemeCtx = {
+  themeId: string;
+  currentTheme: SixSevenTheme;
+  applyTheme: (id: string, custom?: Partial<SixSevenTheme>) => void;
+  themes: SixSevenTheme[];
+};
+
+const C = createContext<ThemeCtx | null>(null);
+
+function hexColor(value: unknown, fallback: string): string {
+  return typeof value === 'string' && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(value) ? value : fallback;
+}
+
+function fromThemeJson(json: ThemeJson): SixSevenTheme {
+  const colors = json.colors ?? {};
+  const shapes = json.shapes ?? {};
+  const bg = hexColor(colors.scaffold_bg, '#050505');
+  return {
+    id: json.id,
+    name: json.name,
+    primary: hexColor(colors.primary, '#ff1a1a'),
+    background: bg,
+    bubbleSent: hexColor(colors.bubble_me, hexColor(colors.primary, '#321014')),
+    bubbleReceived: hexColor(colors.bubble_other, hexColor(colors.card_bg, '#171717')),
+    text: hexColor(colors.text_primary, '#ffffff'),
+    tickColor: hexColor(colors.primary, '#ff1a1a'),
+    fontFamily: 'system-ui',
+    bottomNavBg: hexColor(colors.bottom_nav_bg, bg),
+    bubbleRadius: Number(shapes.bubble_radius ?? 20),
+    estadoShape: String(shapes.estado_shape ?? 'rounded_rectangle'),
+    isRectangularEstados: shapes.is_rectangular_estados === true,
+    estadoRectWidth: Number(shapes.estado_rect_width ?? 72),
+    estadoRectHeight: Number(shapes.estado_rect_height ?? 92),
+    estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
+  };
+}
+
+function applyCss(t: SixSevenTheme) {
+  const root = document.documentElement;
+  root.style.setProperty('--primary', t.primary);
+  root.style.setProperty('--bubble-me', t.bubbleSent);
+  root.style.setProperty('--bubble-other', t.bubbleReceived);
+  root.style.setProperty('--scaffold-bg', t.background);
+  root.style.setProperty('--bottom-nav-bg', t.bottomNavBg ?? t.background);
+  root.style.setProperty('--text-primary', t.text);
+  root.style.setProperty('--bubble-radius', `${t.bubbleRadius ?? 20}px`);
+  root.style.setProperty('--estado-width', `${t.estadoRectWidth ?? 72}px`);
+  root.style.setProperty('--estado-height', `${t.estadoRectHeight ?? 92}px`);
+  root.style.setProperty('--estado-radius', `${t.estadoBorderRadius ?? 16}px`);
+  root.style.setProperty('--sx-theme-bg', t.background);
+  root.style.setProperty('--sx-theme-accent', t.primary);
+  root.style.setProperty('--sx-bubble-sent', t.bubbleSent);
+  root.style.setProperty('--sx-bubble-received', t.bubbleReceived);
+  root.style.setProperty('--sx-text', t.text);
+  root.style.setProperty('--sx-tick-color', t.tickColor);
+  root.style.setProperty('--sx-font', t.fontFamily);
+  root.dataset.sxTheme = t.id;
+  root.dataset.rectangularEstados = t.isRectangularEstados ? 'true' : 'false';
+  document.body.style.backgroundColor = t.background;
+  document.body.style.color = t.text;
+  document.body.style.fontFamily = t.fontFamily;
+}
+
+export const ThemeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [active, setActive] = useState<SixSevenTheme>(themes[0]);
+
+  const applyTheme = (id: string, custom?: Partial<SixSevenTheme>) => {
+    const base = themes.find((item) => item.id === id) ?? themes[0];
+    const merged = { ...base, ...custom, id };
+    setActive(merged);
+    try {
+      localStorage.setItem('sixseven:themeV4', id);
+      localStorage.setItem('sixseven:themeCustom', JSON.stringify(merged));
+      localStorage.setItem('sixseven:theme', id);
+    } catch {
+      // Theme preferences are optional.
+    }
+    applyCss(merged);
+    window.dispatchEvent(new Event('sixseven:appearanceChanged'));
+  };
+
+  useEffect(() => {
+    try {
+      const savedJson = localStorage.getItem('selected_theme_id');
+      const savedRaw = savedJson ? localStorage.getItem(`theme_${savedJson}`) ?? localStorage.getItem(`sixseven:downloaded-theme:${savedJson}`) : null;
+      if (savedRaw) {
+        const parsed = JSON.parse(savedRaw) as ThemeJson;
+        const mapped = fromThemeJson(parsed);
+        setActive(mapped);
+        applyCss(mapped);
+        return;
+      }
+      const raw = localStorage.getItem('sixseven:themeCustom');
+      if (raw) {
+        const saved = JSON.parse(raw) as SixSevenTheme;
+        setActive(saved);
+        applyCss(saved);
+        return;
+      }
+      const id = localStorage.getItem('sixseven:themeV4') ?? 'default';
+      const base = themes.find((item) => item.id === id) ?? themes[0];
+      setActive(base);
+      applyCss(base);
+    } catch {
+      setActive(themes[0]);
+      applyCss(themes[0]);
+    }
+  }, []);
+
+  const value = useMemo(() => ({
+    themeId: active.id,
+    currentTheme: active,
+    applyTheme,
+    themes,
+  }), [active]);
+
+  return <C.Provider value={value}>{children}</C.Provider>;
+};
+
+export const useThemeSettings = () => {
+  const value = useContext(C);
+  if (!value) throw new Error('useThemeSettings requiere ThemeProvider');
+  return value;
+};
