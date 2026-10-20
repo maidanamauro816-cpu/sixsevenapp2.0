@@ -1,0 +1,22 @@
+{
+  "id": "corona_gold",
+  "name": "Corona Gold",
+  "description": "Diseño de chat dorado con burbujas premium y contorno elegante.",
+  "colors": {
+    "primary": "#d4af37",
+    "primary_dark": "#9f7f20",
+    "scaffold_bg": "#090806",
+    "card_bg": "#17140d",
+    "bubble_me": "#3a2d0d",
+    "bubble_other": "#191710",
+    "text_primary": "#fff8df",
+    "bottom_nav_bg": "#080706"
+  },
+  "shapes": {
+    "bubble_radius": 18,
+    "chat_layout": "corona",
+    "card_radius": 18,
+    "estado_shape": "rounded_rectangle",
+    "layout_style": "chat-corona"
+  }
+}

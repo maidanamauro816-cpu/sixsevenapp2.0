@@ -978,6 +978,50 @@
         "estado_border_radius": 8,
         "layout_style": "square-status"
       }
+    },
+    {
+      "id": "corona_gold",
+      "name": "Corona Gold",
+      "description": "Diseño de chat dorado con burbujas premium y contorno elegante.",
+      "colors": {
+        "primary": "#d4af37",
+        "primary_dark": "#9f7f20",
+        "scaffold_bg": "#090806",
+        "card_bg": "#17140d",
+        "bubble_me": "#3a2d0d",
+        "bubble_other": "#191710",
+        "text_primary": "#fff8df",
+        "bottom_nav_bg": "#080706"
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "chat_layout": "corona",
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "layout_style": "chat-corona"
+      }
+    },
+    {
+      "id": "midnight",
+      "name": "Midnight",
+      "description": "Diseño nocturno con burbujas compactas azul oscuro y bordes suaves.",
+      "colors": {
+        "primary": "#7c8cff",
+        "primary_dark": "#5364c9",
+        "scaffold_bg": "#070a12",
+        "card_bg": "#111725",
+        "bubble_me": "#202b49",
+        "bubble_other": "#121a2a",
+        "text_primary": "#f4f6ff",
+        "bottom_nav_bg": "#060811"
+      },
+      "shapes": {
+        "bubble_radius": 24,
+        "chat_layout": "midnight",
+        "card_radius": 24,
+        "estado_shape": "rounded_rectangle",
+        "layout_style": "chat-midnight"
+      }
     }
   ]
 }

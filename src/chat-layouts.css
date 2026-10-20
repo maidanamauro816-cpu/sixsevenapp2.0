@@ -1,0 +1,31 @@
+/* Chat-specific layouts selected by the active SixSeven theme. */
+[data-chat-layout="corona"] {
+  border-radius: 18px 18px 5px 18px !important;
+  background: linear-gradient(145deg, #4b3a0d 0%, #211a09 100%) !important;
+  border: 1px solid rgba(212, 175, 55, .72) !important;
+  box-shadow: 0 3px 12px rgba(212, 175, 55, .12), inset 0 1px rgba(255, 235, 160, .12) !important;
+  color: #fff8df !important;
+}
+[data-chat-layout="corona"][data-message-owner="received"] {
+  border-radius: 18px 18px 18px 5px !important;
+  background: linear-gradient(145deg, #211e13 0%, #13120e 100%) !important;
+  border-color: rgba(212, 175, 55, .28) !important;
+  box-shadow: inset 0 1px rgba(255, 235, 160, .05) !important;
+}
+[data-chat-layout="midnight"] {
+  border-radius: 22px 22px 7px 22px !important;
+  background: linear-gradient(160deg, #26365d 0%, #17213b 100%) !important;
+  border: 1px solid rgba(124, 140, 255, .32) !important;
+  box-shadow: 0 4px 14px rgba(3, 7, 20, .28) !important;
+  color: #f4f6ff !important;
+}
+[data-chat-layout="midnight"][data-message-owner="received"] {
+  border-radius: 22px 22px 22px 7px !important;
+  background: #111827 !important;
+  border-color: rgba(148, 163, 184, .18) !important;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .025) !important;
+}
+[data-chat-layout="corona"] img,
+[data-chat-layout="corona"] video,
+[data-chat-layout="midnight"] img,
+[data-chat-layout="midnight"] video { border-radius: 12px; }

@@ -1,0 +1,19 @@
+{
+  "id": "midnight",
+  "name": "Midnight",
+  "description": "Diseño nocturno con burbujas compactas azul oscuro y bordes suaves.",
+  "colors": {
+    "primary": "#7c8cff",
+    "primary_dark": "#5364c9",
+    "scaffold_bg": "#070a12",
+    "card_bg": "#111725",
+    "bubble_me": "#202b49",
+    "bubble_other": "#121a2a",
+    "text_primary": "#f4f6ff",
+    "bottom_nav_bg": "#060811"
+  },
+  "shapes": {
+    "bubble_radius": 24,
+    "chat_layout": "midnight"
+  }
+}
