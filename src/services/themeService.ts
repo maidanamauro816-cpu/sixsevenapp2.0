@@ -9,6 +9,12 @@ export interface SixSevenTheme {
   price?: number;
   description?: string;
   preview_image?: string;
+  wallpaper_image?: string;
+  has_images?: boolean;
+  is_image_theme?: boolean;
+  images?: { chat_wallpaper?: string; header_bg?: string; pattern?: string; requires_download?: boolean };
+  layout?: { tab_style?: string; header_style?: string; icon_pack?: string; fab_style?: string; navigation_bar?: string; estado_position?: string; llamadas_position?: string };
+  emoji_style?: string;
   colors: {
     primary: string;
     primary_dark?: string;
@@ -28,6 +34,7 @@ export interface SixSevenTheme {
     estado_rect_height?: number;
     estado_border_radius?: number;
     header_radius?: number;
+    bubble_style?: string;
   };
 }
 
@@ -39,6 +46,8 @@ export interface ThemeStoreIndex {
 }
 
 const REMOTE_BASE_URL = 'https://sixseven-upload.mauromaidana.workers.dev/themes';
+const STORAGE_ROOT = 'SixSeven';
+const IMAGE_FOLDER = 'SixSeven Wallpapers';
 const LOCAL_BASE_URL = '/themes';
 const PREF_KEY = 'selected_theme_id';
 const INDEX_CACHE_KEY = 'tienda_index_cache';
@@ -121,9 +130,10 @@ export const ThemeService = {
 
     // En Android se guarda una copia real en Documentos/SStemas además del almacenamiento interno.
     if (Capacitor.isNativePlatform()) {
-      const filePath = `SStemas/${themeId}.json`;
+      const filePath = `${STORAGE_ROOT}/SStemas/${themeId}.json`;
       try {
-        await Filesystem.mkdir({ path: 'SStemas', directory: Directory.Documents, recursive: true });
+        await Filesystem.mkdir({ path: `${STORAGE_ROOT}/SStemas`, directory: Directory.Documents, recursive: true });
+        await Filesystem.mkdir({ path: `${STORAGE_ROOT}/${IMAGE_FOLDER}/${themeId}`, directory: Directory.Documents, recursive: true });
       } catch {
         // La carpeta puede existir ya; se confirma al escribir el archivo.
       }
@@ -135,6 +145,40 @@ export const ThemeService = {
           encoding: Encoding.UTF8,
           recursive: true,
         });
+        const assetNames = [...new Set([
+          theme.wallpaper_image,
+          theme.images?.chat_wallpaper,
+          theme.images?.header_bg,
+          theme.images?.pattern,
+          theme.preview_image,
+        ].filter((name): name is string => typeof name === 'string' && !!name && !/^https?:\\/\\//i.test(name)))];
+        for (const assetName of assetNames) {
+          const safeName = assetName.split('/').pop()?.replace(/[^a-z0-9._-]/gi, '_');
+          if (!safeName) continue;
+          const urls = [
+            assetName.startsWith('/') ? assetName : `${REMOTE_BASE_URL}/${assetName.split('/').map(encodeURIComponent).join('/')}`,
+            `${LOCAL_BASE_URL}/${assetName.split('/').map(encodeURIComponent).join('/')}`,
+          ];
+          let bytes: ArrayBuffer | null = null;
+          for (const url of urls) {
+            try {
+              const response = await fetch(url);
+              if (response.ok) { bytes = await response.arrayBuffer(); break; }
+            } catch { /* probar la siguiente ubicación */ }
+          }
+          if (!bytes) continue;
+          const view = new Uint8Array(bytes);
+          let binary = '';
+          for (let offset = 0; offset < view.length; offset += 0x8000) {
+            binary += String.fromCharCode(...view.subarray(offset, Math.min(offset + 0x8000, view.length)));
+          }
+          await Filesystem.writeFile({
+            path: `${STORAGE_ROOT}/${IMAGE_FOLDER}/${themeId}/${safeName}`,
+            data: btoa(binary),
+            directory: Directory.Documents,
+            recursive: true,
+          });
+        }
       } catch (error) {
         throw new Error('El tema se descargó, pero Android no permitió guardarlo en Documentos/SStemas. Revisá el espacio disponible e intentá otra vez.');
       }
