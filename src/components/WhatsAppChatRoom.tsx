@@ -108,7 +108,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
     if (!myUid) { setError('Iniciá sesión para enviar archivos.'); return; }
     setUploading(true); setError(null); setAttachOpen(false); setEmojiOpen(false);
     try { await sendMediaMessage(chat.id, myUid, chat.otherUid, file, type); playConfiguredSound('message'); }
-    catch (err) { console.error('Error subiendo adjunto:', err); setError('No se pudo subir el archivo. Comprobá que Firebase Storage esté habilitado y que sus reglas estén publicadas.'); }
+    catch (err) { console.error('Error subiendo adjunto:', err); setError(err instanceof Error ? err.message : 'No se pudo subir el archivo a Backblaze. Revisá tu conexión y la configuración del almacenamiento.'); }
     finally { setUploading(false); }
   };
 
@@ -127,7 +127,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
           const file = new File([blob], `nota-de-voz-${Date.now()}.${blob.type.includes('mp4') ? 'mp4' : 'webm'}`, { type: blob.type || 'audio/webm' });
           setUploading(true); setError(null);
           try { await sendMediaMessage(chat.id, myUid, chat.otherUid, file, 'audio'); playConfiguredSound('message'); }
-          catch (err) { console.error('Error enviando nota de voz:', err); setError('No se pudo enviar la nota de voz. Comprobá Firebase Storage.'); }
+          catch (err) { console.error('Error enviando nota de voz:', err); setError(err instanceof Error ? err.message : 'No se pudo enviar la nota de voz a Backblaze. Revisá tu conexión.'); }
           finally { setUploading(false); }
         }
       };
