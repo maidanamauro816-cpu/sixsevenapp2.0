@@ -27,3 +27,26 @@ Este Worker firma URLs temporales para subir archivos directamente a Backblaze B
 ## Nota de publicación
 
 El Worker no queda desplegado solo por agregar estos archivos al repositorio. Requiere cuenta Cloudflare y los secretos anteriores. Las claves B2 no se deben guardar en `.env` público ni en el código de la aplicación.
+
+## CORS necesario en Backblaze
+
+La firma de la URL no configura automáticamente CORS en el bucket. Antes de probar subidas desde la app, abrí cada bucket en la consola de Backblaze B2 y configurá CORS para permitir solicitudes `PUT` desde el origen de SixSeven. Como mínimo, para el cliente Android Capacitor se usan normalmente `capacitor://localhost` y/o `https://localhost`; agregá también el origen HTTPS real si usás la versión web. No habilites orígenes que no controles.
+
+Configuración S3 CORS de referencia (adaptar los orígenes a los que realmente usa la app):
+
+```json
+[
+  {
+    "AllowedOrigins": [
+      "capacitor://localhost",
+      "https://localhost"
+    ],
+    "AllowedMethods": ["PUT", "GET", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+Aplicá la regla a los cuatro buckets: perfiles, portadas, imágenes y audios. Las URLs públicas solo funcionarán si el bucket y sus permisos de lectura están configurados para acceso público; las claves de escritura deben seguir siendo privadas.
