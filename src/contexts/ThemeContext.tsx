@@ -139,7 +139,7 @@ function applyCss(t: SixSevenTheme) {
   root.style.setProperty('--sx-text', t.text);
   root.style.setProperty('--sx-tick-color', t.tickColor);
   root.style.setProperty('--sx-font', t.fontFamily);
-  const assetUrl = (value?: string) => !value ? 'none' : /^https?:\\/\\//i.test(value) ? `url("${value.replace(/"/g, '%22')}")` : `url("${value.startsWith('/') ? value : `/themes/${value.split('/').map(encodeURIComponent).join('/')}`}")`;
+  const assetUrl = (value?: string) => !value ? 'none' : /^https?:\\/\\//i.test(value) ? `url("${value.replace(/"/g, '%22')}")` : `url("${value.startsWith('/') || /^https?:\\/\\//i.test(value) ? value : `https://sixseven-upload.mauromaidana.workers.dev/themes/${value.split('/').map(encodeURIComponent).join('/')}`}")`;
   root.style.setProperty('--sx-wallpaper-image', assetUrl(t.wallpaperImage));
   root.style.setProperty('--sx-header-image', assetUrl(t.headerBackgroundImage));
   root.style.setProperty('--sx-bubble-pattern', assetUrl(t.bubblePattern));
