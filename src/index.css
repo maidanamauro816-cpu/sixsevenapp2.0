@@ -207,3 +207,27 @@ html[data-sx-bubble-style="rounded"] .sx-message-bubble { border-radius: var(--b
 html[data-sx-fab-style="capsule"] .sx-fab { border-radius: 999px !important; }
 html[data-sx-fab-style="rounded"] .sx-fab { border-radius: 18px !important; }
 html[data-sx-fab-style="sharp"] .sx-fab { border-radius: 4px !important; }
+
+
+@keyframes sx-eye-blink {
+  0%, 91%, 95%, 100% { transform: scaleY(0); opacity: 0; }
+  92.5%, 94% { transform: scaleY(1); opacity: .98; }
+}
+@keyframes sx-eye-ring-pulse {
+  0%, 100% { opacity: .55; stroke-dashoffset: 0; }
+  50% { opacity: 1; stroke-dashoffset: 26; }
+}
+.sx-eye-blink {
+  transform-box: fill-box; transform-origin: center;
+  animation: sx-eye-blink 5.8s infinite;
+}
+.sx-eye-ring { animation: sx-eye-ring-pulse 3.8s linear infinite; }
+.sx-eye-orb { cursor: pointer; }
+html[data-sx-has-wallpaper="true"] .sx-chat-list-surface,
+html[data-sx-has-wallpaper="true"] .sx-chat-room,
+html[data-sx-has-wallpaper="true"] .sx-main-content {
+  background-color: color-mix(in srgb, var(--scaffold-bg, #000) 78%, transparent) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sx-eye-blink, .sx-eye-ring { animation: none !important; }
+}
