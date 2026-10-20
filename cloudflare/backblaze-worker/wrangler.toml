@@ -1,4 +1,5 @@
 name = "sixseven-backblaze-signer"
+workers_dev = true
 main = "src/index.ts"
 compatibility_date = "2026-10-20"
 compatibility_flags = ["nodejs_compat"]
