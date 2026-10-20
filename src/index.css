@@ -171,3 +171,19 @@ html[data-sx-theme] [data-sx-message-bubble="received"] { background-color: var(
 .sx-ai-eye { filter: drop-shadow(0 0 3px rgba(255, 20, 40, .55)); }
 .sx-ai-eye.sx-orb-listening { filter: drop-shadow(0 0 9px rgba(255, 20, 40, .95)); }
 @media (prefers-reduced-motion: reduce) { .sx-ai-eye .sx-eye-rotating-ring { animation: none; } }
+
+
+/* Temas con fondos fotográficos y variaciones de composición. */
+html[data-sx-theme] body {
+  background-image: var(--sx-theme-wallpaper, none);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+html[data-sx-layout="square-status"] [data-sx-status-card],
+html[data-sx-layout="square-status"] [data-status-card] { border-radius: 0.8rem !important; }
+html[data-sx-layout="classic"] [data-sx-status-card],
+html[data-sx-layout="classic"] [data-status-card] { border-radius: 9999px !important; }
+html[data-sx-layout="editorial"] .sx-main-header { border-radius: 0 0 1.5rem 1.5rem; }
+html[data-sx-layout="minimal"] .neon { box-shadow: none; }
