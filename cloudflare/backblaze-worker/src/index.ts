@@ -98,7 +98,7 @@ async function verifyUser(request: Request): Promise<string | null> {
 }
 
 
-async function askGemini(request: Request, env: Env, uid: string): Promise<Response> {
+async function askGemini(request: Request, env: Env): Promise<Response> {
   if (!env.GEMINI_API_KEY?.trim()) {
     return response({
       code: "ai_not_configured",
@@ -133,7 +133,7 @@ async function askGemini(request: Request, env: Env, uid: string): Promise<Respo
 Respondé siempre en español latinoamericano, con tono amable, claro y natural de Argentina.
 Ayudá con consultas generales y con el uso de SixSeven. La app tiene Chats, Estados, Música, Llamadas, Perfil y configuración.
 No afirmes haber ejecutado acciones que la app no te haya permitido realizar. Si no sabés algo, decilo con honestidad.
-Mantené las respuestas concisas y útiles. El usuario autenticado tiene el identificador interno ${uid}; no lo reveles ni lo uses para otros fines.`,
+Mantené las respuestas concisas y útiles.`,
           }],
         },
         contents: [{ role: "user", parts: [{ text: prompt }] }],
@@ -223,7 +223,7 @@ export default {
     if (request.method === "POST" && url.pathname === "/api/ask-gemini") {
       const uid = await verifyUser(request);
       if (!uid) return response({ code: "unauthenticated", error: "Iniciá sesión en SixSeven para usar la IA." }, 401);
-      return askGemini(request, env, uid);
+      return askGemini(request, env);
     }
 
     if (request.method === "POST" && (url.pathname === "/api/upload-avatar" || url.pathname === "/api/upload-cover")) {
