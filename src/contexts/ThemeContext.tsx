@@ -20,6 +20,7 @@ export type SixSevenTheme = {
   estadoRectWidth?: number;
   estadoRectHeight?: number;
   estadoBorderRadius?: number;
+  layoutStyle?: string;
 };
 
 export const themes: SixSevenTheme[] = [
@@ -91,6 +92,7 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
     estadoRectWidth: Number(shapes.estado_rect_width ?? 72),
     estadoRectHeight: Number(shapes.estado_rect_height ?? 92),
     estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
+    layoutStyle: String(shapes.layout_style ?? (shapes.is_rectangular_estados === true ? 'square-status' : 'classic')),
   };
 }
 
@@ -117,6 +119,7 @@ function applyCss(t: SixSevenTheme) {
   root.style.setProperty('--sx-font', t.fontFamily);
   root.dataset.sxTheme = t.id;
   root.dataset.rectangularEstados = t.isRectangularEstados ? 'true' : 'false';
+  root.dataset.sxLayout = t.layoutStyle ?? 'classic';
   document.body.style.backgroundColor = t.background;
   document.body.style.color = t.text;
   document.body.style.fontFamily = t.fontFamily;
