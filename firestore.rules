@@ -179,7 +179,7 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && incoming().uid == request.auth.uid
         && incoming().keys().hasAll(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'createdAt', 'expiresAt'])
-        && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'mediaUrl', 'mediaType', 'createdAt', 'expiresAt'])
+        && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'mediaUrl', 'mediaType', 'createdAt', 'expiresAt', 'audience', 'audienceList'])
         && incoming().name is string && incoming().name.size() <= 80
         && incoming().avatar is string && incoming().avatar.size() <= 60000
         && incoming().text is string && incoming().text.size() > 0 && incoming().text.size() <= 300
@@ -188,10 +188,37 @@ service cloud.firestore {
         && incoming().songTitle is string && incoming().songTitle.size() <= 100
         && (!('mediaUrl' in incoming()) || (incoming().mediaUrl is string && incoming().mediaUrl.size() <= 1000))
         && (!('mediaType' in incoming()) || incoming().mediaType in ['', 'image', 'video'])
-        && incoming().expiresAt is timestamp;
+        && incoming().expiresAt is timestamp
+        && (!('audience' in incoming()) || incoming().audience in ['contacts', 'except', 'only'])
+        && (!('audienceList' in incoming()) || (incoming().audienceList is list && incoming().audienceList.size() <= 200));
       allow update: if false;
       allow delete: if isSignedIn() && existing().uid == request.auth.uid;
     }
+    // Instagram-style Stories: separate collection from WhatsApp statuses.
+    // Stories expire client-side after 24 hours; signed-in users can publish and interact.
+    match /instagramStories/{storyId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && incoming().uid == request.auth.uid
+        && incoming().keys().hasAll(['uid', 'name', 'avatar', 'text', 'mediaUrl', 'mediaType', 'createdAt', 'likesCount', 'likedBy', 'comments'])
+        && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'mediaUrl', 'mediaType', 'createdAt', 'likesCount', 'likedBy', 'comments'])
+        && incoming().name is string && incoming().name.size() <= 80
+        && incoming().avatar is string && incoming().avatar.size() <= 60000
+        && incoming().text is string && incoming().text.size() <= 500
+        && incoming().mediaUrl is string && incoming().mediaUrl.size() <= 2000
+        && incoming().mediaType in ['', 'image', 'video']
+        && incoming().likesCount == 0
+        && incoming().likedBy is list && incoming().likedBy.size() == 0
+        && incoming().comments is list && incoming().comments.size() == 0;
+      allow update: if isSignedIn()
+        && incoming().diff(existing()).affectedKeys().hasOnly(['likedBy', 'likesCount', 'comments'])
+        && incoming().likedBy is list
+        && incoming().likedBy.size() <= 10000
+        && incoming().likesCount is number && incoming().likesCount >= 0
+        && incoming().comments is list && incoming().comments.size() <= 1000;
+      allow delete: if isSignedIn() && existing().uid == request.auth.uid;
+    }
+
     // Posts Collection
     match /posts/{postId} {
       allow read: if isSignedIn();
