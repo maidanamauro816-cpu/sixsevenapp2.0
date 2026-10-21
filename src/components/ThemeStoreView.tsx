@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowDownToLine, Check, Download, LoaderCircle, Palette, Search, Smartphone, Sparkles } from 'lucide-react';
+import { ArrowDownToLine, Check, Download, LoaderCircle, Palette, Search, Smartphone, Sparkles, Upload } from 'lucide-react';
 import { ThemeService, type SixSevenTheme as StoreTheme } from '../services/themeService';
 import { useThemeSettings } from '../contexts/ThemeContext';
 import { isNative } from '../native';
@@ -10,6 +10,18 @@ function saveBrowserCopy(theme: StoreTheme) {
   const link = document.createElement('a');
   link.href = url;
   link.download = `SStemas_${theme.id}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+function saveXmlCopy(theme: StoreTheme) {
+  const blob = new Blob([ThemeService.exportThemeXml(theme)], { type: 'application/xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `SixSeven_${theme.id}.xml`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -43,6 +55,7 @@ function mapTheme(theme: StoreTheme) {
     estadoRectWidth: Number(s.estado_rect_width || 72),
     estadoRectHeight: Number(s.estado_rect_height || 92),
     estadoBorderRadius: Number(s.estado_border_radius || 16),
+    layoutStyle: String(s.layout_style || (s.is_rectangular_estados === true ? 'manga-board' : (theme.id.includes('minimal') ? 'minimal' : (theme.id.includes('custom') || theme.id.includes('anime') ? 'editorial' : (theme.id.includes('moccha') || theme.id.includes('yushi') ? 'delta-cards' : 'classic')))),
   };
 }
 
@@ -131,6 +144,27 @@ export const ThemeStoreView: React.FC = () => {
         <p className="mt-3 flex items-start gap-2 text-xs text-neutral-400"><Smartphone size={15} className="mt-0.5 shrink-0 text-red-400"/>{isNative ? 'Los archivos se guardan en Documentos/SStemas y la app conserva una copia interna.' : 'Los temas quedan guardados dentro de SixSeven. También podés descargar el JSON; el navegador controla la carpeta de descarga.'}</p>
       </div>
 
+      <div className="flex gap-2">
+        <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-xs font-bold text-neutral-200">
+          <Upload size={15}/> Importar tema XML/JSON
+          <input type="file" accept=".xml,.json,application/xml,application/json" className="hidden" onChange={async e => {
+            const file = e.currentTarget.files?.[0];
+            e.currentTarget.value = '';
+            if (!file) return;
+            setError(''); setNotice('');
+            try {
+              const imported = await ThemeService.importThemeFile(file);
+              setDownloaded(ThemeService.getDownloadedThemeIds());
+              setNotice(`Tema “${imported.name}” importado. Ya podés aplicarlo desde la tienda.`);
+              const index = await ThemeService.fetchStoreIndex();
+              setThemes(current => current.some(item => item.id === imported.id) ? current.map(item => item.id === imported.id ? imported : item) : [imported, ...current]);
+            } catch (err) {
+              setError(err instanceof Error ? err.message : 'No se pudo importar el tema.');
+            }
+          }}/>
+        </label>
+      </div>
+
       <label className="flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-950 px-3 py-2.5">
         <Search size={18} className="text-neutral-500"/>
         <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar tema por nombre o estilo…" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-neutral-600"/>
@@ -146,10 +180,11 @@ export const ThemeStoreView: React.FC = () => {
           const c=theme.colors;
           const isSaved=downloaded.includes(theme.id);
           const isActive=activeThemeId===theme.id || ThemeService.getSavedThemeId()===theme.id;
+          const layout=String(theme.shapes.layout_style || (theme.shapes.is_rectangular_estados ? 'manga-board' : (theme.id.includes('minimal') ? 'minimal' : (theme.id.includes('custom') || theme.id.includes('anime') ? 'editorial' : (theme.id.includes('moccha') || theme.id.includes('yushi') ? 'delta-cards' : 'classic'))));
           return <article key={theme.id} className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
             <div className="relative h-32 overflow-hidden p-3" style={{background:`linear-gradient(135deg,${c.scaffold_bg || '#050505'},${c.card_bg || c.scaffold_bg || '#111'} 65%,${c.primary || '#ff1a1a'})`}}>
               <div className="absolute inset-0 opacity-20" style={{backgroundImage:'radial-gradient(circle at 20% 20%, white 1px, transparent 1.5px)',backgroundSize:'18px 18px'}}/>
-              <div className="relative flex h-full flex-col justify-between">
+              <div className={`relative flex h-full flex-col justify-between ${layout === 'manga-board' ? 'border-l-4 border-white/70 pl-2' : layout === 'editorial' ? 'rounded-b-2xl border-b border-white/50 pb-1' : ''}`}>
                 <div className="flex items-start justify-between gap-2"><span className="rounded-full bg-black/65 px-2 py-1 text-[10px] font-bold text-white">{isSaved?'DESCARGADO':'GRATUITO'}</span>{isActive&&<span className="flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-1 text-[10px] font-bold text-black"><Check size={12}/>APLICADO</span>}</div>
                 <div className="flex items-end justify-between gap-2">
                   <div className="max-w-[70%] rounded-2xl p-2 text-xs shadow-lg" style={{background:c.bubble_other||c.card_bg||'#171717',color:c.text_primary||'#fff',borderRadius:`${Math.min(Number(theme.shapes.bubble_radius||20),28)}px`}}>Hola, ¿cómo estás?</div>
@@ -158,7 +193,7 @@ export const ThemeStoreView: React.FC = () => {
               </div>
             </div>
             <div className="space-y-3 p-3">
-              <div><h3 className="font-bold leading-tight">{theme.name}</h3><p className="mt-1 line-clamp-2 min-h-8 text-xs text-neutral-400">{theme.description || 'Tema oficial de la tienda SixSeven.'}</p></div>
+              <div><h3 className="font-bold leading-tight">{theme.name}</h3><p className="mt-1 text-[10px] uppercase tracking-wider text-red-300">Interfaz: {layout}</p><p className="mt-1 line-clamp-2 min-h-8 text-xs text-neutral-400">{theme.description || 'Tema oficial de la tienda SixSeven.'}</p></div>
               <div className="flex items-center gap-1.5">{[c.primary,c.scaffold_bg,c.card_bg,c.bubble_me,c.bubble_other].filter(Boolean).slice(0,5).map((color,i)=><span key={i} title={color} className="h-5 w-5 rounded-full border border-white/15" style={{backgroundColor:color}}/>)}</div>
               <div className="grid grid-cols-2 gap-2">
                 <button disabled={busyId===theme.id} onClick={()=>void download(theme)} className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900 px-2 py-2.5 text-xs font-bold disabled:opacity-50">
@@ -168,6 +203,9 @@ export const ThemeStoreView: React.FC = () => {
                 <button disabled={busyId===theme.id} onClick={()=>void apply(theme)} className="flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-2 py-2.5 text-xs font-bold text-white shadow-[0_0_12px_rgba(255,26,26,.18)] disabled:opacity-50">
                   {busyId===theme.id?<LoaderCircle size={15} className="animate-spin"/>:isActive?<Check size={15}/>:<Sparkles size={15}/>}
                   {isActive?'Aplicado':'Aplicar'}
+                </button>
+                <button onClick={()=>{ try { saveXmlCopy(theme); setNotice(`XML del tema “${theme.name}” exportado.`); setError(''); } catch { setError('No se pudo exportar el XML.'); } }} className="col-span-2 flex items-center justify-center gap-1.5 rounded-xl border border-neutral-800 bg-black px-2 py-2 text-xs text-neutral-300">
+                  <Download size={13}/> Exportar XML del tema
                 </button>
               </div>
             </div>

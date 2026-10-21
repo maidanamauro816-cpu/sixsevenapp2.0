@@ -218,7 +218,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           <button
             key={chat.id}
             onClick={() => { playSixSevenSound(); onOpenChat(chat); }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-left border-b border-neutral-900 active:bg-neutral-950 cursor-pointer"
+            data-sx-chat-row="true" className="w-full flex items-center gap-3 px-4 py-2.5 text-left border-b border-neutral-900 active:bg-neutral-950 cursor-pointer"
           >
             <div className="w-12 h-12 rounded-full bg-neutral-900 border border-neutral-800 overflow-hidden shrink-0">
               {chat.avatar && <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />}

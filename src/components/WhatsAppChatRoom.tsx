@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, Phone, Video, MoreVertical, Smile, Send, CheckCheck, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
+import { ChevronLeft, Phone, Video, MoreVertical, Smile, Send, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
 import { onSnapshot } from 'firebase/firestore';
 import { WhatsAppChat } from './WhatsAppChatList';
 import { MediaPicker, PickerTab } from './MediaPicker';
@@ -221,7 +221,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
                   {m.text && <span className="whitespace-pre-wrap break-words min-w-0">{m.text}</span>}
                   <span className="flex items-center gap-0.5 text-[10px] text-white/60 justify-end mt-1">
                     {fmt(m.createdAt?.toMillis?.())}
-                    {mine && <CheckCheck size={13} className="text-white/80" />}
+                    {mine && <span className="sx-chat-tick" aria-label="Estado del mensaje">✓✓</span>}
                   </span>
                 </>
               </div>

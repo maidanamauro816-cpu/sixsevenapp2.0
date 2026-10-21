@@ -187,3 +187,69 @@ html[data-sx-layout="classic"] [data-sx-status-card],
 html[data-sx-layout="classic"] [data-status-card] { border-radius: 9999px !important; }
 html[data-sx-layout="editorial"] .sx-main-header { border-radius: 0 0 1.5rem 1.5rem; }
 html[data-sx-layout="minimal"] .neon { box-shadow: none; }
+
+
+/* SixSeven chat tick styles: visual only; delivery/read state remains governed by chat data. */
+.sx-chat-tick { display: inline-flex; align-items: center; margin-left: 3px; font-size: 11px; line-height: 1; font-weight: 800; letter-spacing: -2px; color: var(--sx-tick-color, #35b8ff); }
+.sx-tick-preview { display: inline-flex; margin-left: 5px; font-weight: 900; letter-spacing: -2px; color: #35b8ff; }
+html[data-sx-tick-style="blue"] .sx-chat-tick, html[data-sx-tick-style="blue"] .sx-tick-preview { color: #35b8ff; }
+html[data-sx-tick-style="green"] .sx-chat-tick, html[data-sx-tick-style="green"] .sx-tick-preview { color: #22c55e; }
+html[data-sx-tick-style="white"] .sx-chat-tick, html[data-sx-tick-style="white"] .sx-tick-preview { color: #ffffff; }
+html[data-sx-tick-style="dots"] .sx-chat-tick, html[data-sx-tick-style="dots"] .sx-tick-preview { letter-spacing: 0; font-size: 9px; }
+html[data-sx-tick-style="dots"] .sx-chat-tick::first-letter, html[data-sx-tick-style="dots"] .sx-tick-preview::first-letter { font-size: 0; }
+html[data-sx-tick-style="dots"] .sx-chat-tick::before, html[data-sx-tick-style="dots"] .sx-tick-preview::before { content: "●●"; letter-spacing: -2px; }
+html[data-sx-tick-style="dots"] .sx-chat-tick, html[data-sx-tick-style="dots"] .sx-tick-preview { font-size: 0; }
+html[data-sx-tick-style="dots"] .sx-chat-tick::before, html[data-sx-tick-style="dots"] .sx-tick-preview::before { font-size: 9px; color: #35b8ff; }
+html[data-sx-tick-style="sixseven"] .sx-chat-tick, html[data-sx-tick-style="sixseven"] .sx-tick-preview { color: var(--sx-theme-accent, #ff1a1a); letter-spacing: -1px; }
+
+/* Layout presets are declarative theme choices, not copied third-party code.
+   Theme JSON shapes.layout_style may select classic, square-status, editorial,
+   minimal, compact, delta-cards, or manga-board. */
+html[data-sx-layout="compact"] .sx-chat-list-surface section { gap: .5rem; padding-top: .55rem; padding-bottom: .55rem; }
+html[data-sx-layout="delta-cards"] .sx-chat-list-surface [data-sx-chat-row],
+html[data-sx-layout="manga-board"] .sx-chat-list-surface [data-sx-chat-row] { margin: .45rem .75rem; border: 1px solid color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 38%, #333); border-radius: 1rem; background: color-mix(in srgb, var(--card-bg, #111) 88%, transparent); padding: .65rem; }
+html[data-sx-layout="manga-board"] .sx-chat-list-surface [data-sx-chat-row] { border-radius: .35rem; border-width: 1px 1px 1px 3px; }
+html[data-sx-layout="editorial"] .sx-chat-list-surface .sx-main-header { border-bottom: 1px solid color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 45%, transparent); }
+html[data-sx-layout="minimal"] .sx-chat-list-surface .neon { box-shadow: none !important; }
+
+
+/* SixSeven full-screen theme layouts: same theme tokens reach home, lists, chats and settings. */
+html[data-sx-theme] .sx-main-header,
+html[data-sx-theme] header,
+html[data-sx-theme] [data-sx-theme-header="true"] {
+  background-color: var(--sx-header-bg, var(--sx-theme-bg, #000)) !important;
+  color: var(--sx-text, #fff);
+}
+html[data-sx-theme] .sx-bottom-nav,
+html[data-sx-theme] nav[aria-label],
+html[data-sx-theme] [data-sx-bottom-nav="true"] {
+  background-color: var(--bottom-nav-bg, var(--sx-theme-bg, #000)) !important;
+  color: var(--sx-text, #fff);
+}
+html[data-sx-theme] [data-sx-message-bubble="sent"],
+html[data-sx-theme] [data-sx-message-bubble="true"][data-message-direction="out"] {
+  background-color: var(--sx-bubble-sent, var(--bubble-me, #321014)) !important;
+  border-radius: var(--bubble-radius, 20px) !important;
+}
+html[data-sx-theme] [data-sx-message-bubble="received"],
+html[data-sx-theme] [data-sx-message-bubble="true"][data-message-direction="in"] {
+  background-color: var(--sx-bubble-received, var(--bubble-other, #171717)) !important;
+  border-radius: var(--bubble-radius, 20px) !important;
+}
+html[data-sx-layout="compact"] [data-sx-chat-row] { min-height: 60px; padding-top: .4rem !important; padding-bottom: .4rem !important; }
+html[data-sx-layout="delta-cards"] [data-sx-chat-row] { margin: .45rem .65rem; border: 1px solid color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 40%, #333); border-radius: 1rem; padding: .65rem !important; background: color-mix(in srgb, var(--card-bg, #111) 90%, transparent); }
+html[data-sx-layout="manga-board"] [data-sx-chat-row] { margin: .35rem .5rem; border-left: 3px solid var(--sx-theme-accent, #ff1a1a); border-radius: .45rem; padding: .7rem !important; }
+html[data-sx-layout="editorial"] .sx-main-header { border-radius: 0 0 1.5rem 1.5rem; border-bottom: 1px solid color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 45%, transparent); }
+html[data-sx-layout="minimal"] .neon, html[data-sx-layout="minimal"] .sx-orb-nav-halo { box-shadow: none !important; }
+html[data-sx-layout="compact"] [data-sx-message-bubble] { border-radius: .7rem !important; }
+html[data-sx-layout="manga-board"] [data-sx-message-bubble] { border-radius: .45rem .9rem .45rem .9rem !important; }
+html[data-sx-layout="editorial"] [data-sx-message-bubble] { border-radius: 1.25rem !important; padding: .8rem 1rem !important; }
+html[data-sx-layout="delta-cards"] .sx-chat-list-surface { background-image: radial-gradient(color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 10%, transparent) 1px, transparent 1px); background-size: 18px 18px; }
+html[data-sx-layout="manga-board"] .sx-chat-list-surface { background-image: linear-gradient(135deg, color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 7%, transparent), transparent 55%); }
+html[data-sx-layout="editorial"] .sx-chat-list-surface { background-image: linear-gradient(180deg, color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 7%, transparent), transparent 35%); }
+@media (prefers-reduced-motion: no-preference) {
+ html[data-sx-animation="slide"] [data-sx-theme-panel] { animation: sx-theme-slide-in 220ms ease-out both; }
+ html[data-sx-animation="flip"] [data-sx-theme-panel] { animation: sx-theme-flip-in 260ms ease-out both; }
+}
+@keyframes sx-theme-slide-in { from { opacity: .65; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes sx-theme-flip-in { from { opacity: .7; transform: perspective(600px) rotateX(-7deg); } to { opacity: 1; transform: perspective(600px) rotateX(0); } }

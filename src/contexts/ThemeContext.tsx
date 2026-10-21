@@ -93,7 +93,7 @@ function fromThemeJson(json: ThemeJson): SixSevenTheme {
     estadoRectWidth: Number(shapes.estado_rect_width ?? 72),
     estadoRectHeight: Number(shapes.estado_rect_height ?? 92),
     estadoBorderRadius: Number(shapes.estado_border_radius ?? 16),
-    layoutStyle: String(shapes.layout_style ?? (shapes.is_rectangular_estados === true ? 'square-status' : 'classic')),
+    layoutStyle: String(shapes.layout_style ?? (shapes.is_rectangular_estados === true ? 'manga-board' : (json.id.includes('minimal') ? 'minimal' : (json.id.includes('custom') || json.id.includes('anime') ? 'editorial' : (json.id.includes('moccha') || json.id.includes('yushi') ? 'delta-cards' : 'classic')))),
     wallpaperUrl: typeof json.wallpaper_url === 'string' ? json.wallpaper_url : (typeof json.preview_image === 'string' && /^https?:\/\//i.test(json.preview_image) ? json.preview_image : undefined),
   };
 }
@@ -122,6 +122,8 @@ function applyCss(t: SixSevenTheme) {
   root.dataset.sxTheme = t.id;
   root.dataset.rectangularEstados = t.isRectangularEstados ? 'true' : 'false';
   root.dataset.sxLayout = t.layoutStyle ?? 'classic';
+  root.dataset.sxAnimation = (t.layoutStyle === 'manga-board' ? 'flip' : t.layoutStyle === 'editorial' ? 'slide' : 'none');
+  root.style.setProperty('--sx-header-bg', t.primaryDark ?? t.background);
   if (t.wallpaperUrl) root.style.setProperty('--sx-theme-wallpaper', `url(\"${t.wallpaperUrl.replace(/[\"\\\\]/g, '')}\")`);
   else root.style.removeProperty('--sx-theme-wallpaper');
   document.body.style.backgroundColor = t.background;
