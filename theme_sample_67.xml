@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="ss_theme_mode">dark</string>
+    <int name="ss_primary_color" value="-58854" />
+    <int name="ss_accent_color" value="-54742" />
+    <int name="ss_background_color" value="-16777216" />
+    <int name="ss_home_header_color" value="-16777216" />
+    <string name="ss_row_style">card</string>
+    <string name="ss_list_animation">slide</string>
+    <int name="ss_fab_color" value="-58854" />
+    <int name="ss_status_ring_color" value="-58854" />
+    <int name="ss_tab_active_color" value="-54742" />
+    <string name="ss_bubble_style">neon</string>
+    <int name="ss_bubble_right_color" value="-5042150" />
+    <int name="ss_bubble_left_color" value="-15263977" />
+    <boolean name="ss_bubble_gradient" value="true" />
+    <int name="ss_bubble_gradient_color" value="-11926004" />
+    <int name="ss_chat_bg_color" value="-16777216" />
+    <string name="ss_chat_pattern">crowns</string>
+    <int name="ss_chat_pattern_color" value="-58854" />
+    <int name="ss_chat_pattern_opacity" value="12" />
+    <string name="ss_font_style">system</string>
+    <string name="ss_icon_pack">normal</string>
+</map>

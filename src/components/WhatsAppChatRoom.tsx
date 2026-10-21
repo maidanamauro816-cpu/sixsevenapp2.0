@@ -189,13 +189,13 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
           <h2 className="ml-1 text-sm font-bold leading-tight truncate max-w-[200px]">{chat.name}</h2>
         </div>
         <div className="flex items-center gap-3 pr-3 pt-2">
-          <button type="button" onClick={() => setError('Las llamadas llegan en una próxima versión.')} className="p-1 text-[#ff2a2a] cursor-pointer" title="Llamar"><Phone size={19} /></button>
-          <button type="button" onClick={() => setError('Las videollamadas llegan en una próxima versión.')} className="p-1 text-[#ff2a2a] cursor-pointer" title="Videollamada"><Video size={20} /></button>
+          <button type="button" onClick={() => setError('Las llamadas llegan en una próxima versión.')} className="sx-call-btn p-1 text-[#ff2a2a] cursor-pointer" title="Llamar"><Phone size={19} /></button>
+          <button type="button" onClick={() => setError('Las videollamadas llegan en una próxima versión.')} className="sx-call-btn p-1 text-[#ff2a2a] cursor-pointer" title="Videollamada"><Video size={20} /></button>
           <button type="button" className="p-1 text-neutral-300 cursor-pointer" title="Más"><MoreVertical size={20} /></button>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2.5">
+      <div className="sx-chat-body flex-1 overflow-y-auto px-3 py-4 space-y-2.5">
         {messages.length === 0 && !error && (
           <p className="text-center text-xs text-neutral-500 py-10">Escribí el primer mensaje a {chat.name} 👋</p>
         )}
@@ -205,6 +205,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div
                 data-sx-message-bubble="true"
+                data-sx-mine={mine ? 'true' : 'false'}
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-[13px] leading-snug ${
                   m.mediaType === 'sticker' ? 'bg-transparent !px-0' : mine
                     ? 'bg-gradient-to-br from-[#d4141c] to-[#a00d14] text-white rounded-br-md ring-1 ring-red-400/40 shadow-[0_0_12px_rgba(255,0,0,0.3)]'
@@ -219,9 +220,9 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
                   {m.mediaType === 'sticker' && m.stickerData && <img src={m.stickerData} alt="Sticker" className="w-36 h-36 object-contain" />}
                   {m.messageType === 'sticker' && m.stickerId && <div className="flex min-w-36 flex-col items-center justify-center rounded-2xl bg-neutral-950/80 p-3 text-center ring-1 ring-red-500/30"><span className="text-5xl">{m.text.split(' ')[0]}</span><span className="mt-1 text-xs font-semibold">{m.text.replace(/^\S+\s*/, '')}</span></div>}
                   {m.text && <span className="whitespace-pre-wrap break-words min-w-0">{m.text}</span>}
-                  <span className="flex items-center gap-0.5 text-[10px] text-white/60 justify-end mt-1">
+                  <span className="sx-meta flex items-center gap-0.5 text-[10px] text-white/60 justify-end mt-1">
                     {fmt(m.createdAt?.toMillis?.())}
-                    {mine && <CheckCheck size={13} className="text-white/80" />}
+                    {mine && <CheckCheck size={13} className="sx-tick text-white/80" />}
                   </span>
                 </>
               </div>
@@ -237,7 +238,7 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
       {recording && <div className="bg-red-950 text-red-200 text-center text-[11px] py-1 flex items-center justify-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"/>Grabando nota de voz · {Math.floor(recordSeconds / 60)}:{String(recordSeconds % 60).padStart(2,'0')}</div>}
       {stickerCatalogOpen && <StickerPicker onSelect={(sticker) => void sendCatalogSticker(sticker)} onClose={() => setStickerCatalogOpen(false)} />}
       {musicShareOpen && <MusicShareButton onShare={(clip) => void shareMusicClip(clip)} onClose={() => setMusicShareOpen(false)} />}
-      <form onSubmit={handleSend} className="bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-1.5">
+      <form onSubmit={handleSend} className="sx-input-bar bg-black border-t border-neutral-900 p-2.5 pb-safe flex items-center gap-1.5">
         <button type="button" aria-label="Abrir emojis" aria-expanded={emojiOpen} onClick={() => { (document.activeElement as HTMLElement | null)?.blur(); setPickerTab('emoji'); setEmojiOpen((open) => !open); setAttachOpen(false); setGifOpen(false); }} className="text-[#ff2a2a] p-1"><Smile size={21}/></button>
         <button type="button" aria-label="Abrir stickers" onClick={() => { setStickerCatalogOpen(v => !v); setMusicShareOpen(false); setEmojiOpen(false); setAttachOpen(false); }} className="p-1 text-[#ff2a2a] text-lg" title="Stickers">▧</button>
         <button type="button" aria-label="Compartir música" onClick={() => { setMusicShareOpen(v => !v); setStickerCatalogOpen(false); setEmojiOpen(false); setAttachOpen(false); }} className="p-1 text-[#ff2a2a] text-lg" title="Música">🎵</button>

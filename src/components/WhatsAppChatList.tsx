@@ -176,7 +176,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
       {/* Fila de historias: círculos con aro rojo (Mi estado + contactos) */}
       <section className="flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
         <button onClick={onAddStory} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
-          <div className="relative w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
+          <div className="sx-story-ring relative w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
             <div className="w-full h-full rounded-full bg-neutral-950 overflow-hidden flex items-center justify-center">
               {myPhoto ? <img src={myPhoto} alt="Mi estado" className="w-full h-full object-cover" /> : <Plus size={18} className="text-white" />}
             </div>
@@ -218,7 +218,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           <button
             key={chat.id}
             onClick={() => { playSixSevenSound(); onOpenChat(chat); }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-left border-b border-neutral-900 active:bg-neutral-950 cursor-pointer"
+            className="sx-chat-row w-full flex items-center gap-3 px-4 py-2.5 text-left border-b border-neutral-900 active:bg-neutral-950 cursor-pointer"
           >
             <div className="w-12 h-12 rounded-full bg-neutral-900 border border-neutral-800 overflow-hidden shrink-0">
               {chat.avatar && <img src={chat.avatar} alt={chat.name} className="w-full h-full object-cover" />}
@@ -243,7 +243,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
 
       <button
         onClick={onNewChat}
-        className="fixed bottom-20 right-5 z-30 w-14 h-14 rounded-full bg-[#ff1a1a] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,0,0,0.65)] active:scale-90 transition-transform cursor-pointer"
+        className="sx-fab fixed bottom-20 right-5 z-30 w-14 h-14 rounded-full bg-[#ff1a1a] text-white flex items-center justify-center shadow-[0_0_20px_rgba(255,0,0,0.65)] active:scale-90 transition-transform cursor-pointer"
         title="Nuevo chat"
       >
         <MessageCircle size={24} />
