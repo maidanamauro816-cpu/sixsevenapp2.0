@@ -47,6 +47,66 @@ async function persistTheme(theme: SixSevenTheme) {
   }
   return theme;
 }
+
+function xmlEscape(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+function xmlAttr(element: Element | null, name: string, fallback = ''): string {
+  return element?.getAttribute(name) ?? fallback;
+}
+function parseThemeXml(raw: string): SixSevenTheme {
+  if (raw.length > 256_000) throw new Error('El XML supera el tamaño permitido.');
+  const doc = new DOMParser().parseFromString(raw, 'application/xml');
+  if (doc.querySelector('parsererror')) throw new Error('El archivo no contiene XML válido.');
+  const root = doc.querySelector('resources > theme');
+  if (!root) throw new Error('El XML debe incluir <resources><theme>.');
+  const colors = root.querySelector('colors');
+  const chat = root.querySelector('chat');
+  const rows = root.querySelector('rows');
+  const primary = xmlAttr(colors, 'primary', '#ff1a1a');
+  const scaffold = xmlAttr(colors, 'background', '#050505');
+  const card = xmlAttr(colors, 'surface', scaffold);
+  const bubbleIn = xmlAttr(chat, 'bubbleIn', '#171717');
+  const bubbleOut = xmlAttr(chat, 'bubbleOut', primary);
+  const layout = xmlAttr(rows, 'style', 'classic');
+  const id = xmlAttr(root, 'id', 'imported_theme').replace(/[^a-z0-9_-]/gi, '_').slice(0, 80);
+  const theme: SixSevenTheme = {
+    id, name: xmlAttr(root, 'name', 'Tema importado'), version: xmlAttr(root, 'version', '1'),
+    author: 'SixSeven', is_premium: false, price: 0,
+    description: 'Tema XML importado de SixSeven',
+    colors: {
+      primary, primary_dark: primary, scaffold_bg: scaffold, card_bg: card,
+      bubble_me: bubbleOut, bubble_other: bubbleIn,
+      bottom_nav_bg: xmlAttr(colors, 'bottomNav', scaffold),
+      text_primary: xmlAttr(colors, 'text', '#ffffff')
+    },
+    shapes: {
+      bubble_radius: Math.min(48, Math.max(0, Number(xmlAttr(chat, 'bubbleRadius', '18')) || 18)),
+      card_radius: Math.min(40, Math.max(0, Number(xmlAttr(rows, 'radius', '14')) || 14)),
+      estado_shape: 'rounded_rectangle', is_rectangular_estados: false,
+      layout_style: ['classic','square-status','editorial','minimal','compact','delta-cards','manga-board'].includes(layout) ? layout : 'classic'
+    }
+  };
+  return validateTheme(theme);
+}
+function themeToXml(theme: SixSevenTheme): string {
+  const c = theme.colors, s = theme.shapes;
+  return `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <theme id="${xmlEscape(theme.id)}" name="${xmlEscape(theme.name)}" version="${xmlEscape(theme.version || '1')}">
+    <colors primary="${c.primary}" accent="${c.primary}" background="${c.scaffold_bg}" surface="${c.card_bg || c.scaffold_bg}" text="${c.text_primary || '#ffffff}" bottomNav="${c.bottom_nav_bg || c.scaffold_bg}" />
+    <chat bubbleIn="${c.bubble_other}" bubbleOut="${c.bubble_me}" bubbleRadius="${s.bubble_radius}" bubbleStyle="rounded" wallpaperPattern="none" />
+    <header style="neon" height="56" showDivider="true" />
+    <rows style="${xmlEscape(s.layout_style || (s.is_rectangular_estados ? 'manga-board' : 'classic'))}" radius="${s.card_radius}" spacing="8" />
+    <animations type="slide" durationMs="220" />
+    <ticks style="blue" sent="#A8A8A8" delivered="#35B8FF" read="#35B8FF" />
+    <typography style="system" fontSizeSp="14" fontPath="" />
+    <icons packPath="icons/default/" />
+    <wallpaper type="pattern" path="" overlay="#99000000" />
+  </theme>
+</resources>`;
+}
+
 export const ThemeService = {
   async fetchStoreIndex(): Promise<ThemeStoreIndex> {
     let remote: ThemeStoreIndex | null = null;
