@@ -42,7 +42,8 @@ function mapTheme(theme: StoreTheme) {
     isRectangularEstados: s.is_rectangular_estados === true,
     estadoRectWidth: Number(s.estado_rect_width || 72),
     estadoRectHeight: Number(s.estado_rect_height || 92),
-    estadoBorderRadius: Number(s.estado_border_radius || 16),\n    layoutStyle: String(s.layout_style || (s.is_rectangular_estados === true ? 'square-status' : 'classic')),
+    estadoBorderRadius: Number(s.estado_border_radius || 16),
+    layoutStyle: String(s.layout_style || (s.is_rectangular_estados === true ? 'square-status' : 'classic')),
   };
 }
 
