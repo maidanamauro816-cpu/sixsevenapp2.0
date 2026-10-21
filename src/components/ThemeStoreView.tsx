@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowDownToLine, Check, Download, LoaderCircle, Palette, Search, Smartphone, Sparkles } from 'lucide-react';
+import { ArrowDownToLine, Check, Download, LoaderCircle, Palette, Search, Smartphone, Sparkles, Upload } from 'lucide-react';
 import { ThemeService, type SixSevenTheme as StoreTheme } from '../services/themeService';
 import { useThemeSettings } from '../contexts/ThemeContext';
 import { isNative } from '../native';
@@ -142,6 +142,27 @@ export const ThemeStoreView: React.FC = () => {
           <div className="rounded-xl border border-neutral-800 bg-black/60 p-3"><p className="text-2xl font-black">{downloaded.length}</p><p className="text-xs text-neutral-400">Guardados en este dispositivo</p></div>
         </div>
         <p className="mt-3 flex items-start gap-2 text-xs text-neutral-400"><Smartphone size={15} className="mt-0.5 shrink-0 text-red-400"/>{isNative ? 'Los archivos se guardan en Documentos/SStemas y la app conserva una copia interna.' : 'Los temas quedan guardados dentro de SixSeven. También podés descargar el JSON; el navegador controla la carpeta de descarga.'}</p>
+      </div>
+
+      <div className="flex gap-2">
+        <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-xs font-bold text-neutral-200">
+          <Upload size={15}/> Importar tema XML/JSON
+          <input type="file" accept=".xml,.json,application/xml,application/json" className="hidden" onChange={async e => {
+            const file = e.currentTarget.files?.[0];
+            e.currentTarget.value = '';
+            if (!file) return;
+            setError(''); setNotice('');
+            try {
+              const imported = await ThemeService.importThemeFile(file);
+              setDownloaded(ThemeService.getDownloadedThemeIds());
+              setNotice(`Tema “${imported.name}” importado. Ya podés aplicarlo desde la tienda.`);
+              const index = await ThemeService.fetchStoreIndex();
+              setThemes(current => current.some(item => item.id === imported.id) ? current.map(item => item.id === imported.id ? imported : item) : [imported, ...current]);
+            } catch (err) {
+              setError(err instanceof Error ? err.message : 'No se pudo importar el tema.');
+            }
+          }}/>
+        </label>
       </div>
 
       <label className="flex items-center gap-2 rounded-2xl border border-neutral-800 bg-neutral-950 px-3 py-2.5">
