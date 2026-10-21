@@ -94,7 +94,7 @@ function themeToXml(theme: SixSevenTheme): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <theme id="${xmlEscape(theme.id)}" name="${xmlEscape(theme.name)}" version="${xmlEscape(theme.version || '1')}">
-    <colors primary="${c.primary}" accent="${c.primary}" background="${c.scaffold_bg}" surface="${c.card_bg || c.scaffold_bg}" text="${c.text_primary || '#ffffff}" bottomNav="${c.bottom_nav_bg || c.scaffold_bg}" />
+    <colors primary="${c.primary}" accent="${c.primary}" background="${c.scaffold_bg}" surface="${c.card_bg || c.scaffold_bg}" text="${c.text_primary || '#ffffff'}" bottomNav="${c.bottom_nav_bg || c.scaffold_bg}" />
     <chat bubbleIn="${c.bubble_other}" bubbleOut="${c.bubble_me}" bubbleRadius="${s.bubble_radius}" bubbleStyle="rounded" wallpaperPattern="none" />
     <header style="neon" height="56" showDivider="true" />
     <rows style="${xmlEscape(s.layout_style || (s.is_rectangular_estados ? 'manga-board' : 'classic'))}" radius="${s.card_radius}" spacing="8" />
@@ -135,11 +135,17 @@ export const ThemeService = {
     return persistTheme(validateTheme(theme));
   },
   async importThemeFile(file: File): Promise<SixSevenTheme> {
-    if (!file.name.toLowerCase().endsWith('.json')) throw new Error('Elegí un archivo de tema .json.');
-    let parsed: unknown;
-    try { parsed = JSON.parse(await file.text()); } catch { throw new Error('El archivo no contiene JSON válido.'); }
-    return persistTheme(validateTheme(parsed));
+    if (file.size > 256_000) throw new Error('El archivo supera el tamaño permitido.');
+    const raw = await file.text();
+    let theme: SixSevenTheme;
+    if (file.name.toLowerCase().endsWith('.xml')) theme = parseThemeXml(raw);
+    else if (file.name.toLowerCase().endsWith('.json')) {
+      try { theme = validateTheme(JSON.parse(raw)); }
+      catch (e) { throw new Error(e instanceof Error ? e.message : 'JSON inválido.'); }
+    } else throw new Error('Elegí un archivo de tema .xml o .json.');
+    return persistTheme(theme);
   },
+  exportThemeXml(theme: SixSevenTheme): string { return themeToXml(validateTheme(theme)); },
   async importThemeFromDocuments(): Promise<SixSevenTheme[]> {
     if (!Capacitor.isNativePlatform()) throw new Error('En este dispositivo, usá “Importar tema” para elegir el archivo .json.');
     await ensureThemeFolder();
