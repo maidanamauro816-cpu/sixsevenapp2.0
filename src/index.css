@@ -187,3 +187,27 @@ html[data-sx-layout="classic"] [data-sx-status-card],
 html[data-sx-layout="classic"] [data-status-card] { border-radius: 9999px !important; }
 html[data-sx-layout="editorial"] .sx-main-header { border-radius: 0 0 1.5rem 1.5rem; }
 html[data-sx-layout="minimal"] .neon { box-shadow: none; }
+
+
+/* SixSeven chat tick styles: visual only; delivery/read state remains governed by chat data. */
+.sx-chat-tick { display: inline-flex; align-items: center; margin-left: 3px; font-size: 11px; line-height: 1; font-weight: 800; letter-spacing: -2px; color: var(--sx-tick-color, #35b8ff); }
+.sx-tick-preview { display: inline-flex; margin-left: 5px; font-weight: 900; letter-spacing: -2px; color: #35b8ff; }
+html[data-sx-tick-style="blue"] .sx-chat-tick, html[data-sx-tick-style="blue"] .sx-tick-preview { color: #35b8ff; }
+html[data-sx-tick-style="green"] .sx-chat-tick, html[data-sx-tick-style="green"] .sx-tick-preview { color: #22c55e; }
+html[data-sx-tick-style="white"] .sx-chat-tick, html[data-sx-tick-style="white"] .sx-tick-preview { color: #ffffff; }
+html[data-sx-tick-style="dots"] .sx-chat-tick, html[data-sx-tick-style="dots"] .sx-tick-preview { letter-spacing: 0; font-size: 9px; }
+html[data-sx-tick-style="dots"] .sx-chat-tick::first-letter, html[data-sx-tick-style="dots"] .sx-tick-preview::first-letter { font-size: 0; }
+html[data-sx-tick-style="dots"] .sx-chat-tick::before, html[data-sx-tick-style="dots"] .sx-tick-preview::before { content: "●●"; letter-spacing: -2px; }
+html[data-sx-tick-style="dots"] .sx-chat-tick, html[data-sx-tick-style="dots"] .sx-tick-preview { font-size: 0; }
+html[data-sx-tick-style="dots"] .sx-chat-tick::before, html[data-sx-tick-style="dots"] .sx-tick-preview::before { font-size: 9px; color: #35b8ff; }
+html[data-sx-tick-style="sixseven"] .sx-chat-tick, html[data-sx-tick-style="sixseven"] .sx-tick-preview { color: var(--sx-theme-accent, #ff1a1a); letter-spacing: -1px; }
+
+/* Layout presets are declarative theme choices, not copied third-party code.
+   Theme JSON shapes.layout_style may select classic, square-status, editorial,
+   minimal, compact, delta-cards, or manga-board. */
+html[data-sx-layout="compact"] .sx-chat-list-surface section { gap: .5rem; padding-top: .55rem; padding-bottom: .55rem; }
+html[data-sx-layout="delta-cards"] .sx-chat-list-surface [data-sx-chat-row],
+html[data-sx-layout="manga-board"] .sx-chat-list-surface [data-sx-chat-row] { margin: .45rem .75rem; border: 1px solid color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 38%, #333); border-radius: 1rem; background: color-mix(in srgb, var(--card-bg, #111) 88%, transparent); padding: .65rem; }
+html[data-sx-layout="manga-board"] .sx-chat-list-surface [data-sx-chat-row] { border-radius: .35rem; border-width: 1px 1px 1px 3px; }
+html[data-sx-layout="editorial"] .sx-chat-list-surface .sx-main-header { border-bottom: 1px solid color-mix(in srgb, var(--sx-theme-accent, #ff1a1a) 45%, transparent); }
+html[data-sx-layout="minimal"] .sx-chat-list-surface .neon { box-shadow: none !important; }
