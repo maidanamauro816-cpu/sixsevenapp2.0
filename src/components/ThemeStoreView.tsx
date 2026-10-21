@@ -43,7 +43,7 @@ function mapTheme(theme: StoreTheme) {
     estadoRectWidth: Number(s.estado_rect_width || 72),
     estadoRectHeight: Number(s.estado_rect_height || 92),
     estadoBorderRadius: Number(s.estado_border_radius || 16),
-    layoutStyle: String(s.layout_style || (s.is_rectangular_estados === true ? 'square-status' : 'classic')),
+    layoutStyle: String(s.layout_style || (s.is_rectangular_estados === true ? 'manga-board' : (theme.id.includes('minimal') ? 'minimal' : (theme.id.includes('custom') || theme.id.includes('anime') ? 'editorial' : (theme.id.includes('moccha') || theme.id.includes('yushi') ? 'delta-cards' : 'classic')))),
   };
 }
 
@@ -147,10 +147,11 @@ export const ThemeStoreView: React.FC = () => {
           const c=theme.colors;
           const isSaved=downloaded.includes(theme.id);
           const isActive=activeThemeId===theme.id || ThemeService.getSavedThemeId()===theme.id;
+          const layout=String(theme.shapes.layout_style || (theme.shapes.is_rectangular_estados ? 'manga-board' : (theme.id.includes('minimal') ? 'minimal' : (theme.id.includes('custom') || theme.id.includes('anime') ? 'editorial' : (theme.id.includes('moccha') || theme.id.includes('yushi') ? 'delta-cards' : 'classic'))));
           return <article key={theme.id} className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950">
             <div className="relative h-32 overflow-hidden p-3" style={{background:`linear-gradient(135deg,${c.scaffold_bg || '#050505'},${c.card_bg || c.scaffold_bg || '#111'} 65%,${c.primary || '#ff1a1a'})`}}>
               <div className="absolute inset-0 opacity-20" style={{backgroundImage:'radial-gradient(circle at 20% 20%, white 1px, transparent 1.5px)',backgroundSize:'18px 18px'}}/>
-              <div className="relative flex h-full flex-col justify-between">
+              <div className={`relative flex h-full flex-col justify-between ${layout === 'manga-board' ? 'border-l-4 border-white/70 pl-2' : layout === 'editorial' ? 'rounded-b-2xl border-b border-white/50 pb-1' : ''}`}>
                 <div className="flex items-start justify-between gap-2"><span className="rounded-full bg-black/65 px-2 py-1 text-[10px] font-bold text-white">{isSaved?'DESCARGADO':'GRATUITO'}</span>{isActive&&<span className="flex items-center gap-1 rounded-full bg-emerald-500 px-2 py-1 text-[10px] font-bold text-black"><Check size={12}/>APLICADO</span>}</div>
                 <div className="flex items-end justify-between gap-2">
                   <div className="max-w-[70%] rounded-2xl p-2 text-xs shadow-lg" style={{background:c.bubble_other||c.card_bg||'#171717',color:c.text_primary||'#fff',borderRadius:`${Math.min(Number(theme.shapes.bubble_radius||20),28)}px`}}>Hola, ¿cómo estás?</div>
@@ -159,7 +160,7 @@ export const ThemeStoreView: React.FC = () => {
               </div>
             </div>
             <div className="space-y-3 p-3">
-              <div><h3 className="font-bold leading-tight">{theme.name}</h3><p className="mt-1 line-clamp-2 min-h-8 text-xs text-neutral-400">{theme.description || 'Tema oficial de la tienda SixSeven.'}</p></div>
+              <div><h3 className="font-bold leading-tight">{theme.name}</h3><p className="mt-1 text-[10px] uppercase tracking-wider text-red-300">Interfaz: {layout}</p><p className="mt-1 line-clamp-2 min-h-8 text-xs text-neutral-400">{theme.description || 'Tema oficial de la tienda SixSeven.'}</p></div>
               <div className="flex items-center gap-1.5">{[c.primary,c.scaffold_bg,c.card_bg,c.bubble_me,c.bubble_other].filter(Boolean).slice(0,5).map((color,i)=><span key={i} title={color} className="h-5 w-5 rounded-full border border-white/15" style={{backgroundColor:color}}/>)}</div>
               <div className="grid grid-cols-2 gap-2">
                 <button disabled={busyId===theme.id} onClick={()=>void download(theme)} className="flex items-center justify-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900 px-2 py-2.5 text-xs font-bold disabled:opacity-50">
