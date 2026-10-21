@@ -16,6 +16,18 @@ function saveBrowserCopy(theme: StoreTheme) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
+function saveXmlCopy(theme: StoreTheme) {
+  const blob = new Blob([ThemeService.exportThemeXml(theme)], { type: 'application/xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `SixSeven_${theme.id}.xml`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
 function mapTheme(theme: StoreTheme) {
   const c = theme.colors;
   const s = theme.shapes;
@@ -170,6 +182,9 @@ export const ThemeStoreView: React.FC = () => {
                 <button disabled={busyId===theme.id} onClick={()=>void apply(theme)} className="flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-2 py-2.5 text-xs font-bold text-white shadow-[0_0_12px_rgba(255,26,26,.18)] disabled:opacity-50">
                   {busyId===theme.id?<LoaderCircle size={15} className="animate-spin"/>:isActive?<Check size={15}/>:<Sparkles size={15}/>}
                   {isActive?'Aplicado':'Aplicar'}
+                </button>
+                <button onClick={()=>{ try { saveXmlCopy(theme); setNotice(`XML del tema “${theme.name}” exportado.`); setError(''); } catch { setError('No se pudo exportar el XML.'); } }} className="col-span-2 flex items-center justify-center gap-1.5 rounded-xl border border-neutral-800 bg-black px-2 py-2 text-xs text-neutral-300">
+                  <Download size={13}/> Exportar XML del tema
                 </button>
               </div>
             </div>
