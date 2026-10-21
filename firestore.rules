@@ -173,6 +173,34 @@ service cloud.firestore {
         && incoming().expiresAt is timestamp;
       allow delete: if isSignedIn() && noteId == request.auth.uid;
     }
+    // WhatsApp-style statuses are stored in /statuses by CreateWhatsAppStatus.tsx.
+    // Accept text-only, image, and video states while allowing only the owner to publish/delete.
+    match /statuses/{statusId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && incoming().uid == request.auth.uid
+        && incoming().keys().hasAll(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'mediaUrl', 'mediaType', 'statusType', 'backgroundColor', 'audience', 'audienceList', 'createdAt', 'expiresAt'])
+        && incoming().keys().hasOnly(['uid', 'name', 'avatar', 'text', 'sticker', 'filter', 'songTitle', 'mediaUrl', 'mediaType', 'statusType', 'backgroundColor', 'audience', 'audienceList', 'createdAt', 'expiresAt'])
+        && incoming().name is string && incoming().name.size() <= 80
+        && incoming().avatar is string && incoming().avatar.size() <= 2000
+        && incoming().text is string && incoming().text.size() <= 300
+        && incoming().sticker is string && incoming().sticker.size() <= 50
+        && incoming().filter is string && incoming().filter.size() <= 30
+        && incoming().songTitle is string && incoming().songTitle.size() <= 100
+        && incoming().mediaUrl is string && incoming().mediaUrl.size() <= 2000
+        && incoming().mediaType in ['', 'image', 'video']
+        && incoming().statusType in ['text', 'image', 'video']
+        && incoming().backgroundColor is string && incoming().backgroundColor.size() <= 20
+        && incoming().audience in ['contacts', 'except', 'only']
+        && incoming().audienceList is list && incoming().audienceList.size() <= 200
+        && incoming().createdAt is timestamp
+        && incoming().expiresAt is timestamp
+        && ((incoming().statusType == 'text' && incoming().text.size() > 0 && incoming().mediaType == '')
+          || (incoming().statusType in ['image', 'video'] && incoming().mediaUrl.size() > 0 && incoming().mediaType == incoming().statusType));
+      allow update: if false;
+      allow delete: if isSignedIn() && existing().uid == request.auth.uid;
+    }
+
     // Stories expire after 24 hours; signed-in users can view them, owners can create/delete.
     match /stories/{storyId} {
       allow read: if isSignedIn();
