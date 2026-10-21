@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, Phone, Video, MoreVertical, Smile, Send, CheckCheck, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
+import { ChevronLeft, Phone, Video, MoreVertical, Smile, Send, Paperclip, Image as ImageIcon, Film, Mic, X, Search, Download, LoaderCircle, Square, Play, Pause } from 'lucide-react';
 import { onSnapshot } from 'firebase/firestore';
 import { WhatsAppChat } from './WhatsAppChatList';
 import { MediaPicker, PickerTab } from './MediaPicker';
