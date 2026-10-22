@@ -22,16 +22,31 @@ export const COUNTRIES: Country[] = [
 export type PhoneResult = { ok: true; e164: string } | { ok: false; error: string };
 
 /**
- * Convierte lo que escribe la persona al formato internacional (E.164) que pide Firebase.
- * Argentina: acepta 376 4624386, 0376 4624386, 0376 15 4624386, 54 9 376 4624386, +54 9 376 4624386.
- * Resultado para celulares argentinos: +549 + área + número (10 dígitos en total).
+ * Normaliza el número al formato E.164 que exige Firebase.
+ * En Argentina Firebase requiere +549 para móviles. Acepta números locales
+ * (con o sin 0/15) y números internacionales que empiecen por +54.
  */
 export function normalizePhone(input: string, countryCode: string): PhoneResult {
   const raw = input.trim();
   let digits = raw.replace(/\D/g, '');
   if (!digits) return { ok: false, error: 'Escribí tu número de teléfono.' };
 
-  // Si lo escribió completo con "+", se respeta tal cual.
+  // Argentina: normalizar también los números escritos completos con +54.
+  // El +54 sin el 9 es un formato frecuente, pero Firebase necesita +549 para móviles.
+  if (countryCode === '54' && raw.startsWith('+54')) {
+    digits = digits.slice(2); // quitar 54
+    digits = digits.replace(/^0+/, '');
+    if (digits.startsWith('9') && digits.length === 11) digits = digits.slice(1);
+    if (digits.length !== 10) {
+      return {
+        ok: false,
+        error: 'Revisá el número argentino: código de área + número, sin 0 ni 15. Ej: +54 9 376 4624386.',
+      };
+    }
+    return { ok: true, e164: `+549${digits}` };
+  }
+
+  // Para otros países, un número ya escrito con "+" se conserva como internacional.
   if (raw.startsWith('+')) {
     return digits.length >= 8 && digits.length <= 15
       ? { ok: true, e164: `+${digits}` }
@@ -39,10 +54,11 @@ export function normalizePhone(input: string, countryCode: string): PhoneResult 
   }
 
   if (countryCode === '54') {
-    if (digits.startsWith('54')) digits = digits.slice(2); // lo escribió con 54
-    digits = digits.replace(/^0+/, ''); // prefijo 0 del área
-    if (digits.startsWith('9') && digits.length === 11) digits = digits.slice(1); // 54 9 ...
-    // Quitar el "15" que se marca desde un fijo: 11 15 xxxxxxxx / 376 15 xxxxxxx / 2965 15 xxxxxx
+    if (digits.startsWith('54')) digits = digits.slice(2);
+    digits = digits.replace(/^0+/, '');
+    if (digits.startsWith('9') && digits.length === 11) digits = digits.slice(1);
+
+    // Quitar "15" cuando el usuario lo escribe como prefijo local.
     if (digits.length === 12) {
       for (const i of [2, 3, 4]) {
         if (digits.slice(i, i + 2) === '15') {
@@ -51,6 +67,7 @@ export function normalizePhone(input: string, countryCode: string): PhoneResult 
         }
       }
     }
+
     if (digits.length !== 10) {
       return {
         ok: false,
@@ -60,7 +77,7 @@ export function normalizePhone(input: string, countryCode: string): PhoneResult 
     return { ok: true, e164: `+549${digits}` };
   }
 
-  // Otros países: se saca el 0 inicial y se antepone el código.
+  // Otros países: quitar prefijo nacional 0 y evitar duplicar el código de país.
   if (digits.startsWith(countryCode) && digits.length > 10) digits = digits.slice(countryCode.length);
   digits = digits.replace(/^0+/, '');
   if (digits.length < 6 || digits.length > 13) {
