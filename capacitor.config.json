@@ -4,5 +4,14 @@
   "webDir": "dist",
   "android": {
     "allowMixedContent": false
+  },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "providers": [
+        "google.com",
+        "phone"
+      ],
+      "skipNativeAuth": true
+    }
   }
 }
