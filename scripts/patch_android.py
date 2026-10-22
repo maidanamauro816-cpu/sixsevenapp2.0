@@ -5,65 +5,6 @@ import re
 import sys
 
 ROOT = pathlib.Path("android")
-
-# Firebase native Authentication requires the Google Services Gradle plugin
-# so google-services.json generates the default FirebaseOptions resources.
-root_gradle = ROOT / "build.gradle"
-if root_gradle.exists():
-    root_text = root_gradle.read_text(encoding="utf-8")
-    if "com.google.gms:google-services" not in root_text and "com.google.gms.google-services" not in root_text:
-        if re.search(r"dependencies\\s*\\{", root_text):
-            root_text = re.sub(
-                r"(dependencies\\s*\\{)",
-                r"\\1\\n        classpath 'com.google.gms:google-services:4.4.2'",
-                root_text,
-                count=1,
-            )
-        else:
-            root_text += "\\n\\nbuildscript {\\n    repositories { google(); mavenCentral() }\\n    dependencies { classpath 'com.google.gms:google-services:4.4.2' }\\n}\\n"
-        root_gradle.write_text(root_text, encoding="utf-8")
-        print("Firebase: dependencia Google Services agregada al Gradle raíz")
-
-app_gradle = ROOT / "app/build.gradle"
-if app_gradle.exists():
-    app_text = app_gradle.read_text(encoding="utf-8")
-    if "com.google.gms.google-services" not in app_text and "com.google.gms:google-services" not in app_text:
-        plugins_match = re.search(r"plugins\\s*\\{[\\s\\S]*?\\}", app_text)
-        if plugins_match:
-            block = plugins_match.group(0)
-            block = block[:-1] + "    id 'com.google.gms.google-services'\\n}"
-            app_text = app_text[:plugins_match.start()] + block + app_text[plugins_match.end():]
-        elif "apply plugin:" in app_text:
-            app_text += "\\napply plugin: 'com.google.gms.google-services'\\n"
-        else:
-            sys.exit("No se encontró un bloque plugins ni apply plugin en android/app/build.gradle.")
-        app_gradle.write_text(app_text, encoding="utf-8")
-        print("Firebase: Google Services plugin aplicado al módulo app")
-
-# Capawesome Firebase Authentication 7.x needs its optional Google SDK enabled
-# explicitly when using the native Google sign-in provider on Android.
-variables_gradle = ROOT / "variables.gradle"
-if variables_gradle.exists():
-    variables_text = variables_gradle.read_text(encoding="utf-8")
-    if "rgcfaIncludeGoogle" not in variables_text:
-        variables_text, count = re.subn(
-            r"ext\\s*\\{",
-            "ext {\\n    rgcfaIncludeGoogle = true\\n    androidxCredentialsVersion = '1.3.0'",
-            variables_text,
-            count=1,
-        )
-        if count == 0:
-            sys.exit("No se encontró el bloque ext en android/variables.gradle.")
-        variables_gradle.write_text(variables_text, encoding="utf-8")
-        print("Firebase Authentication: SDK nativo de Google habilitado")
-    elif "androidxCredentialsVersion" not in variables_text:
-        variables_text = re.sub(
-            r"(ext\\s*\\{)",
-            r"\\1\\n    androidxCredentialsVersion = '1.3.0'",
-            variables_text,
-            count=1,
-        )
-        variables_gradle.write_text(variables_text, encoding="utf-8")
 manifest = ROOT / "app/src/main/AndroidManifest.xml"
 if not manifest.exists():
     sys.exit("No existe android/ — ejecutá primero npx cap add android.")
