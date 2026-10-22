@@ -116,7 +116,10 @@ service cloud.firestore {
           && (!('mediaUrl' in incoming()) || (incoming().mediaUrl is string && incoming().mediaUrl.size() <= 2000))
           && (!('mediaType' in incoming()) || incoming().mediaType in ['image', 'video', 'audio', 'gif', 'sticker'])
           && (!('mediaName' in incoming()) || (incoming().mediaName is string && incoming().mediaName.size() <= 150))
-          && (!('mimeType' in incoming()) || (incoming().mimeType is string && incoming().mimeType.size() <= 100))\n          && (!('messageType' in incoming()) || incoming().messageType in ['text', 'sticker', 'emoji', 'audio'])\n          && (!('stickerId' in incoming()) || (incoming().stickerId is string && incoming().stickerId.size() <= 100))\n          && (!('audioClipId' in incoming()) || (incoming().audioClipId is string && incoming().audioClipId.size() <= 100));
+          && (!('mimeType' in incoming()) || (incoming().mimeType is string && incoming().mimeType.size() <= 100))
+          && (!('messageType' in incoming()) || incoming().messageType in ['text', 'sticker', 'emoji', 'audio'])
+          && (!('stickerId' in incoming()) || (incoming().stickerId is string && incoming().stickerId.size() <= 100))
+          && (!('audioClipId' in incoming()) || (incoming().audioClipId is string && incoming().audioClipId.size() <= 100));
       }
     }
 
