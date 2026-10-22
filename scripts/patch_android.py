@@ -5,6 +5,31 @@ import re
 import sys
 
 ROOT = pathlib.Path("android")
+
+# Capawesome Firebase Authentication 7.x needs its optional Google SDK enabled
+# explicitly when using the native Google sign-in provider on Android.
+variables_gradle = ROOT / "variables.gradle"
+if variables_gradle.exists():
+    variables_text = variables_gradle.read_text(encoding="utf-8")
+    if "rgcfaIncludeGoogle" not in variables_text:
+        variables_text, count = re.subn(
+            r"ext\\s*\\{",
+            "ext {\\n    rgcfaIncludeGoogle = true\\n    androidxCredentialsVersion = '1.3.0'",
+            variables_text,
+            count=1,
+        )
+        if count == 0:
+            sys.exit("No se encontró el bloque ext en android/variables.gradle.")
+        variables_gradle.write_text(variables_text, encoding="utf-8")
+        print("Firebase Authentication: SDK nativo de Google habilitado")
+    elif "androidxCredentialsVersion" not in variables_text:
+        variables_text = re.sub(
+            r"(ext\\s*\\{)",
+            r"\\1\\n    androidxCredentialsVersion = '1.3.0'",
+            variables_text,
+            count=1,
+        )
+        variables_gradle.write_text(variables_text, encoding="utf-8")
 manifest = ROOT / "app/src/main/AndroidManifest.xml"
 if not manifest.exists():
     sys.exit("No existe android/ — ejecutá primero npx cap add android.")
