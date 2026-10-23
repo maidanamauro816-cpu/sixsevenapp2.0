@@ -1,0 +1,2 @@
+export type Chat = { id:string; participants:string[]; members?:Record<string,{name?:string;photo?:string}>; lastMessage?:string; lastSender?:string; updatedAt?:{toDate?:()=>Date}|null; unread?:Record<string,number> };
+export type Message = { id:string; senderId:string; text:string; createdAt?:{toDate?:()=>Date}|null; mediaUrl?:string; mediaType?:'image'|'video'|'audio'|'gif'|'sticker'; mediaName?:string; mimeType?:string; stickerData?:string; messageType?:'text'|'sticker'|'emoji'|'audio'; stickerId?:string };
