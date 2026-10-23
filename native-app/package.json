@@ -1,0 +1,31 @@
+{
+  "name": "sixseven-native",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo/AppEntry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "prebuild": "expo prebuild",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native-firebase/app": "^22.2.0",
+    "@react-native-firebase/auth": "^22.2.0",
+    "@react-native-firebase/firestore": "^22.2.0",
+    "@react-native-firebase/messaging": "^22.2.0",
+    "@react-native-google-signin/google-signin": "^15.0.0",
+    "expo": "~53.0.0",
+    "expo-av": "~15.1.7",
+    "expo-file-system": "~18.1.11",
+    "expo-image-picker": "~16.1.4",
+    "expo-notifications": "~0.31.4",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.0.0",
+    "react-native": "0.79.5"
+  },
+  "devDependencies": {
+    "@types/react": "~19.0.10",
+    "typescript": "~5.8.3"
+  }
+}
