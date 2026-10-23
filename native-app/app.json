@@ -37,12 +37,7 @@
           "microphonePermission": "SixSeven necesita el micrófono para grabar notas de voz."
         }
       ],
-      [
-        "expo-notifications",
-        {
-          "color": "#ff2020"
-        }
-      ]
+      "expo-notifications"
     ]
   }
 }
