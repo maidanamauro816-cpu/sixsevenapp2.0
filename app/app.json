@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "SixSeven Slots ARS",
+    "slug": "sixseven-slots-ars",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "android": {
+      "package": "com.sixseven.slotsars",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#100b24"
+      }
+    },
+    "plugins": []
+  }
+}
