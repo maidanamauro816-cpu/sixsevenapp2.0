@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "736849153214",
+    "project_id": "sixseven-c86ac",
+    "storage_bucket": "sixseven-c86ac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736849153214:android:a1a223d66d6f17a40be2ef",
+        "android_client_info": {
+          "package_name": "com.sixseven.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736849153214-6uj5fq97vd1r0ko42v7tupcr538qnmga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sixseven.app",
+            "certificate_hash": "af466bdc2756b36ea7ee863f2c91a6da691a0286"
+          }
+        },
+        {
+          "client_id": "736849153214-l1at2n4a5ju4ck11easi5hftjuo62s3m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQoPBPm3Eh3GlCp1iFcqUkSXqNQecYB_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736849153214-l1at2n4a5ju4ck11easi5hftjuo62s3m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
