@@ -1,0 +1,37 @@
+name: Build SixSeven Native Android
+on:
+  push:
+    branches: [feature/app-real]
+    paths:
+      - 'native-app/**'
+      - '.github/workflows/native-app-android.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: native-app/package.json
+      - name: Install Expo dependencies
+        working-directory: native-app
+        run: npm install
+      - name: Generate native Android project
+        working-directory: native-app
+        run: npx expo prebuild --platform android --non-interactive
+      - name: Build debug APK
+        working-directory: native-app/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SixSeven-Native-debug
+          path: native-app/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
