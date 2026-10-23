@@ -88,6 +88,18 @@ service cloud.firestore {
           && incoming().photoURL is string;
         allow delete: if isSignedIn() && request.auth.uid == userId;
       }
+
+      // Each signed-in user can manage only their own FCM device tokens.
+      match /deviceTokens/{tokenId} {
+        allow read: if isSignedIn() && request.auth.uid == userId;
+        allow create, update: if isSignedIn()
+          && request.auth.uid == userId
+          && incoming().keys().hasOnly(['token', 'platform', 'updatedAt'])
+          && incoming().keys().hasAll(['token', 'platform'])
+          && incoming().token is string && incoming().token.size() > 20
+          && incoming().platform == 'android';
+        allow delete: if isSignedIn() && request.auth.uid == userId;
+      }
     }
 
     // Chats 1 a 1 (id = uid menor + '_' + uid mayor)
