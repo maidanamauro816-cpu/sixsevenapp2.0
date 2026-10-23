@@ -89,7 +89,7 @@ async function askGemini(request: Request, env: Env): Promise<Response> {
   if (!prompt) return response({ code: "empty_message", error: "Escribí o decí qué necesitás." }, 400);
   if (prompt.length > 4000) return response({ code: "message_too_long", error: "El mensaje es demasiado largo (máximo 4000 caracteres)." }, 413);
   try {
-    const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent", {
+    const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY.trim() },
       body: JSON.stringify({
@@ -113,6 +113,30 @@ async function askGemini(request: Request, env: Env): Promise<Response> {
     return response({ code: "network_error", error: "No se pudo conectar con Gemini. Revisá tu conexión e intentá de nuevo." }, 502);
   }
 }
+async function uploadMedia(request: Request, env: Env, uid: string): Promise<Response> {
+  let form: FormData;
+  try { form = await request.formData(); } catch { return response({ error: "El formulario multimedia no es válido." }, 400); }
+  const candidate = form.get("file");
+  const rawKind = form.get("kind");
+  const kind = typeof rawKind === "string" ? rawKind : "";
+  if (kind !== "image" && kind !== "audio" && kind !== "video") return response({ error: "Tipo de contenido no permitido." }, 400);
+  if (!(candidate instanceof File) || candidate.size <= 0) return response({ error: "Falta el archivo en el campo file." }, 400);
+  if (candidate.size > 50 * 1024 * 1024) return response({ error: "El archivo supera el límite de 50 MB." }, 413);
+  const contentType = (candidate.type || "").toLowerCase().split(";")[0].trim();
+  if (!allowedMime[kind].test(contentType)) return response({ error: "El formato de archivo no está permitido." }, 415);
+  const bucket = buckets[kind];
+  const extByMime: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "audio/mpeg": "mp3", "audio/mp4": "m4a", "audio/ogg": "ogg", "audio/webm": "webm", "audio/wav": "wav", "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" };
+  const ext = extByMime[contentType] || "bin";
+  const objectKey = `${uid}/${kind}/${crypto.randomUUID()}.${ext}`;
+  try {
+    await s3Client(env).send(new PutObjectCommand({ Bucket: bucket, Key: objectKey, Body: new Uint8Array(await candidate.arrayBuffer()), ContentType: contentType }));
+    return response({ url: publicFileUrl(bucket, objectKey, b2Endpoint(env)), key: objectKey, bucket }, 200);
+  } catch (error) {
+    console.error("Backblaze media upload failed", error instanceof Error ? error.message : "unknown error");
+    return response({ error: "No se pudo guardar el contenido en Backblaze. Revisá las credenciales y los permisos del bucket." }, 502);
+  }
+}
+
 async function uploadMultipart(request: Request, env: Env, uid: string, kind: "profile" | "cover"): Promise<Response> {
   let form: FormData;
   try { form = await request.formData(); } catch { return response({ error: "El formulario de subida no es válido." }, 400); }
@@ -147,6 +171,11 @@ export default {
       const uid = await verifyUser(request);
       if (!uid) return response({ code: "unauthenticated", error: "Iniciá sesión en SixSeven para usar la IA." }, 401);
       return askGemini(request, env);
+    }
+    if (request.method === "POST" && url.pathname === "/api/upload-media") {
+      const uid = await verifyUser(request);
+      if (!uid) return response({ error: "La sesión no es válida. Volvé a iniciar sesión en SixSeven." }, 401);
+      return uploadMedia(request, env, uid);
     }
     if (request.method === "POST" && (url.pathname === "/api/upload-avatar" || url.pathname === "/api/upload-cover")) {
       const uid = await verifyUser(request);
