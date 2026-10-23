@@ -32,26 +32,21 @@ export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 
     return data.url;
   }
 
+  const form = new FormData();
+  form.append('file', file, file.name || `sixseven-${kind}-${Date.now()}`);
+  form.append('kind', kind);
   let response: Response;
   try {
-    response = await fetch(`${WORKER_URL}/upload-url`, {
+    response = await fetch(`${WORKER_URL}/api/upload-media`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        kind,
-        contentType: file.type || 'application/octet-stream',
-        fileName: file.name,
-        fileSize: file.size,
-      }),
+      headers: { Authorization: `Bearer ${idToken}` },
+      body: form,
     });
   } catch {
     throw new Error('No se pudo conectar con el servicio de almacenamiento. Revisá tu conexión e intentá de nuevo.');
   }
-  const data = await response.json().catch(() => ({})) as SignedUpload & { error?: string };
-  if (!response.ok) throw new Error(data.error || `No se pudo preparar la subida (HTTP ${response.status}).`);
-  if (!data.uploadUrl || !data.publicUrl) throw new Error('El servicio de almacenamiento devolvió una respuesta incompleta.');
-
-  const uploadResponse = await fetch(data.uploadUrl, { method: 'PUT', headers: data.headers, body: file });
-  if (!uploadResponse.ok) throw new Error(`Backblaze rechazó la subida (HTTP ${uploadResponse.status}). Revisá el CORS del bucket.`);
-  return data.publicUrl;
+  const data = await response.json().catch(() => ({})) as { url?: string; error?: string };
+  if (!response.ok) throw new Error(data.error || `No se pudo subir el archivo (HTTP ${response.status}).`);
+  if (!data.url) throw new Error('El servicio de almacenamiento no devolvió la URL del archivo.');
+  return data.url;
 }
