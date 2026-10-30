@@ -86,7 +86,7 @@ for alias_id, suffix, resource, background, accent, shape in icons:
 </vector>
 '''
     (drawable_dir / f"{resource}.xml").write_text(vector, encoding="utf-8")
-    enabled = "true" if alias_id == "neon-red" else "false"
+    enabled = "false"
     alias_entries.append(f'''        <activity-alias
             android:name=".IconAlias{suffix}"
             android:enabled="{enabled}"
@@ -100,6 +100,22 @@ for alias_id, suffix, resource, background, accent, shape in icons:
             </intent-filter>
         </activity-alias>''')
     alias_map.append(f'        ALIASES.put("{alias_id}", "{suffix}");')
+
+# Icono original (corona + S neón roja): usa los mipmaps generados por capacitor-assets desde assets/icon-*.png.
+alias_entries.insert(0, '''        <activity-alias
+            android:name=".IconAliasOfficial"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:label="@string/app_name"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>''')
+alias_map.insert(0, '        ALIASES.put("official", "Official");')
 
 marker = "<!-- SIXSEVEN_ICON_ALIASES -->"
 if marker not in xml:

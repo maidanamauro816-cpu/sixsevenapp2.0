@@ -25,7 +25,7 @@ export type SixSevenTheme = {
 };
 
 export const themes: SixSevenTheme[] = [
-  { id: 'default', name: 'Default', primary: '#ff1a1a', background: '#050505', bubbleSent: '#321014', bubbleReceived: '#171717', text: '#ffffff', tickColor: '#35b8ff', fontFamily: 'system-ui' },
+  { id: 'default', name: 'Default', primary: '#ff1a1a', background: '#000000', bubbleSent: '#321014', bubbleReceived: '#171717', text: '#ffffff', tickColor: '#35b8ff', fontFamily: 'system-ui' },
   { id: 'cristiano-light', name: 'Cristiano Luz', primary: '#c9a227', background: '#f4f4f4', bubbleSent: '#e6f7d9', bubbleReceived: '#ffffff', text: '#171717', tickColor: '#168cff', fontFamily: 'Roboto' },
   { id: 'cristiano-dark', name: 'Cristiano Oscuro', primary: '#d5b45b', background: '#080808', bubbleSent: '#202020', bubbleReceived: '#111111', text: '#ffffff', tickColor: '#d5b45b', fontFamily: 'Roboto' },
   { id: 'argento', name: 'Argento', primary: '#75bfff', background: '#07111c', bubbleSent: '#102d46', bubbleReceived: '#17202a', text: '#f1f7ff', tickColor: '#75bfff', fontFamily: 'system-ui' },

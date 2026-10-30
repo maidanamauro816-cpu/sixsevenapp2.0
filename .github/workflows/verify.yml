@@ -20,10 +20,6 @@ jobs:
           node-version: 22
       - name: Install app dependencies
         run: npm install --no-audit --no-fund
-      - name: Generate official SixSeven icons
-        run: |
-          npm install --no-save --no-audit --no-fund sharp
-          node scripts/generate-icons.mjs
       - name: TypeScript check
         run: npm run lint
       - name: Build web app

@@ -7,6 +7,7 @@ type IconChangerBridge = { changeIcon: (options: { alias: string }) => Promise<{
 const NativeIconChanger = registerPlugin<IconChangerBridge>('IconChanger');
 
 const icons = [
+  { id:'official', name:'Original SixSeven', art:'S', bg:'#000000', accent:'#ff1a1a' },
   { id:'shield-blue-gold', name:'Escudo azul y oro', art:'🛡️', bg:'#123a73', accent:'#f6c343' },
   { id:'shield-red-white', name:'Escudo rojo y blanco', art:'🛡️', bg:'#8f1727', accent:'#ffffff' },
   { id:'shield-blue-red', name:'Escudo azul y rojo', art:'🛡️', bg:'#173b8e', accent:'#f04444' },
@@ -24,7 +25,7 @@ const icons = [
   { id:'lightning', name:'Rayo', art:'⚡', bg:'#161506', accent:'#f5e342' },
 ];
 export const IconChangerSettings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
-  const [selected,setSelected] = useState(()=>localStorage.getItem('sixseven:launcherIcon')||'sixseven-crown');
+  const [selected,setSelected] = useState(()=>localStorage.getItem('sixseven:launcherIcon')||'official');
   const [message,setMessage] = useState('');
   const [busy,setBusy] = useState(false);
   const apply=async(id:string)=>{
