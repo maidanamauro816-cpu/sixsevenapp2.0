@@ -144,7 +144,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
             </button>
           </div>
         </div>
-        <div className="mt-3 flex items-center gap-2 rounded-full bg-neutral-900 border border-neutral-800 px-3.5 py-2 focus-within:border-red-600">
+        <div className="sx-search mt-3 flex items-center gap-2 rounded-full bg-neutral-900 border border-neutral-800 px-3.5 py-2 focus-within:border-red-600">
           <Search size={15} className="text-neutral-500 shrink-0" />
           <input
             type="text"
@@ -179,8 +179,8 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
       )}
 
       {/* Fila de historias: círculos con aro rojo (Mi estado + contactos) */}
-      <section className="flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
-        <button onClick={onAddStory} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
+      <section className="sx-stories-row flex gap-4 overflow-x-auto no-scrollbar px-4 py-3">
+        <button onClick={onAddStory} className="sx-story-item flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
           <div className="sx-story-ring relative w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
             <div className="w-full h-full rounded-full bg-neutral-950 overflow-hidden flex items-center justify-center">
               {myPhoto ? <img src={myPhoto} alt="Mi estado" className="w-full h-full object-cover" /> : <Plus size={18} className="text-white" />}
@@ -190,7 +190,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           <span className="text-[10px] text-neutral-300 truncate w-full text-center">Tu historia</span>
         </button>
         {storyAuthors.map((a) => (
-          <button key={a.uid} onClick={onViewStories} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
+          <button key={a.uid} onClick={onViewStories} className="sx-story-item flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
             <div className="w-14 h-14 rounded-full border-2 border-red-600 p-0.5 shadow-[0_0_10px_rgba(255,0,0,0.45)]">
               <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">{a.avatar && <img src={a.avatar} alt={a.name} className="w-full h-full object-cover" />}</div>
             </div>
@@ -198,7 +198,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
           </button>
         ))}
         {friendsNoStory.map((f) => (
-          <button key={f.uid} onClick={() => openFriend(f)} className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
+          <button key={f.uid} onClick={() => openFriend(f)} className="sx-story-item flex flex-col items-center gap-1.5 shrink-0 cursor-pointer w-14">
             <div className="w-14 h-14 rounded-full border-2 border-red-900 p-0.5">
               <div className="w-full h-full rounded-full bg-neutral-900 overflow-hidden">{f.photo && <img src={f.photo} alt={f.name} className="w-full h-full object-cover" />}</div>
             </div>
@@ -207,7 +207,7 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
         ))}
       </section>
 
-      <div>
+      <div className="sx-rows-wrap">
         {loading && <p className="text-center text-xs text-neutral-500 py-10">Cargando chats...</p>}
         {!loading && chats.length === 0 && (
           <div className="text-center px-10 py-16 text-neutral-400">

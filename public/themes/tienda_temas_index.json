@@ -4,6 +4,161 @@
   "last_updated": "2026-10-20",
   "themes": [
     {
+      "id": "neu-azul",
+      "name": "Neumorfismo Azul",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Estilo suave en relieve: tarjetas y botones que parecen salir de la pantalla, historias en tarjetas altas y botones redondos.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%23e6e9f0'/%3E%3Crect x='8' y='8' width='224' height='46' rx='22' fill='%23eceff5'/%3E%3Crect x='12' y='66' width='216' height='42' rx='16' fill='%23eceff5'/%3E%3Ccircle cx='34' cy='87' r='13' fill='none' stroke='%235b6ee1' stroke-width='3'/%3E%3Crect x='58' y='76' width='90' height='7' rx='3' fill='%235b6ee1' fill-opacity='.8'/%3E%3Crect x='58' y='90' width='130' height='6' rx='3' fill='%235b6ee1' fill-opacity='.35'/%3E%3Crect x='12' y='116' width='216' height='42' rx='16' fill='%23eceff5'/%3E%3Ccircle cx='34' cy='137' r='13' fill='none' stroke='%235b6ee1' stroke-width='3'/%3E%3Crect x='58' y='126' width='90' height='7' rx='3' fill='%235b6ee1' fill-opacity='.8'/%3E%3Crect x='58' y='140' width='130' height='6' rx='3' fill='%235b6ee1' fill-opacity='.35'/%3E%3Crect x='12' y='166' width='216' height='42' rx='16' fill='%23eceff5'/%3E%3Ccircle cx='34' cy='187' r='13' fill='none' stroke='%235b6ee1' stroke-width='3'/%3E%3Crect x='58' y='176' width='90' height='7' rx='3' fill='%235b6ee1' fill-opacity='.8'/%3E%3Crect x='58' y='190' width='130' height='6' rx='3' fill='%235b6ee1' fill-opacity='.35'/%3E%3Crect x='12' y='216' width='216' height='42' rx='16' fill='%23eceff5'/%3E%3Ccircle cx='34' cy='237' r='13' fill='none' stroke='%235b6ee1' stroke-width='3'/%3E%3Crect x='58' y='226' width='90' height='7' rx='3' fill='%235b6ee1' fill-opacity='.8'/%3E%3Crect x='58' y='240' width='130' height='6' rx='3' fill='%235b6ee1' fill-opacity='.35'/%3E%3Crect y='282' width='240' height='38' fill='%23eceff5'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#5b6ee1",
+        "primary_dark": "#5b6ee1",
+        "scaffold_bg": "#e6e9f0",
+        "card_bg": "#eceff5",
+        "bubble_me": "#5b6ee1",
+        "bubble_other": "#eceff5",
+        "bottom_nav_bg": "#e6e9f0",
+        "text_primary": "#3b4252"
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 78,
+        "estado_rect_height": 112,
+        "estado_border_radius": 22,
+        "layout_style": "neu-azul"
+      }
+    },
+    {
+      "id": "neu-rosa",
+      "name": "Neumorfismo Rosa",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "El mismo relieve suave en rosa, con historias como píldoras altas con borde.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%23f8c8dc'/%3E%3Crect x='8' y='8' width='224' height='46' rx='22' fill='%23fbd9e6'/%3E%3Crect x='12' y='66' width='216' height='42' rx='16' fill='%23fbd9e6'/%3E%3Ccircle cx='34' cy='87' r='13' fill='none' stroke='%23d6336c' stroke-width='3'/%3E%3Crect x='58' y='76' width='90' height='7' rx='3' fill='%23d6336c' fill-opacity='.8'/%3E%3Crect x='58' y='90' width='130' height='6' rx='3' fill='%23d6336c' fill-opacity='.35'/%3E%3Crect x='12' y='116' width='216' height='42' rx='16' fill='%23fbd9e6'/%3E%3Ccircle cx='34' cy='137' r='13' fill='none' stroke='%23d6336c' stroke-width='3'/%3E%3Crect x='58' y='126' width='90' height='7' rx='3' fill='%23d6336c' fill-opacity='.8'/%3E%3Crect x='58' y='140' width='130' height='6' rx='3' fill='%23d6336c' fill-opacity='.35'/%3E%3Crect x='12' y='166' width='216' height='42' rx='16' fill='%23fbd9e6'/%3E%3Ccircle cx='34' cy='187' r='13' fill='none' stroke='%23d6336c' stroke-width='3'/%3E%3Crect x='58' y='176' width='90' height='7' rx='3' fill='%23d6336c' fill-opacity='.8'/%3E%3Crect x='58' y='190' width='130' height='6' rx='3' fill='%23d6336c' fill-opacity='.35'/%3E%3Crect x='12' y='216' width='216' height='42' rx='16' fill='%23fbd9e6'/%3E%3Ccircle cx='34' cy='237' r='13' fill='none' stroke='%23d6336c' stroke-width='3'/%3E%3Crect x='58' y='226' width='90' height='7' rx='3' fill='%23d6336c' fill-opacity='.8'/%3E%3Crect x='58' y='240' width='130' height='6' rx='3' fill='%23d6336c' fill-opacity='.35'/%3E%3Crect y='282' width='240' height='38' fill='%23fbd9e6'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#d6336c",
+        "primary_dark": "#d6336c",
+        "scaffold_bg": "#f8c8dc",
+        "card_bg": "#fbd9e6",
+        "bubble_me": "#d6336c",
+        "bubble_other": "#fbd9e6",
+        "bottom_nav_bg": "#f8c8dc",
+        "text_primary": "#8a3a5c"
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 78,
+        "estado_rect_height": 112,
+        "estado_border_radius": 22,
+        "layout_style": "neu-rosa"
+      }
+    },
+    {
+      "id": "cafe-kawaii",
+      "name": "Café Kawaii",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tonos café y beige: filas en forma de píldora gigante, cabecera redondeada, historias en píldoras altas y fondo en bloques.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%23cdb8ab'/%3E%3Crect x='8' y='8' width='224' height='46' rx='26' fill='%238a6c60'/%3E%3Crect x='12' y='66' width='216' height='42' rx='20' fill='%23dcc9bd'/%3E%3Ccircle cx='34' cy='87' r='13' fill='none' stroke='%235a4036' stroke-width='3'/%3E%3Crect x='58' y='76' width='90' height='7' rx='3' fill='%235a4036' fill-opacity='.8'/%3E%3Crect x='58' y='90' width='130' height='6' rx='3' fill='%235a4036' fill-opacity='.35'/%3E%3Crect x='12' y='116' width='216' height='42' rx='20' fill='%23dcc9bd'/%3E%3Ccircle cx='34' cy='137' r='13' fill='none' stroke='%235a4036' stroke-width='3'/%3E%3Crect x='58' y='126' width='90' height='7' rx='3' fill='%235a4036' fill-opacity='.8'/%3E%3Crect x='58' y='140' width='130' height='6' rx='3' fill='%235a4036' fill-opacity='.35'/%3E%3Crect x='12' y='166' width='216' height='42' rx='20' fill='%23dcc9bd'/%3E%3Ccircle cx='34' cy='187' r='13' fill='none' stroke='%235a4036' stroke-width='3'/%3E%3Crect x='58' y='176' width='90' height='7' rx='3' fill='%235a4036' fill-opacity='.8'/%3E%3Crect x='58' y='190' width='130' height='6' rx='3' fill='%235a4036' fill-opacity='.35'/%3E%3Crect x='12' y='216' width='216' height='42' rx='20' fill='%23dcc9bd'/%3E%3Ccircle cx='34' cy='237' r='13' fill='none' stroke='%235a4036' stroke-width='3'/%3E%3Crect x='58' y='226' width='90' height='7' rx='3' fill='%235a4036' fill-opacity='.8'/%3E%3Crect x='58' y='240' width='130' height='6' rx='3' fill='%235a4036' fill-opacity='.35'/%3E%3Crect y='282' width='240' height='38' fill='%238a6c60'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#7a5a4d",
+        "primary_dark": "#7a5a4d",
+        "scaffold_bg": "#cdb8ab",
+        "card_bg": "#dcc9bd",
+        "bubble_me": "#7a5a4d",
+        "bubble_other": "#dcc9bd",
+        "bottom_nav_bg": "#8a6c60",
+        "text_primary": "#5a4036"
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 78,
+        "estado_rect_height": 112,
+        "estado_border_radius": 22,
+        "layout_style": "cafe-kawaii"
+      }
+    },
+    {
+      "id": "carmesi-anime",
+      "name": "Carmesí Anime",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Barras rojas arriba y abajo, lista crema y chat con fondo rojo de trazos; burbujas claras y rojas. Arte original.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%23ece5dd'/%3E%3Crect x='8' y='8' width='224' height='46' rx='12' fill='%23b3101a'/%3E%3Crect x='12' y='66' width='216' height='42' rx='6' fill='%23e2d9cf'/%3E%3Ccircle cx='34' cy='87' r='13' fill='none' stroke='%233a2a2a' stroke-width='3'/%3E%3Crect x='58' y='76' width='90' height='7' rx='3' fill='%233a2a2a' fill-opacity='.8'/%3E%3Crect x='58' y='90' width='130' height='6' rx='3' fill='%233a2a2a' fill-opacity='.35'/%3E%3Crect x='12' y='116' width='216' height='42' rx='6' fill='%23e2d9cf'/%3E%3Ccircle cx='34' cy='137' r='13' fill='none' stroke='%233a2a2a' stroke-width='3'/%3E%3Crect x='58' y='126' width='90' height='7' rx='3' fill='%233a2a2a' fill-opacity='.8'/%3E%3Crect x='58' y='140' width='130' height='6' rx='3' fill='%233a2a2a' fill-opacity='.35'/%3E%3Crect x='12' y='166' width='216' height='42' rx='6' fill='%23e2d9cf'/%3E%3Ccircle cx='34' cy='187' r='13' fill='none' stroke='%233a2a2a' stroke-width='3'/%3E%3Crect x='58' y='176' width='90' height='7' rx='3' fill='%233a2a2a' fill-opacity='.8'/%3E%3Crect x='58' y='190' width='130' height='6' rx='3' fill='%233a2a2a' fill-opacity='.35'/%3E%3Crect x='12' y='216' width='216' height='42' rx='6' fill='%23e2d9cf'/%3E%3Ccircle cx='34' cy='237' r='13' fill='none' stroke='%233a2a2a' stroke-width='3'/%3E%3Crect x='58' y='226' width='90' height='7' rx='3' fill='%233a2a2a' fill-opacity='.8'/%3E%3Crect x='58' y='240' width='130' height='6' rx='3' fill='%233a2a2a' fill-opacity='.35'/%3E%3Crect y='282' width='240' height='38' fill='%23b3101a'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#b3101a",
+        "primary_dark": "#b3101a",
+        "scaffold_bg": "#0d0306",
+        "card_bg": "#1a0a0c",
+        "bubble_me": "#be101c",
+        "bubble_other": "#f4f1ee",
+        "bottom_nav_bg": "#b3101a",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 78,
+        "estado_rect_height": 112,
+        "estado_border_radius": 22,
+        "layout_style": "carmesi-anime"
+      }
+    },
+    {
+      "id": "negro-rosa",
+      "name": "Negro y Rosa",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Paneles negros redondeados con filas rosas, historias en cápsulas y barra inferior rosa.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%23f7cfe3'/%3E%3Crect x='8' y='8' width='224' height='46' rx='28' fill='%230b0b0b'/%3E%3Crect x='12' y='66' width='216' height='42' rx='22' fill='%23eaa7c6'/%3E%3Ccircle cx='34' cy='87' r='13' fill='none' stroke='%233a1228' stroke-width='3'/%3E%3Crect x='58' y='76' width='90' height='7' rx='3' fill='%233a1228' fill-opacity='.8'/%3E%3Crect x='58' y='90' width='130' height='6' rx='3' fill='%233a1228' fill-opacity='.35'/%3E%3Crect x='12' y='116' width='216' height='42' rx='22' fill='%23eaa7c6'/%3E%3Ccircle cx='34' cy='137' r='13' fill='none' stroke='%233a1228' stroke-width='3'/%3E%3Crect x='58' y='126' width='90' height='7' rx='3' fill='%233a1228' fill-opacity='.8'/%3E%3Crect x='58' y='140' width='130' height='6' rx='3' fill='%233a1228' fill-opacity='.35'/%3E%3Crect x='12' y='166' width='216' height='42' rx='22' fill='%23eaa7c6'/%3E%3Ccircle cx='34' cy='187' r='13' fill='none' stroke='%233a1228' stroke-width='3'/%3E%3Crect x='58' y='176' width='90' height='7' rx='3' fill='%233a1228' fill-opacity='.8'/%3E%3Crect x='58' y='190' width='130' height='6' rx='3' fill='%233a1228' fill-opacity='.35'/%3E%3Crect x='12' y='216' width='216' height='42' rx='22' fill='%23eaa7c6'/%3E%3Ccircle cx='34' cy='237' r='13' fill='none' stroke='%233a1228' stroke-width='3'/%3E%3Crect x='58' y='226' width='90' height='7' rx='3' fill='%233a1228' fill-opacity='.8'/%3E%3Crect x='58' y='240' width='130' height='6' rx='3' fill='%233a1228' fill-opacity='.35'/%3E%3Crect y='282' width='240' height='38' fill='%230b0b0b'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#ff6fae",
+        "primary_dark": "#ff6fae",
+        "scaffold_bg": "#0b0b0b",
+        "card_bg": "#141014",
+        "bubble_me": "#ff6fae",
+        "bubble_other": "#1a1a1a",
+        "bottom_nav_bg": "#f7cfe3",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 18,
+        "card_radius": 20,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 78,
+        "estado_rect_height": 112,
+        "estado_border_radius": 22,
+        "layout_style": "negro-rosa"
+      }
+    },
+    {
       "id": "dragon-ki",
       "name": "Dragón Ki (anime)",
       "version": "2.0",
