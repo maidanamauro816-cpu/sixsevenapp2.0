@@ -1,5 +1,19 @@
 import { auth } from '../firebase';
 
+/** fetch con límite de tiempo y un reintento si falla la red (típico al cambiar de wifi a datos). */
+async function postWithRetry(url: string, init: RequestInit, timeoutMs = 120000): Promise<Response> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try { return await fetch(url, { ...init, signal: controller.signal }); }
+    catch (e) { lastError = e; }
+    finally { clearTimeout(timer); }
+    await new Promise((r) => setTimeout(r, 1200));
+  }
+  throw lastError;
+}
+
 export type BackblazeUploadKind = 'profile' | 'cover' | 'image' | 'audio' | 'video';
 type SignedUpload = { uploadUrl: string; publicUrl: string; headers: Record<string, string> };
 
@@ -9,7 +23,7 @@ export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 
   if (!(file instanceof File) || file.size <= 0) throw new Error('Elegí un archivo válido para subir.');
   const user = auth.currentUser;
   if (!user) throw new Error('Iniciá sesión en SixSeven antes de subir archivos.');
-  const idToken = await user.getIdToken();
+  const idToken = await user.getIdToken(true);
 
   if (kind === 'profile' || kind === 'cover') {
     const endpoint = kind === 'profile' ? '/api/upload-avatar' : '/api/upload-cover';
@@ -18,7 +32,7 @@ export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 
     if (kind === 'cover' && username) form.append('username', username);
     let response: Response;
     try {
-      response = await fetch(`${WORKER_URL}${endpoint}`, {
+      response = await postWithRetry(`${WORKER_URL}${endpoint}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${idToken}` },
         body: form,
@@ -37,7 +51,7 @@ export async function uploadToBackblaze(file: File, kind: BackblazeUploadKind = 
   form.append('kind', kind);
   let response: Response;
   try {
-    response = await fetch(`${WORKER_URL}/api/upload-media`, {
+    response = await postWithRetry(`${WORKER_URL}/api/upload-media`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${idToken}` },
       body: form,

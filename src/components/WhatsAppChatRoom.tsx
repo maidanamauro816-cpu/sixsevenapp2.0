@@ -100,8 +100,12 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
   };
 
   const handleFile = async (event: React.ChangeEvent<HTMLInputElement>, expected: 'image' | 'video' | 'audio') => {
-    const file = event.target.files?.[0]; event.target.value = '';
-    if (!file) return;
+    const picked = event.target.files?.[0]; event.target.value = '';
+    if (!picked) return;
+    // Algunos Android entregan el archivo sin tipo MIME: se deduce por la extensión.
+    const extMime: Record<string, string> = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', mp4: 'video/mp4', webm: 'video/webm', mov: 'video/quicktime', '3gp': 'video/3gpp', mp3: 'audio/mpeg', m4a: 'audio/mp4', aac: 'audio/aac', ogg: 'audio/ogg', wav: 'audio/wav', opus: 'audio/ogg' };
+    const guessed = extMime[(picked.name.split('.').pop() || '').toLowerCase()];
+    const file = picked.type || !guessed ? picked : new File([picked], picked.name, { type: guessed });
     if (file.size > 50 * 1024 * 1024) { setError('El archivo supera el límite de 50 MB.'); return; }
     const type = file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : file.type.startsWith('image/') ? (file.type === 'image/gif' ? 'gif' : 'image') : null;
     if (!type || (expected === 'image' && type !== 'image' && type !== 'gif') || (expected !== 'image' && type !== expected)) { setError('Formato no compatible. Elegí imagen/GIF, video o audio.'); return; }

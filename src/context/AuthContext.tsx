@@ -186,7 +186,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (isNative) {
         const verificationId = await new Promise<string>((resolve, reject) => {
           const handles: Array<{ remove: () => Promise<void> }> = [];
-          const cleanup = () => handles.forEach((h) => h.remove().catch(() => undefined));
+          const timer = setTimeout(() => { cleanup(); reject(new Error('No llegó el código por SMS. Revisá el número (con +54) y tu señal, e intentá de nuevo.')); }, 90000);
+          const cleanup = () => { clearTimeout(timer); handles.forEach((h) => h.remove().catch(() => undefined)); };
           (async () => {
             handles.push(
               await FirebaseAuthentication.addListener('phoneCodeSent', (event) => {

@@ -94,6 +94,7 @@ export async function sendMediaMessage(
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-100) || `media-${Date.now()}`;
   // El Worker valida la sesión, firma la subida y mantiene las claves de B2 fuera del cliente.
   const mediaUrl = await uploadToBackblaze(file, mediaType === 'video' ? 'video' : mediaType === 'audio' ? 'audio' : 'image');
+  if (!mediaUrl) throw new Error('No se obtuvo la dirección del archivo subido.');
   const preview = mediaType === 'image' ? '📷 Foto' : mediaType === 'video' ? '🎬 Video' : mediaType === 'audio' ? '🎤 Nota de voz' : mediaType === 'sticker' ? 'Sticker' : 'GIF';
   await addDoc(collection(db, 'chats', chatId, 'messages'), {
     senderId: myUid, text: '', mediaUrl, mediaType, mediaName: safeName,
