@@ -1,13 +1,16 @@
 import { auth } from '../firebase';
 
 /** fetch con límite de tiempo y un reintento si falla la red (típico al cambiar de wifi a datos). */
-async function postWithRetry(url: string, init: RequestInit, timeoutMs = 120000): Promise<Response> {
+async function postWithRetry(url: string, init: RequestInit, timeoutMs = 60000): Promise<Response> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 2; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try { return await fetch(url, { ...init, signal: controller.signal }); }
-    catch (e) { lastError = e; }
+    catch (e) {
+      lastError = e;
+      if (controller.signal.aborted) throw new Error('La subida tardó demasiado y se canceló. Probá con un archivo más liviano o con mejor señal.');
+    }
     finally { clearTimeout(timer); }
     await new Promise((r) => setTimeout(r, 1200));
   }

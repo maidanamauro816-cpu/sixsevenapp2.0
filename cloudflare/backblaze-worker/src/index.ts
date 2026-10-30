@@ -54,7 +54,12 @@ function b2Endpoint(env: Env): string {
   return endpoint;
 }
 function s3Client(env: Env): S3Client {
-  return new S3Client({ region: REGION, endpoint: b2Endpoint(env), forcePathStyle: true, credentials: b2Credentials(env) });
+  return new S3Client({
+    region: REGION, endpoint: b2Endpoint(env), forcePathStyle: true, credentials: b2Credentials(env),
+    // Backblaze B2 no acepta los checksums CRC32 automáticos que agregan los SDK nuevos (>=3.729):
+    // sin esto las subidas fallan o quedan colgadas.
+    requestChecksumCalculation: "WHEN_REQUIRED", responseChecksumValidation: "WHEN_REQUIRED",
+  });
 }
 function publicFileUrl(bucket: string, key: string, endpoint: string): string {
   const host = new URL(endpoint).hostname;
@@ -132,8 +137,9 @@ async function uploadMedia(request: Request, env: Env, uid: string): Promise<Res
     await s3Client(env).send(new PutObjectCommand({ Bucket: bucket, Key: objectKey, Body: new Uint8Array(await candidate.arrayBuffer()), ContentType: contentType }));
     return response({ url: publicFileUrl(bucket, objectKey, b2Endpoint(env)), key: objectKey, bucket }, 200);
   } catch (error) {
-    console.error("Backblaze media upload failed", error instanceof Error ? error.message : "unknown error");
-    return response({ error: "No se pudo guardar el contenido en Backblaze. Revisá las credenciales y los permisos del bucket." }, 502);
+    const detail = error instanceof Error ? `${error.name}: ${error.message}`.slice(0, 200) : "unknown error";
+    console.error("Backblaze media upload failed", detail);
+    return response({ error: `No se pudo guardar el archivo en Backblaze (${detail}).`, detail }, 502);
   }
 }
 
