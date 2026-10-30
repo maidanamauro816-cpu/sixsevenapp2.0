@@ -4,6 +4,99 @@
   "last_updated": "2026-10-20",
   "themes": [
     {
+      "id": "dragon-ki",
+      "name": "Dragón Ki (anime)",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Estilo anime de combate: aura naranja, filas con corte angular, botón en forma de estrella y burbujas filosas.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%2305060f'/%3E%3Crect width='240' height='52' fill='%230b1030'/%3E%3Crect y='50' width='240' height='3' fill='%23ff9a1f'/%3E%3Cpolygon points='16%2C70 224%2C70 218%2C112 10%2C112' fill='%23ff9a1f' fill-opacity='.18'/%3E%3Ccircle cx='36' cy='91' r='13' fill='none' stroke='%23ff9a1f' stroke-width='3'/%3E%3Crect x='64' y='80' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='94' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Cpolygon points='16%2C122 224%2C122 218%2C164 10%2C164' fill='%23ff9a1f' fill-opacity='.18'/%3E%3Ccircle cx='36' cy='143' r='13' fill='none' stroke='%23ff9a1f' stroke-width='3'/%3E%3Crect x='64' y='132' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='146' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Cpolygon points='16%2C174 224%2C174 218%2C216 10%2C216' fill='%23ff9a1f' fill-opacity='.18'/%3E%3Ccircle cx='36' cy='195' r='13' fill='none' stroke='%23ff9a1f' stroke-width='3'/%3E%3Crect x='64' y='184' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='198' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Cpolygon points='16%2C226 224%2C226 218%2C268 10%2C268' fill='%23ff9a1f' fill-opacity='.18'/%3E%3Ccircle cx='36' cy='247' r='13' fill='none' stroke='%23ff9a1f' stroke-width='3'/%3E%3Crect x='64' y='236' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='250' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect y='286' width='240' height='34' fill='%23070a18'/%3E%3Crect y='286' width='240' height='3' fill='%23ff9a1f'/%3E%3Cpolygon points='200%2C236 206%2C250 222%2C250 209%2C259 214%2C274 200%2C265 186%2C274 191%2C259 178%2C250 194%2C250' fill='%23ff9a1f'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#ff9a1f",
+        "primary_dark": "#ff9a1f",
+        "scaffold_bg": "#05060f",
+        "card_bg": "#0d1226",
+        "bubble_me": "#b35400",
+        "bubble_other": "#0d1226",
+        "bottom_nav_bg": "#070a18",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 6,
+        "card_radius": 18,
+        "estado_shape": "sharp_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 10,
+        "layout_style": "ki"
+      }
+    },
+    {
+      "id": "shinobi-espiral",
+      "name": "Shinobi Espiral (anime)",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Estilo ninja anime: barra flotante en píldora, tarjetas tipo pergamino, avatares cuadrados con doble anillo y fondo en espiral.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%230a0d14'/%3E%3Cpath d='M0 0H240V38Q240 52 226 52H14Q0 52 0 38Z' fill='%230a0d14' stroke='%23ff7a1a' stroke-width='3'/%3E%3Crect x='12' y='70' width='216' height='42' rx='14' fill='%23131a2a' stroke='%23ff7a1a' stroke-opacity='.5'/%3E%3Crect x='24' y='78' width='26' height='26' rx='8' fill='none' stroke='%23ff7a1a' stroke-width='2.5'/%3E%3Crect x='64' y='80' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='94' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='12' y='122' width='216' height='42' rx='14' fill='%23131a2a' stroke='%23ff7a1a' stroke-opacity='.5'/%3E%3Crect x='24' y='130' width='26' height='26' rx='8' fill='none' stroke='%23ff7a1a' stroke-width='2.5'/%3E%3Crect x='64' y='132' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='146' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='12' y='174' width='216' height='42' rx='14' fill='%23131a2a' stroke='%23ff7a1a' stroke-opacity='.5'/%3E%3Crect x='24' y='182' width='26' height='26' rx='8' fill='none' stroke='%23ff7a1a' stroke-width='2.5'/%3E%3Crect x='64' y='184' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='198' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='12' y='226' width='216' height='42' rx='14' fill='%23131a2a' stroke='%23ff7a1a' stroke-opacity='.5'/%3E%3Crect x='24' y='234' width='26' height='26' rx='8' fill='none' stroke='%23ff7a1a' stroke-width='2.5'/%3E%3Crect x='64' y='236' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='250' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='14' y='284' width='212' height='30' rx='15' fill='%230e1422' stroke='%23ff7a1a'/%3E%3Ccircle cx='204' cy='256' r='17' fill='%23ff7a1a'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#ff7a1a",
+        "primary_dark": "#ff7a1a",
+        "scaffold_bg": "#0a0d14",
+        "card_bg": "#131a2a",
+        "bubble_me": "#c2410c",
+        "bubble_other": "#121a2c",
+        "bottom_nav_bg": "#0e1422",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 22,
+        "card_radius": 18,
+        "estado_shape": "rounded_rectangle",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 10,
+        "layout_style": "shinobi"
+      }
+    },
+    {
+      "id": "cerbero-infernal",
+      "name": "Cerbero Infernal",
+      "version": "2.0",
+      "author": "SixSeven",
+      "is_premium": false,
+      "price": 0,
+      "description": "Tres cabezas, tres llamas: cabecera con colmillos, avatares hexagonales, bordes carmesí y violeta, burbujas con esquina cortada.",
+      "preview_image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 320'%3E%3Crect width='240' height='320' fill='%2307040a'/%3E%3Cpolygon points='0%2C0 240%2C0 240%2C44 200%2C54 160%2C44 120%2C54 80%2C44 40%2C54 0%2C44' fill='%23e11d48' fill-opacity='.85'/%3E%3Crect x='10' y='70' width='220' height='42' fill='%23e11d48' fill-opacity='.1'/%3E%3Cpolygon points='36%2C76 48%2C76 55%2C91 48%2C106 36%2C106 29%2C91' fill='%237c3aed'/%3E%3Crect x='10' y='112' width='220' height='2' fill='%23e11d48'/%3E%3Crect x='64' y='80' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='94' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='10' y='122' width='220' height='42' fill='%23e11d48' fill-opacity='.1'/%3E%3Cpolygon points='36%2C128 48%2C128 55%2C143 48%2C158 36%2C158 29%2C143' fill='%237c3aed'/%3E%3Crect x='10' y='164' width='220' height='2' fill='%23e11d48'/%3E%3Crect x='64' y='132' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='146' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='10' y='174' width='220' height='42' fill='%23e11d48' fill-opacity='.1'/%3E%3Cpolygon points='36%2C180 48%2C180 55%2C195 48%2C210 36%2C210 29%2C195' fill='%237c3aed'/%3E%3Crect x='10' y='216' width='220' height='2' fill='%23e11d48'/%3E%3Crect x='64' y='184' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='198' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect x='10' y='226' width='220' height='42' fill='%23e11d48' fill-opacity='.1'/%3E%3Cpolygon points='36%2C232 48%2C232 55%2C247 48%2C262 36%2C262 29%2C247' fill='%237c3aed'/%3E%3Crect x='10' y='268' width='220' height='2' fill='%23e11d48'/%3E%3Crect x='64' y='236' width='90' height='7' rx='3' fill='%23fff' fill-opacity='.8'/%3E%3Crect x='64' y='250' width='130' height='6' rx='3' fill='%23fff' fill-opacity='.3'/%3E%3Crect y='286' width='240' height='34' fill='%230a050c'/%3E%3Crect y='286' width='240' height='4' fill='none' stroke='%23e11d48' stroke-width='1'/%3E%3Cpolygon points='190%2C240 214%2C240 224%2C258 214%2C276 190%2C276 180%2C258' fill='%23e11d48'/%3E%3C/svg%3E",
+      "wallpaper_url": "",
+      "colors": {
+        "primary": "#e11d48",
+        "primary_dark": "#e11d48",
+        "scaffold_bg": "#07040a",
+        "card_bg": "#140812",
+        "bubble_me": "#7f1230",
+        "bubble_other": "#1a0f22",
+        "bottom_nav_bg": "#0a050c",
+        "text_primary": "#ffffff"
+      },
+      "shapes": {
+        "bubble_radius": 4,
+        "card_radius": 18,
+        "estado_shape": "hexagon",
+        "is_rectangular_estados": true,
+        "estado_rect_width": 72,
+        "estado_rect_height": 92,
+        "estado_border_radius": 10,
+        "layout_style": "cerbero"
+      }
+    },
+    {
       "id": "moccha_dango",
       "name": "Moccha Dango 🍡",
       "version": "1.0",
