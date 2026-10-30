@@ -3,6 +3,7 @@ import App from './App.tsx';
 import { isNative } from './native';
 import './index.css';
 import { applyPrefs, loadPrefs } from './theme/engine';
+import { applyUiPrefs, loadUiPrefs } from './fonts/FontManager';
 
 // Restaura una sola vez el aspecto original negro (borra temas guardados y ajustes del Estudio de temas).
 try {
@@ -12,6 +13,7 @@ try {
   }
 } catch { /* sin almacenamiento */ }
 applyPrefs(loadPrefs());
+applyUiPrefs(loadUiPrefs());
 
 if (isNative) document.documentElement.classList.add('native');
 

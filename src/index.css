@@ -276,3 +276,18 @@ html[data-sx-layout='cerbero'] [data-sx-mine='true'] { background: linear-gradie
 html[data-sx-layout='cerbero'] [data-sx-mine='false'] { background: #1a0f22 !important; border-left: 3px solid #e11d48; border-radius: 0 !important; clip-path: polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%); }
 html[data-sx-layout='cerbero'] .sx-chat-body { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='%23e11d48' fill-opacity='.2'%3E%3Cpath d='M20 60c-8-9-2-17 2-24 1 6 6 8 8 4 3 7 6 12-2 20z'/%3E%3Cpath d='M58 28c-5-6-1-11 1-16 1 4 4 5 5 2 2 5 4 8-1 14z' fill='%237c3aed' fill-opacity='.25'/%3E%3C/g%3E%3C/svg%3E"); background-color: #07040a; }
 html[data-sx-layout='cerbero'] .sx-input-bar { background: #0a050c !important; border-top: 2px solid #7c3aed; }
+
+/* ===== Interfaz principal personalizable (FontManager): fuente, tamaño, colores y estilo de la lista ===== */
+html[data-sx-ui-fs] { font-size: var(--sx-ui-fs); }
+html[data-sx-ui-font] body, html[data-sx-ui-font] button, html[data-sx-ui-font] input, html[data-sx-ui-font] textarea, html[data-sx-ui-font] select { font-family: var(--sx-ui-font) !important; }
+html[data-sx-ui-fs] [data-sx-message-bubble='true'] { font-size: calc(var(--sx-ui-fs) - 3px) !important; }
+html[data-sx-ui-bg] body, html[data-sx-ui-bg] #root, html[data-sx-ui-bg] .sx-chat-list-surface, html[data-sx-ui-bg] .sx-main-header { background-color: var(--sx-ui-bg) !important; }
+html[data-sx-ui-text] body, html[data-sx-ui-text] .sx-chat-list-surface, html[data-sx-ui-text] .sx-chat-row h3, html[data-sx-ui-text] .sx-chat-row p { color: var(--sx-ui-text) !important; }
+html[data-sx-ui-row='card'] .sx-chat-row { margin: 4px 10px; width: calc(100% - 20px); border-radius: 16px; border: 1px solid rgba(255,255,255,.1) !important; background: rgba(255,255,255,.04); }
+html[data-sx-ui-row='compact'] .sx-chat-row { padding-top: 6px; padding-bottom: 6px; }
+html[data-sx-ui-pad='compact'] .sx-chat-row { padding-top: 5px; padding-bottom: 5px; }
+html[data-sx-ui-pad='spacious'] .sx-chat-row { padding-top: 16px; padding-bottom: 16px; }
+html[data-sx-ui-nophoto] .sx-chat-row .sx-avatar { display: none; }
+html[data-sx-ui-bubble='round'] [data-sx-message-bubble='true'] { border-radius: 24px !important; }
+html[data-sx-ui-bubble='square'] [data-sx-message-bubble='true'] { border-radius: 3px !important; }
+html[data-sx-ui-bubble='soft'] [data-sx-message-bubble='true'] { border-radius: 18px !important; box-shadow: none !important; }

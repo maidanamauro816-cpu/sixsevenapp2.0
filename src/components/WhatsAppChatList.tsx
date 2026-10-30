@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { ChatDoc, myChatsQuery, openChatWith } from '../services/chats';
 import wordmark from '../assets/logo-wordmark.png';
 import { playSixSevenSound } from '../utils/audio';
+import { useUiPrefs } from '../fonts/FontManager';
 
 export interface WhatsAppChat {
   id: string;
@@ -119,11 +120,15 @@ export const WhatsAppChatList: React.FC<WhatsAppChatListProps> = ({ onOpenChat, 
   const [coverPhoto, setCoverPhoto] = useState(() => { try { return localStorage.getItem('sixseven:coverPhoto') || ''; } catch { return ''; } });
   useEffect(() => { const refresh = () => { try { setHomeLayout(localStorage.getItem('sixseven:homeLayout') || 'classic'); setCoverPhoto(localStorage.getItem('sixseven:coverPhoto') || ''); } catch {} }; window.addEventListener('sixseven:appearanceChanged', refresh); return () => window.removeEventListener('sixseven:appearanceChanged', refresh); }, []);
 
+  const uiPrefs = useUiPrefs();
+
   return (
     <div className="sx-chat-list-surface w-full max-w-md mx-auto min-h-screen bg-black text-white pb-24 selection:bg-red-600">
       <header className="sx-main-header sticky top-0 z-40 bg-black px-4 pb-2 safe-top">
         <div className="flex items-center justify-between pt-3">
-          <img src={wordmark} alt="SixSeven" className="h-9 w-auto select-none" draggable={false} />
+          {uiPrefs.custom_header_text
+            ? <h1 className="sx-header-title max-w-[45%] truncate text-2xl font-black text-[#ff2a2a] drop-shadow-[0_0_8px_rgba(255,26,26,.6)]">{uiPrefs.custom_header_text}</h1>
+            : <img src={wordmark} alt="SixSeven" className="h-9 w-auto select-none" draggable={false} />}
           <div className="flex items-center gap-3 text-[#ff2a2a]">
             <button className="p-1 cursor-pointer" title="Archivados"><Archive size={20} /></button>
             <button onClick={onOpenContacts} className="relative p-1 cursor-pointer" title="Amigos y solicitudes">

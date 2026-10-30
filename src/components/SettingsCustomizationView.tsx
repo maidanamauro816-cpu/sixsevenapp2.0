@@ -1,13 +1,14 @@
 import { CopyrightFooter } from './CopyrightFooter';
 import { ThemeStoreView } from './ThemeStoreView';
 import { ThemeStudioView } from './ThemeStudioView';
+import { ConfiguracionPantallaView } from './ConfiguracionPantallaView';
 import { useAuth } from '../context/AuthContext';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, MessageSquare, ImagePlus, UserRound, Monitor, Settings2, Download, Upload } from 'lucide-react';
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
 
 interface Props { onBack: () => void }
-type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas' | 'tienda' | 'estudio';
+type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas' | 'tienda' | 'estudio' | 'interfaz';
 
 const read = (key: string, fallback = '') => { try { return localStorage.getItem('sixseven:' + key) || fallback; } catch { return fallback; } };
 const save = (key: string, value: string) => { try { localStorage.setItem('sixseven:' + key, value); } catch {} };
@@ -17,6 +18,7 @@ const sections: { id: Exclude<Section,'menu'>; title: string; subtitle: string; 
   { id:'mensajes', title:'Mensajes', subtitle:'Burbujas y visualización de chats', icon:MessageSquare },
   { id:'teclado', title:'Teclado', subtitle:'Tipografía de la aplicación', icon:Keyboard },
   { id:'apariencia', title:'Estilos y apariencia', subtitle:'Diseño principal, perfil y portada', icon:Layout },
+  { id:'interfaz', title:'Interfaz principal', subtitle:'Fuente, tamaño, colores, nombre y lista de chats', icon:Layout },
   { id:'estudio', title:'Estudio de temas', subtitle:'Estilo Delta: inicio, chat, colores, animaciones, .xml', icon:Palette },
   { id:'tienda', title:'Tienda de temas', subtitle:'Descargar, aplicar y guardar temas', icon:Download },
   { id:'temas', title:'Temas y copias', subtitle:'Exportar, importar y restaurar tu configuración', icon:Palette },
@@ -170,6 +172,8 @@ export const SettingsCustomizationView: React.FC<Props> = ({ onBack }) => {
           <span className="flex-1"><b className="block text-sm">{item.title}</b><small className="text-neutral-400">{item.subtitle}</small></span><ChevronRight size={18} className="text-red-400"/>
         </button>)}
       </>}
+
+      {section==='interfaz' && <ConfiguracionPantallaView />}
 
       {section==='estudio' && <ThemeStudioView />}
 
