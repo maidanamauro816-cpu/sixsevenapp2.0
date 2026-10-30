@@ -95,7 +95,9 @@ export const WhatsAppChatRoom: React.FC<WhatsAppChatRoomProps> = ({ chat, onBack
     } catch (err) {
       console.error('Error enviando mensaje:', err);
       setInputText(text);
-      setError('No se pudo enviar. Revisá tu conexión.');
+      const firebaseCode = err && typeof err === 'object' && 'code' in err ? String((err as { code?: unknown }).code || '') : '';
+      const detail = err instanceof Error ? err.message : String(err);
+      setError(`No se pudo enviar${firebaseCode ? ` (${firebaseCode})` : ''}: ${detail.slice(0, 180)}`);
     }
   };
 
