@@ -8,6 +8,7 @@ import { COUNTRIES, normalizePhone, prettyPhone } from '../utils/phone';
 import logoMark from '../assets/logo-mark.png';
 import wordmark from '../assets/logo-wordmark.png';
 import PhoneLogin from './PhoneLogin';
+import { TermsOfServiceView, PrivacyPolicyView } from './LegalView';
 import { isNative } from '../native';
 
 interface LoginScreenProps {
@@ -15,6 +16,7 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
+  const [legalPage, setLegalPage] = useState<'terms' | 'privacy' | null>(null);
   const {
     signInWithGoogle,
     setupPhoneRecaptcha,
@@ -254,13 +256,18 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       {/* FOOTER: Small text below: "Al continuar aceptas nuestros términos del 6 7" */}
       <div className="w-full text-center z-10 pb-4">
         <p className="text-xs text-neutral-500 font-medium tracking-tight">
-          Al continuar aceptas nuestros términos del 6 7
+          Al continuar aceptás nuestros{' '}
+          <button type="button" onClick={() => setLegalPage('terms')} className="underline underline-offset-2">Términos del servicio</button>
+          {' '}y nuestra{' '}
+          <button type="button" onClick={() => setLegalPage('privacy')} className="underline underline-offset-2">Política de privacidad</button>
         </p>
         <div className="flex items-center justify-center gap-1.5 mt-2 text-[10px] text-neutral-600">
           <Shield size={12} className="text-red-500/80" />
           <span>SixSeven • Más que un chat, es tu espacio</span>
         </div>
       </div>
+      {legalPage === 'terms' && <TermsOfServiceView onBack={() => setLegalPage(null)} />}
+      {legalPage === 'privacy' && <PrivacyPolicyView onBack={() => setLegalPage(null)} />}
     </div>
   );
 };

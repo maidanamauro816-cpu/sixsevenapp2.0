@@ -1,4 +1,5 @@
 import { CopyrightFooter } from './CopyrightFooter';
+import { TermsOfServiceView, PrivacyPolicyView } from './LegalView';
 import { ThemeStoreView } from './ThemeStoreView';
 import { ThemeStudioView } from './ThemeStudioView';
 import { ConfiguracionPantallaView } from './ConfiguracionPantallaView';
@@ -8,7 +9,7 @@ import { ArrowLeft, Check, ChevronRight, Keyboard, Layout, Palette, Volume2, Mes
 import { playSuccessChime, playLikePop, playSixSevenSound } from '../utils/audio';
 
 interface Props { onBack: () => void }
-type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas' | 'tienda' | 'estudio' | 'interfaz';
+type Section = 'menu' | 'pantalla' | 'sonido' | 'mensajes' | 'teclado' | 'apariencia' | 'temas' | 'tienda' | 'estudio' | 'interfaz' | 'legal-terms' | 'legal-privacy';
 
 const read = (key: string, fallback = '') => { try { return localStorage.getItem('sixseven:' + key) || fallback; } catch { return fallback; } };
 const save = (key: string, value: string) => { try { localStorage.setItem('sixseven:' + key, value); } catch {} };
@@ -19,6 +20,8 @@ const sections: { id: Exclude<Section,'menu'>; title: string; subtitle: string; 
   { id:'teclado', title:'Teclado', subtitle:'Tipografía de la aplicación', icon:Keyboard },
   { id:'apariencia', title:'Estilos y apariencia', subtitle:'Diseño principal, perfil y portada', icon:Layout },
   { id:'interfaz', title:'Interfaz principal', subtitle:'Fuente, tamaño, colores, nombre y lista de chats', icon:Layout },
+  { id:'legal-terms', title:'Términos del servicio', subtitle:'Reglas de uso de SixSeven', icon:Download },
+  { id:'legal-privacy', title:'Política de privacidad', subtitle:'Qué datos guardamos y por qué', icon:Download },
   { id:'estudio', title:'Estudio de temas', subtitle:'Estilo Delta: inicio, chat, colores, animaciones, .xml', icon:Palette },
   { id:'tienda', title:'Tienda de temas', subtitle:'Descargar, aplicar y guardar temas', icon:Download },
   { id:'temas', title:'Temas y copias', subtitle:'Exportar, importar y restaurar tu configuración', icon:Palette },
